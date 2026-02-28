@@ -4,12 +4,15 @@
     <p>ส่วนนี้คือการเตรียมสภาพแวดล้อมสำหรับการทดลอง เพื่อให้มั่นใจว่าผลการวัดประสิทธิภาพ (Benchmarking) มีความแม่นยำและสามารถทำซ้ำได้ (Reproducible) </p>
     <h2>1. Hardware Specifications</h2>
     <p>เพื่อให้การทดลองอยู่ในสภาวะควบคุม (Controlled Conditions) เครื่องที่ใช้ทดสอบมีรายละเอียดดังนี้:</p>
-    <div class="spec-grid">
+    <div>
+        server
+    </div>
+    <!--<div class="spec-grid">
         <div class="spec-item"><strong>Processor:</strong> Intel Core i5-8300H (Acer Nitro 5)</div>
         <div class="spec-item"><strong>Memory:</strong> 16GB DDR4</div>
         <div class="spec-item"><strong>Storage:</strong> NVMe SSD</div>
         <div class="spec-item"><strong>Operating System:</strong> Ubuntu 22.04 LTS / Windows 11</div>
-    </div>
+    </div>-->
     <h2>2. Software Stack & Runtime Paradigms</h2>
     <p>การทดสอบครอบคลุม 4 ภาษาที่เป็นตัวแทนของแต่ละรูปแบบการทำงาน (Runtime Paradigms):</p>
     <table>
@@ -51,5 +54,6 @@
     </ul>
 </div>
 </body>
+
 
 
