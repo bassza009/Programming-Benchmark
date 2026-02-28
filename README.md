@@ -11,7 +11,7 @@
         <div class="spec-item"><strong>Operating System:</strong> Ubuntu 22.04 LTS / Windows 11</div>
     </div>
     <h2>2. Software Stack & Runtime Paradigms</h2>
-    <p>การทดสอบครอบคลุม 4 ภาษาที่เป็นตัวแทนของแต่ละรูปแบบการทำงาน (Runtime Paradigms): [cite: 5, 28, 99]</p>
+    <p>การทดสอบครอบคลุม 4 ภาษาที่เป็นตัวแทนของแต่ละรูปแบบการทำงาน (Runtime Paradigms):</p>
     <table>
         <thead>
             <tr>
@@ -51,4 +51,5 @@
     </ul>
 </div>
 </body>
+
 
