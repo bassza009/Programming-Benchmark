@@ -10,7 +10,7 @@ import os
 #setup resoures tracking
 process = psutil.Process(os.getpid())
 
-door_number = 100000
+door_number = 1000
 def solve_door():
     doors = [False] * door_number 
 
