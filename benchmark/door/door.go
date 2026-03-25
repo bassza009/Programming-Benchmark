@@ -1,3 +1,5 @@
+cat <<EOF>benchmark/door/door.go
+
 package main
 
 import (
@@ -24,3 +26,4 @@ func main() {
 
 	fmt.Println("Task process : ",duration)
 }
+EOF
