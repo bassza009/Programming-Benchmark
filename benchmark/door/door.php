@@ -1,6 +1,6 @@
 <?php
 $start_time = microtime(true);
-for ($i = 1; $i <= 100; $i++) {
+for ($i = 1; $i <= 10000; $i++) {
 	$root = sqrt($i);
 	$state = ($root == ceil($root)) ? 'open' : 'closed';
 	echo "Door {$i}: {$state}\n";
