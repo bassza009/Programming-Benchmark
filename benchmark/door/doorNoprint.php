@@ -4,7 +4,7 @@ for ($i = 1; $i <= 10000; $i++) {
 	$root = sqrt($i);
 	$state = ($root == ceil($root)) ? 'open' : 'closed';
 	if ($state === "open"){
-		echo "Door {$i}: {$state}\n";
+	// 	echo "Door {$i}: {$state}\n";
 	}
 }
 $end_time = microtime(true);

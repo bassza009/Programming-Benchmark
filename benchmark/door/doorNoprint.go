@@ -13,7 +13,7 @@ func main() {
 		//fmt.Printf("Door %d ", current)
 
 		if current == door {
-			fmt.Printf("Door %d Open\n", current)
+			//fmt.Printf("Open\n")
 			incrementer++
 			door += 2*incrementer + 1
 		} else {
