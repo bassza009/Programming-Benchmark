@@ -1,4 +1,4 @@
 FROM node:20-slim
 WORKDIR /app
 COPY . .
-CMD ["node", "doorNoprint.js"]
+CMD ["node", "door.js"]
