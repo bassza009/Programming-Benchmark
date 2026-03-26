@@ -5,4 +5,4 @@ RUN pip install --no-cache-dir psutil
 # ก๊อปปี้ไฟล์ทั้งหมดในโปรเจกต์เข้าไปใน Docker
 COPY . .
 # สั่งรันไฟล์ Benchmark 
-CMD ["python3", "door.py"]
+CMD ["python3", "doorNoprint.py"]
