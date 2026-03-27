@@ -9,7 +9,7 @@ func main() {
 	var door int = 1
 	var incrementer = 0
 	start := time.Now()
-	for current := 1; current <= 10000; current++ {
+	for current := 1; current <= 100000000; current++ {
 		//fmt.Printf("Door %d ", current)
 
 		if current == door {
