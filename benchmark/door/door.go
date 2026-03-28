@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 func main() {
 	var door int = 1
 	var incrementer = 0
-	start := time.Now()
+
 	for current := 1; current <= 100000000; current++ {
 		//fmt.Printf("Door %d ", current)
 
@@ -20,7 +19,5 @@ func main() {
 			//fmt.Printf("Closed\n")
 		}
 	}
-	duration := time.Since(start)
 
-	fmt.Println("Task process : ", duration)
 }

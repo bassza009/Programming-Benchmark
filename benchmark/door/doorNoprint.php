@@ -1,14 +1,11 @@
 <?php
-$start_time = microtime(true);
-for ($i = 1; $i <= 10000; $i++) {
+
+for ($i = 1; $i <= 100000000;$i++) {
 	$root = sqrt($i);
 	$state = ($root == ceil($root)) ? 'open' : 'closed';
 	if ($state === "open"){
 	// 	echo "Door {$i}: {$state}\n";
 	}
 }
-$end_time = microtime(true);
-$duration = $end_time - $start_time;
 
-echo "Process duration : " .  round($duration,4) . "sec.\n";
 ?>
