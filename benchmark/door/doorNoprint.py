@@ -1,4 +1,4 @@
-door_number = 100000000
+door_number = 1000000
 def solve_door():
     doors = [False] * door_number 
 

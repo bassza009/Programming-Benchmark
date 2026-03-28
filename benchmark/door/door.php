@@ -1,5 +1,5 @@
 <?php
-for ($i = 1; $i <= 100000000; $i++) {
+for ($i = 1; $i <= 1000000; $i++) {
 	$root = sqrt($i);
 	$state = ($root == ceil($root)) ? 'open' : 'closed';
 	if ($state === "open"){
