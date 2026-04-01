@@ -1,29 +1,36 @@
-n = 500
-a = [[1.0 for _ in range(n)] for _ in range(n) ]
-b = [[2.0 for _ in range(n)] for _ in range(n) ]
-def MatrixMul( mtx_a, mtx_b):
-    tpos_b = zip( *mtx_b)
-    rtn = [[ sum( ea*eb for ea,eb in zip(a,b)) for b in tpos_b] for a in mtx_a]
-    return rtn
+import time
+import math
+
+def main():
+    n = 1000
+
+    # 1. เตรียมข้อมูล (ไม่นับรวมในเวลาประมวลผลหลัก)
+    # ใช้ list ธรรมดาเพื่อวัดประสิทธิภาพของตัวภาษา Python เอง
+    matrix_a = [0.0] * (n * n)
+    matrix_b = [0.0] * (n * n)
+    result  = [0.0] * (n * n)
+
+    for i in range(n * n):
+        matrix_a[i] = float(i % n)
+        matrix_b[i] = float(i // n)
+
+    print(f"Starting Matrix Multiplication (Python): {n}x{n}")
+
+ 
+    for i in range(n):
+        for j in range(n):
+            sum_val = 0.0
+            for k in range(n):
+                # สูตรคำนวณ Index สำหรับ Flat Array: (row * n) + k
+                sum_val += matrix_a[i * n + k] * matrix_b[k * n + j]
+            result[i * n + j] = sum_val
 
 
-v = MatrixMul( a, b )
 
-print( 'v = (')
-for r in v:
-    print ('['), 
-    for val in r:
-        print ( '%8.2f '%val), 
-    print (']')
-print (')')
+    # 3. แสดงผลลัพธ์ (Output Format เดียวกับภาษาอื่น)
 
 
-u = MatrixMul(b,a)
+    print(f"Sample Result [0]: {result[0]:.6f}")
 
-print ('u = ')
-for r in u:
-    print ('['), 
-    for val in r:
-        print ('%8.2f '%val), 
-    print (']')
-print (')')
+if __name__ == "__main__":
+    main()
