@@ -31,4 +31,4 @@ def json_to_csv(json_filename,csv_filename):
                 writer.writerow([command,mean,stddev,min,max,tag])
     print(f"convert {json_filename} to {csv_filename} success!!")
 
-json_to_csv(results.json,results.csv)
+json_to_csv("results.json","results.csv")
