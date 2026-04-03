@@ -58,7 +58,7 @@ trial:
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	const trials = 1000000
-	for _, np := range []int{10, 100} {
+	for _, np := range []int{100} {
 		fmt.Printf("Results from %d trials with %d prisoners:\n\n", trials, np)
 		for _, strategy := range [2]string{"random", "optimal"} {
 			doTrials(trials, np, strategy)
