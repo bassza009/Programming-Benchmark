@@ -5,5 +5,5 @@ function factorial($n){
     }
     return $n * factorial($n-1);
 }
-printf(factorial(990),"\n")
+printf(factorial(100),"\n")
 ?>

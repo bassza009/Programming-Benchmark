@@ -7,7 +7,7 @@ public class factorial {
 
     }
     public static void main(String[] args){
-        System.out.println(facto_rial(990));
+        System.out.println(facto_rial(100));
 
     }
 }

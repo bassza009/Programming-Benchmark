@@ -5,5 +5,5 @@
         }
         return fibonacci($n-1) + fibonacci($n-2);
     }
-    printf(fibonacci(10))
+    printf(fibonacci(50))
 ?>

@@ -3,4 +3,4 @@ def fibonacci(n):
         return n
     return fibonacci(n-1) + fibonacci(n-2)
 
-print(fibonacci(990))
+print(fibonacci(50))

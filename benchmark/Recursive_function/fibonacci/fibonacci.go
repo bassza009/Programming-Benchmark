@@ -9,5 +9,5 @@ func fibonacci(n uint64) uint64 {
 	return fibonacci(n-1) + fibonacci(n-2)
 }
 func main() {
-	fmt.Println(fibonacci(990))
+	fmt.Println(fibonacci(50))
 }
