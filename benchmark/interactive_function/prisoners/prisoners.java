@@ -2,7 +2,7 @@ import java.util.*;
 
 public class prisoners {
     public static void main(String[] args) {
-        int trials = 100000;
+        int trials = 1000000;
         runTrial(trials, "random");
         runTrial(trials, "optimal");
     }
