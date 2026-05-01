@@ -10,5 +10,5 @@ func factorial(n uint64) uint64 {
 }
 func main() {
 
-	fmt.Println(factorial(100))
+	fmt.Println(factorial(990))
 }

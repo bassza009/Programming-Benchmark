@@ -3,4 +3,4 @@ def factorial(n):
         return 1
     return n * factorial(n-1)
 
-print(factorial(100))
+print(factorial(990))
