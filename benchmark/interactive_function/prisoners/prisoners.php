@@ -40,6 +40,6 @@ function playOptimal($n) {
 }
 
 // กำหนดจำนวนรอบการทดลอง
-$n = 100000; 
+$n = 1000000; 
 echo "Simulation count: $n\n";
 printf("Optimal play wins (PHP): %.1f%%\n", playOptimal($n));
