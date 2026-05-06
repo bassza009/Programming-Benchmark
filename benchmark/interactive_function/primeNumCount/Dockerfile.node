@@ -1,0 +1,6 @@
+FROM node:20-slim
+WORKDIR /app
+RUN npm init -y && npm install lodash
+COPY . .
+
+CMD ["node", "prime.js"]
