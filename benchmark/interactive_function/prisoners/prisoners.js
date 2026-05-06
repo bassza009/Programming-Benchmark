@@ -1,108 +1,37 @@
-const _ = require('lodash');
+'use strict';
 
-const numPlays = 1000000;
+function playOptimal(n) {
+    let pardoned = 0;
+    const inDrawer = Array.from({length: 100}, (_, i) => i);
 
-const setupSecrets = () => {
-	// setup the drawers with random cards
-	let secrets = [];
+    for (let r = 0; r < n; r++) {
+        // Shuffle
+        for (let i = 99; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [inDrawer[i], inDrawer[j]] = [inDrawer[j], inDrawer[i]];
+        }
 
-	for (let i = 0; i < 100; i++) {
-		secrets.push(i);
-	}
-
-	return _.shuffle(secrets);
+        let allFound = true;
+        for (let prisoner = 0; prisoner < 100; prisoner++) {
+            let found = false;
+            let reveal = prisoner;
+            for (let go = 0; go < 50; go++) {
+                const card = inDrawer[reveal];
+                if (card === prisoner) {
+                    found = true;
+                    break;
+                }
+                reveal = card;
+            }
+            if (!found) {
+                allFound = false;
+                break;
+            }
+        }
+        if (allFound) pardoned++;
+    }
+    return (pardoned / n) * 100;
 }
 
-const playOptimal = () => {
-	
-	let secrets = setupSecrets();
-	
-
-	// Iterate once per prisoner
-	loop1:
-	for (let p = 0; p < 100; p++) {
-		
-		// whether the prisoner succeedss
-		let success = false;
-		
-		// the drawer number the prisoner chose
-		let choice = p;
-		
-		
-		// The prisoner can choose up to 50 cards
-		loop2:
-		for (let i = 0; i < 50; i++) {
-			
-			// if the card in the drawer that the prisoner chose is his card
-			if (secrets[choice] === p){
-				success = true;
-				break loop2;
-			}
-
-			// the next drawer the prisoner chooses will be the number of the card he has.
-			choice = secrets[choice];
-		
-		}	// each prisoner gets 50 chances
-
-		
-		if (!success) return false;
-
-	} // iterate for each prisoner 
-
-	return true;
-}
-
-const playRandom = () => {
-
-	let secrets = setupSecrets();
-
-	// iterate for each prisoner 
-	for (let p = 0; p < 100; p++) {
-
-		let choices = setupSecrets();
-		
-		let success = false;
-		
-		for (let i = 0; i < 50; i++) {
-
-			if (choices[i] === p) {
-				success = true;
-				break;
-			}
-		}
-
-		if (!success) return false;
-	}
-
-	return true;
-}
-
-const execOptimal = () => {
-
-	let success = 0;
-	
-	for (let i = 0; i < numPlays; i++) {
-
-		if (playOptimal()) success++;
-			
-	}
-
-	return 100.0 * success / 1000000;
-}
-
-const execRandom = () => {
-
-	let success = 0;
-
-	for (let i = 0; i < numPlays; i++) {
-
-		if (playRandom()) success++;
-
-	}
-
-	return 100.0 * success / 1000000;
-}
-
-console.log("# of executions: " + numPlays);
-console.log("Optimal Play Success Rate: " + execOptimal());
-console.log("Random Play Success Rate: " + execRandom());
+const n = 1000000;
+console.log(`Optimal play wins (Node.js): ${playOptimal(n).toFixed(1)}%`);

@@ -1,4 +1,4 @@
-public class Doors {
+public class door {
     
     public static void main(String[] args) {
         int n = 1000000;

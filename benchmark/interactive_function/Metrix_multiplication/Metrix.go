@@ -4,30 +4,25 @@ import "fmt"
 
 func main() {
 	const n = 1000
+	a := make([]float64, n*n)
+	b := make([]float64, n*n)
+	res := make([]float64, n*n)
 
-	metrix_a := make([][]float64, n)
-	metrix_b := make([][]float64, n)
-	results := make([][]float64, n)
-	for i := 0; i < n; i++ {
-		metrix_a[i] = make([]float64, n)
-		metrix_b[i] = make([]float64, n)
-		results[i] = make([]float64, n)
-		for j := 0; j < n; j++ {
-			metrix_a[i][j] = float64(i + j)
-			metrix_b[i][j] = float64(i + j)
-		}
+	for i := 0; i < n*n; i++ {
+		a[i] = float64(i % n)
+		b[i] = float64(i / n)
 	}
+
+	fmt.Printf("Starting Matrix Multiplication (Go): %dx%d\n", n, n)
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
 			var sum float64
 			for k := 0; k < n; k++ {
-				sum += metrix_a[i][k] * metrix_b[j][k]
-
+				sum += a[i*n+k] * b[k*n+j]
 			}
-			results[i][j] = sum
-
+			res[i*n+j] = sum
 		}
 	}
-	fmt.Println("Result[0][0] : ", results[0][0])
+	fmt.Printf("Sample Result [0]: %f\n", res[0])
 }

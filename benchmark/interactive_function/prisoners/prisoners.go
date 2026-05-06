@@ -6,62 +6,42 @@ import (
 	"time"
 )
 
-// Uses 0-based numbering rather than 1-based numbering throughout.
-func doTrials(trials, np int, strategy string) {
+func playOptimal(n int) float64 {
 	pardoned := 0
-trial:
-	for t := 0; t < trials; t++ {
-		var drawers [100]int
-		for i := 0; i < 100; i++ {
-			drawers[i] = i
-		}
-		rand.Shuffle(100, func(i, j int) {
-			drawers[i], drawers[j] = drawers[j], drawers[i]
-		})
-	prisoner:
-		for p := 0; p < np; p++ {
-			if strategy == "optimal" {
-				prev := p
-				for d := 0; d < 50; d++ {
-					this := drawers[prev]
-					if this == p {
-						continue prisoner
-					}
-					prev = this
-				}
-			} else {
-				// Assumes a prisoner remembers previous drawers (s)he opened
-				// and chooses at random from the others.
-				var opened [100]bool
-				for d := 0; d < 50; d++ {
-					var n int
-					for {
-						n = rand.Intn(100)
-						if !opened[n] {
-							opened[n] = true
-							break
-						}
-					}
-					if drawers[n] == p {
-						continue prisoner
-					}
-				}
-			}
-			continue trial
-		}
-		pardoned++
+	inDrawer := make([]int, 100)
+	for i := 0; i < 100; i++ {
+		inDrawer[i] = i
 	}
-	rf := float64(pardoned) / float64(trials) * 100
-	fmt.Printf("  strategy = %-7s  pardoned = %-6d relative frequency = %5.2f%%\n\n", strategy, pardoned, rf)
+
+	for r := 0; r < n; r++ {
+		rand.Shuffle(100, func(i, j int) { inDrawer[i], inDrawer[j] = inDrawer[j], inDrawer[i] })
+
+		allFound := true
+		for prisoner := 0; prisoner < 100; prisoner++ {
+			found := false
+			reveal := prisoner
+			for go_round := 0; go_round < 50; go_round++ {
+				card := inDrawer[reveal]
+				if card == prisoner {
+					found = true
+					break
+				}
+				reveal = card
+			}
+			if !found {
+				allFound = false
+				break
+			}
+		}
+		if allFound {
+			pardoned++
+		}
+	}
+	return float64(pardoned) / float64(n) * 100
 }
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	const trials = 1000000
-	for _, np := range []int{100} {
-		fmt.Printf("Results from %d trials with %d prisoners:\n\n", trials, np)
-		for _, strategy := range [2]string{"random", "optimal"} {
-			doTrials(trials, np, strategy)
-		}
-	}
+	n := 1000000
+	fmt.Printf("Optimal play wins (Go): %.1f%%\n", playOptimal(n))
 }

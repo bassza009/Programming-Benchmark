@@ -1,28 +1,26 @@
-public class Metrix {
+public class MatrixBench {
     public static void main(String[] args) {
         int n = 1000;
-        double[][] a = new double[n][n];
-        double[][] b = new double[n][n];
-        double[][] result = new double[n][n];
+        double[] a = new double[n * n];
+        double[] b = new double[n * n];
+        double[] res = new double[n * n];
 
-        // Initialize matrices
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                a[i][j] = i + j;
-                b[i][j] = i + j;
-            }
+        for (int i = 0; i < n * n; i++) {
+            a[i] = (double) (i % n);
+            b[i] = (double) (i / n);
         }
 
-        // Multiply
+        System.out.printf("Starting Matrix Multiplication (Java): %dx%d\n", n, n);
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 double sum = 0;
                 for (int k = 0; k < n; k++) {
-                    sum += a[i][k] * b[k][j];
+                    sum += a[i * n + k] * b[k * n + j];
                 }
-                result[i][j] = sum;
+                res[i * n + j] = sum;
             }
         }
-        System.out.printf("Matrix[0][0]: %.2f\n", result[0][0]);
+        System.out.printf("Sample Result [0]: %.6f\n", res[0]);
     }
 }

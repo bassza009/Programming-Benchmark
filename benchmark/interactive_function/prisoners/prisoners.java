@@ -1,58 +1,43 @@
-import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class prisoners {
-    public static void main(String[] args) {
-        int trials = 1000000;
-        runTrial(trials, "random");
-        runTrial(trials, "optimal");
-    }
+public class prisoners{
+    public static double playOptimal(int n) {
+        int pardoned = 0;
+        int[] inDrawer = new int[100];
+        for (int i = 0; i < 100; i++) inDrawer[i] = i;
 
-    public static void runTrial(int trials, String strategy) {
-        int pardonedCount = 0;
-        Random rand = new Random();
-        int[] drawers = new int[100];
-
-        for (int t = 0; t < trials; t++) {
-            for (int i = 0; i < 100; i++) drawers[i] = i;
-            shuffle(drawers, rand);
+        for (int r = 0; r < n; r++) {
+            // Shuffle
+            for (int i = 99; i > 0; i--) {
+                int index = ThreadLocalRandom.current().nextInt(i + 1);
+                int a = inDrawer[index];
+                inDrawer[index] = inDrawer[i];
+                inDrawer[i] = a;
+            }
 
             boolean allFound = true;
-            for (int p = 0; p < 100; p++) {
-                if (!findCard(p, drawers, strategy, rand)) {
+            for (int prisoner = 0; prisoner < 100; prisoner++) {
+                boolean found = false;
+                int reveal = prisoner;
+                for (int go = 0; go < 50; go++) {
+                    if (inDrawer[reveal] == prisoner) {
+                        found = true;
+                        break;
+                    }
+                    reveal = inDrawer[reveal];
+                }
+                if (!found) {
                     allFound = false;
                     break;
                 }
             }
-            if (allFound) pardonedCount++;
+            if (allFound) pardoned++;
         }
-        double rate = (double) pardonedCount / trials * 100;
-        System.out.printf("Strategy: %-7s | Success Rate: %.2f%%\n", strategy, rate);
+        return (double) pardoned / n * 100;
     }
 
-    private static boolean findCard(int prisoner, int[] drawers, String strategy, Random rand) {
-        if (strategy.equals("optimal")) {
-            int next = prisoner;
-            for (int i = 0; i < 50; i++) {
-                if (drawers[next] == prisoner) return true;
-                next = drawers[next];
-            }
-        } else {
-            List<Integer> choices = new ArrayList<>();
-            for (int i = 0; i < 100; i++) choices.add(i);
-            Collections.shuffle(choices);
-            for (int i = 0; i < 50; i++) {
-                if (drawers[choices.get(i)] == prisoner) return true;
-            }
-        }
-        return false;
-    }
-
-    private static void shuffle(int[] array, Random rand) {
-        for (int i = array.length - 1; i > 0; i--) {
-            int index = rand.nextInt(i + 1);
-            int temp = array[index];
-            array[index] = array[i];
-            array[i] = temp;
-        }
+    public static void main(String[] args) {
+        int n = 1000000;
+      System.out.printf("Optimal play wins (Java): %.1f%%\n", playOptimal(n));
     }
 }
