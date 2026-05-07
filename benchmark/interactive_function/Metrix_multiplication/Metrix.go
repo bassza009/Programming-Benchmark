@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func main() {
 	const n = 1000
@@ -13,7 +15,8 @@ func main() {
 		b[i] = float64(i / n)
 	}
 
-	fmt.Printf("Starting Matrix Multiplication (Go): %dx%d\n", n, n)
+	fmt.Printf("Starting Matrix Multiplication (Go - Flat): %dx%d\n", n, n)
+	// start := time.Now()
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < n; j++ {
@@ -24,5 +27,8 @@ func main() {
 			res[i*n+j] = sum
 		}
 	}
+
+	// duration := time.Since(start)
 	fmt.Printf("Sample Result [0]: %f\n", res[0])
+	// fmt.Printf("Time: %v\n", duration.Seconds())
 }

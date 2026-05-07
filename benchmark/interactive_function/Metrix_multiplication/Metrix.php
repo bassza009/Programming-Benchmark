@@ -9,7 +9,8 @@ for ($i = 0; $i < $n * $n; $i++) {
     $b[$i] = (double)floor($i / $n);
 }
 
-echo "Starting Matrix Multiplication (PHP): {$n}x{$n}\n";
+echo "Starting Matrix Multiplication (PHP - Flat): {$n}x{$n}\n";
+// $start = microtime(true);
 
 for ($i = 0; $i < $n; $i++) {
     for ($j = 0; $j < $n; $j++) {
@@ -20,4 +21,8 @@ for ($i = 0; $i < $n; $i++) {
         $res[$i * $n + $j] = $sum;
     }
 }
+
+// $end = microtime(true);
 echo "Sample Result [0]: " . $res[0] . "\n";
+// echo "Time: " . round($end - $start, 4) . " sec\n";
+?>

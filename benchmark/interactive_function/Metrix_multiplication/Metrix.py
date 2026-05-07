@@ -1,25 +1,24 @@
-import math
+import time
 
 def main():
     n = 1000
-    a = [0.0] * (n * n)
-    b = [0.0] * (n * n)
-    res = [0.0] * (n * n)
+    matrix_a = [float(i % n) for i in range(n * n)]
+    matrix_b = [float(i // n) for i in range(n * n)]
+    result = [0.0] * (n * n)
 
-    for i in range(n * n):
-        a[i] = float(i % n)
-        b[i] = float(i // n)
-
-    print(f"Starting Matrix Multiplication (Python): {n}x{n}")
+    print(f"Starting Matrix Multiplication (Python - Flat): {n}x{n}")
+    # start = time.perf_counter()
 
     for i in range(n):
         for j in range(n):
             sum_val = 0.0
             for k in range(n):
-                sum_val += a[i * n + k] * b[k * n + j]
-            res[i * n + j] = sum_val
+                sum_val += matrix_a[i * n + k] * matrix_b[k * n + j]
+            result[i * n + j] = sum_val
 
-    print(f"Sample Result [0]: {res[0]:.6f}")
+    # end = time.perf_counter()
+    print(f"Sample Result [0]: {result[0]:.6f}")
+    # print(f"Time: {end - start:.4f} sec")
 
 if __name__ == "__main__":
     main()

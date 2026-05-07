@@ -9,7 +9,8 @@ for (let i = 0; i < n * n; i++) {
     b[i] = Math.floor(i / n);
 }
 
-console.log(`Starting Matrix Multiplication (Node.js): ${n}x${n}`);
+console.log(`Starting Matrix Multiplication (Node.js - Flat): ${n}x${n}`);
+const start = performance.now();
 
 for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
@@ -20,4 +21,7 @@ for (let i = 0; i < n; i++) {
         res[i * n + j] = sum;
     }
 }
+
+const end = performance.now();
 console.log(`Sample Result [0]: ${res[0]}`);
+console.log(`Time: ${((end - start) / 1000).toFixed(4)} sec`);
