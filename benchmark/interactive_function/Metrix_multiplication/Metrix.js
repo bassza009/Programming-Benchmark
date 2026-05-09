@@ -10,7 +10,7 @@ for (let i = 0; i < n * n; i++) {
 }
 
 console.log(`Starting Matrix Multiplication (Node.js - Flat): ${n}x${n}`);
-const start = performance.now();
+// const start = performance.now();
 
 for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
@@ -22,6 +22,6 @@ for (let i = 0; i < n; i++) {
     }
 }
 
-const end = performance.now();
+// const end = performance.now();
 console.log(`Sample Result [0]: ${res[0]}`);
-console.log(`Time: ${((end - start) / 1000).toFixed(4)} sec`);
+// console.log(`Time: ${((end - start) / 1000).toFixed(4)} sec`);
