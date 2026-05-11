@@ -1,0 +1,4 @@
+Fibonacci(50),,,,,,,,,,
+,Python(BME.),Python(Dkr.),Node(BME.),Node(Dkr.),Golang(BME.),Golang(Dkr.),PHP(BME.),PHP(Dkr.),JAVA(BME.),JAVA(Dkr.)
+,ระยะเวลา(S.),,,,,,,,,
+Avg. duration,3510.548,3405.985,287.878,284.673,93.067,95.601,1281.669,1363.589,74.406,76.919

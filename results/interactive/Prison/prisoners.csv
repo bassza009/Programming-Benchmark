@@ -1,0 +1,4 @@
+Prisoners(loop 2ขั้น) (1000000 prisoners),,,,,,,,,,
+,Python(BME.),Python(Dkr.),Node(BME.),Node(Dkr.),Golang(BME.),Golang(Dkr.),PHP(BME.),PHP(Dkr.),JAVA(BME.),JAVA(Dkr.)
+,ระยะเวลา(S.),,,,,,,,,
+Avg. duration,73.287,81.593,4.91,5.419,4.808,5.207,29.702,29.073,3.866,4.243

@@ -1,0 +1,4 @@
+Metrix multiplication(loop 3ขั้น)(1000*1000),,,,,,,,,,,,
+,Python(BME.),Python(Dkr.),Node(BME.),Node(Dkr.),Golang(BME.),Golang(Dkr.),PHP(BME.),PHP(Dkr.),JAVA(BME.),JAVA(Dkr.),PHP(BME.)otm,PHP(Dkr.)otm
+,ระยะเวลา(S.),,,,,,,,,,,
+Avg. duration,351.63,365.649,23.008,23.441,23.117,23.605,94.26,86.962,24.207,24.856,74.038,74.518

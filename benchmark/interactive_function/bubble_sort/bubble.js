@@ -1,5 +1,5 @@
 'use strict';
-const n = 1000000;
+const n = 100000;
 // ใช้ Int32Array เพื่อจำลองความเร็วเหมือน Typed Array ใน Go/Java
 const arr = new Int32Array(n);
 
