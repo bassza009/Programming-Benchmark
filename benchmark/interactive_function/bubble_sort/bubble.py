@@ -1,7 +1,7 @@
 import time
 
 def main():
-    n = 1000000
+    n = 100000
     arr = [n - i for i in range(n)]
 
     print(f"Starting Bubble Sort (Python): {n} items")

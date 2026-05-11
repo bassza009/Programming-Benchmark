@@ -1,6 +1,6 @@
 public class bubble {
     public static void main(String[] args) {
-        int n = 1000000;
+        int n = 100000;
         int[] arr = new int[n];
         
         // สร้างข้อมูลเรียงกลับด้าน (Worst-case)
