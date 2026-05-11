@@ -1,5 +1,5 @@
 <?php
-$n = 20000;
+$n = 1000000;
 $arr = new SplFixedArray($n);
 
 for ($i = 0; $i < $n; $i++) {

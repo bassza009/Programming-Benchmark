@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	const n = 20000
+	const n = 1000000
 	arr := make([]int, n)
 	for i := 0; i < n; i++ {
 		arr[i] = n - i
