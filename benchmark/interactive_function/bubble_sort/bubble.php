@@ -1,6 +1,6 @@
 <?php
 $n = 100000;
-$arr = new SplFixedArray($n);
+$arr = array($n);
 
 for ($i = 0; $i < $n; $i++) {
     $arr[$i] = $n - $i;
