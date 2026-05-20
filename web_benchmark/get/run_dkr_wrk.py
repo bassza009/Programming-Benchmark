@@ -13,70 +13,58 @@ LANGUAGE_CONFIG = {
 
 ENDPOINTS = ["/", "/health", "/api/data"]
 OUTPUT_FILE = "dkr_benchmark_results.json"
-LUA_REPORTER = "benchmark/wrk_json_reporter.lua"
+LUA_REPORTER = "wrk_json_reporter.lua"
 CONTAINER_NAME = "bench_current"
 
 
 def run_wrk(port: int, endpoint: str) -> dict:
-    url = f"http://localhost:{port}{endpoint}"
+    url = f"http://127.0.0.1:{port}{endpoint}"
     print(f"🚀 Running wrk for {url}")
-    result = subprocess.run(
-        [
-            "wrk",
-            "-t4",
-            "-c500",
-            "-d30s",
-            "-s",
-            LUA_REPORTER,
-            url,
-        ],
+    cmd = [
+        "wrk",
+        "-t4",
+        "-c500",
+        "-d30s",
+        "-s",
+        LUA_REPORTER,
+        url,
+    ]
+
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        output = result.stdout
+
+        # ดึงเฉพาะ JSON เผื่อ wrk พ่นข้อความอื่นปนมา
+        start_idx = output.find('{')
+        end_idx = output.rfind('}') + 1
+
+        if start_idx != -1 and end_idx != -1:
+            json_str = output[start_idx:end_idx]
+            return json.loads(json_str)
+        else:
+            print(f"⚠️  [พัง] wrk ยิงไม่เข้า (Connection Refused)")
+            print(f"รายละเอียดจาก wrk: {output.strip()} {result.stderr.strip()}")
+            return None
+    except Exception as e:
+        print(f"⚠️  [พัง] รันคำสั่ง wrk ไม่สำเร็จ: {e}")
+        return None
+
+
+def start_container(image: str, port: int) -> None:
+    print(f"🐳 Starting Docker container from image {image} on port {port}")
+    # ใช้ -p เพื่อเจาะพอร์ตจาก Host เข้าไปหา Container ให้ทะลุถึงกัน
+    subprocess.run(
+        ["docker", "run", "-d", "-p", f"{port}:{port}", "--name", CONTAINER_NAME, image],
         capture_output=True,
         text=True,
     )
-
-    if result.returncode != 0:
-        print(f"⚠️  wrk failed for {url} (exit code {result.returncode})")
-        print(result.stderr.strip())
-        raise RuntimeError(f"wrk failed for {url}")
-
-    output = result.stdout.strip()
-    if not output:
-        raise ValueError(f"No JSON output from wrk for {url}")
-
-    return json.loads(output)
-
-
-def start_container(image: str) -> None:
-    print(f"🐳 Starting Docker container from image {image}")
-    result = subprocess.run(
-        [
-            "docker",
-            "run",
-            "-d",
-            "--rm",
-            "--network",
-            "host",
-            "--name",
-            CONTAINER_NAME,
-            image,
-        ],
-        capture_output=True,
-        text=True,
-    )
-
-    if result.returncode != 0:
-        print(f"❌ Failed to start container {CONTAINER_NAME} from {image}")
-        print(result.stderr.strip())
-        raise RuntimeError(f"docker run failed for image {image}")
-
-    container_id = result.stdout.strip()
-    print(f"✅ Container started: {container_id}")
 
 
 def stop_container() -> None:
     print(f"🛑 Stopping container {CONTAINER_NAME}")
+    # ใช้ rm -f เพื่อบังคับลบ Container ทิ้งไปเลย จะได้ไม่กวนการรันรอบหน้า
     subprocess.run(
-        ["docker", "stop", CONTAINER_NAME],
+        ["docker", "rm", "-f", CONTAINER_NAME],
         capture_output=True,
         text=True,
     )
@@ -85,6 +73,9 @@ def stop_container() -> None:
 def main() -> None:
     print("📊 Starting Docker benchmark run...")
     aggregated = {}
+
+    # ล้าง Container เก่าที่อาจจะค้างอยู่ก่อนเริ่ม
+    stop_container()
 
     for language, config in LANGUAGE_CONFIG.items():
         image = config["image"]
@@ -95,15 +86,18 @@ def main() -> None:
         container_started = False
 
         try:
-            start_container(image)
+            start_container(image, port)
             container_started = True
             print("⏳ Waiting 5 seconds for container initialization...")
             time.sleep(5)
 
             for endpoint in ENDPOINTS:
                 metrics = run_wrk(port, endpoint)
-                language_data["endpoints"][endpoint] = metrics
-                print(f"✅ Collected data for {language} {endpoint}")
+                if metrics:
+                    language_data["endpoints"][endpoint] = metrics
+                    print(f"✅ Collected data for {language} {endpoint}")
+                else:
+                    print(f"❌ ข้าม {endpoint} เพราะดึงข้อมูลไม่ได้")
 
         except Exception as exc:
             print(f"⚠️  Error while benchmarking {language}: {exc}")
@@ -113,7 +107,7 @@ def main() -> None:
 
         aggregated[language] = language_data
 
-    print(f"💾 Writing aggregated results to {OUTPUT_FILE}")
+    print(f"\n💾 Writing aggregated results to {OUTPUT_FILE}")
     with open(OUTPUT_FILE, "w", encoding="utf-8") as output_file:
         json.dump(aggregated, output_file, indent=2)
 
