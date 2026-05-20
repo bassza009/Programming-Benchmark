@@ -1,0 +1,6 @@
+*.csv
+*.json
+*.class
+go_server
+__pycache__/
+*.png

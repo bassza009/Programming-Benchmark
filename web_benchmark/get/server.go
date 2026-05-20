@@ -56,7 +56,7 @@ func handleGET(w http.ResponseWriter, r *http.Request) {
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "8004"
 	}
 
 	_, err := strconv.Atoi(port)

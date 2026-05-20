@@ -7,7 +7,7 @@ import json
 import sys
 import os
 
-PORT = int(os.getenv('PORT', 8080))
+PORT = int(os.getenv('PORT', 8001))
 
 class GetHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):

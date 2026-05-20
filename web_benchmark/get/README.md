@@ -82,6 +82,26 @@ python3 benchmark.py 60 8
 python3 benchmark.py 10 2
 ```
 
+## New wrk Benchmarking
+
+The repository also supports `wrk`-based benchmarking using the Lua JSON reporter.
+
+- `wrk_json_reporter.lua` formats `wrk` output as strict JSON.
+- `run_bme_wrk.py` benchmarks locally running servers and writes `bme_benchmark_results.json`.
+- `run_dkr_wrk.py` benchmarks Docker containers and writes `dkr_benchmark_results.json`.
+
+### Example wrk benchmark commands
+
+```bash
+# Run local Bare Metal Environment benchmark
+python3 run_bme_wrk.py
+
+# Run Docker benchmark
+python3 run_dkr_wrk.py
+```
+
+> Ensure `wrk` is installed and servers are already running for `run_bme_wrk.py`.
+
 ## Benchmark Script Features
 
 The `benchmark.py` script:

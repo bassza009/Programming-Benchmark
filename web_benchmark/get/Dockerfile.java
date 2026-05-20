@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y wget maven && \
 
 COPY server.java .
 
-ENV PORT=8080
+ENV PORT=8005
 EXPOSE 8080
 
 RUN javac -cp /usr/share/java/* server.java 2>/dev/null || \
