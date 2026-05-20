@@ -1,20 +1,15 @@
-FROM openjdk:17-slim
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
+
+# ก๊อปปี้ไฟล์โค้ดเข้ามา
 COPY server.java .
 
-# Download JSON library (org.json)
-RUN apt-get update && apt-get install -y wget maven && \
-    echo 'import org.json.JSONObject;' > /tmp/test.java
+# คอมไพล์โค้ด
+RUN javac server.java
 
-COPY server.java .
-
-ENV PORT=8005
+# เปิดพอร์ต
 EXPOSE 8080
 
-RUN javac -cp /usr/share/java/* server.java 2>/dev/null || \
-    (cd /tmp && wget -q https://repo1.maven.org/maven2/org/json/json/20230227/json-20230227.jar && \
-     cp json-20230227.jar /tmp/json.jar && \
-     cd /app && javac -cp /tmp/json.jar server.java)
-
-CMD ["java", "-cp", "/tmp/json.jar:.", "server"]
+# สั่งรัน
+CMD ["java", "server"]
