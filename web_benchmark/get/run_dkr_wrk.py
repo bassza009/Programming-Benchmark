@@ -18,7 +18,7 @@ CONTAINER_NAME = "bench_current"
 
 
 def run_wrk(port: int, endpoint: str) -> dict:
-    url = f"http://127.0.0.1:{port}{endpoint}"
+    url = f"http://localhost:{port}{endpoint}"
     print(f"🚀 Running wrk for {url}")
     result = subprocess.run(
         [
