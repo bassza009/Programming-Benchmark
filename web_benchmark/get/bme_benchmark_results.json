@@ -1,0 +1,222 @@
+{
+  "Python": {
+    "Environment": "BME",
+    "endpoints": {
+      "/": {
+        "requests": 18883,
+        "success": 0,
+        "errors": 18920,
+        "min_ms": 0.308,
+        "max_ms": 1858.332,
+        "mean_ms": 5.030482,
+        "stdev_ms": 53.554925,
+        "p50_ms": 1.23,
+        "p95_ms": 1.814,
+        "p99_ms": 3.66,
+        "requests_per_sec": 627.677531
+      },
+      "/health": {
+        "requests": 49082,
+        "success": 0,
+        "errors": 49117,
+        "min_ms": 0.327,
+        "max_ms": 1921.594,
+        "mean_ms": 5.262932,
+        "stdev_ms": 56.626115,
+        "p50_ms": 1.261,
+        "p95_ms": 1.859,
+        "p99_ms": 2.541,
+        "requests_per_sec": 1632.14153
+      },
+      "/api/data": {
+        "requests": 28243,
+        "success": 0,
+        "errors": 28273,
+        "min_ms": 0.32,
+        "max_ms": 1920.509,
+        "mean_ms": 10.316597,
+        "stdev_ms": 83.690865,
+        "p50_ms": 1.301,
+        "p95_ms": 1.933,
+        "p99_ms": 210.554,
+        "requests_per_sec": 939.045091
+      }
+    }
+  },
+  "Node": {
+    "Environment": "BME",
+    "endpoints": {
+      "/": {
+        "requests": 195736,
+        "success": 195736,
+        "errors": 304,
+        "min_ms": 4.273,
+        "max_ms": 1988.785,
+        "mean_ms": 65.996227,
+        "stdev_ms": 59.622116,
+        "p50_ms": 71.006,
+        "p95_ms": 79.678,
+        "p99_ms": 95.364,
+        "requests_per_sec": 6508.521719
+      },
+      "/health": {
+        "requests": 185824,
+        "success": 185824,
+        "errors": 345,
+        "min_ms": 0.651,
+        "max_ms": 1991.286,
+        "mean_ms": 67.789836,
+        "stdev_ms": 68.564613,
+        "p50_ms": 62.104,
+        "p95_ms": 97.014,
+        "p99_ms": 117.678,
+        "requests_per_sec": 6182.720444
+      },
+      "/api/data": {
+        "requests": 176924,
+        "success": 176924,
+        "errors": 342,
+        "min_ms": 0.548,
+        "max_ms": 1993.648,
+        "mean_ms": 69.150219,
+        "stdev_ms": 67.306701,
+        "p50_ms": 72.248,
+        "p95_ms": 94.331,
+        "p99_ms": 103.936,
+        "requests_per_sec": 5886.172475
+      }
+    }
+  },
+  "PHP": {
+    "Environment": "BME",
+    "endpoints": {
+      "/": {
+        "requests": 67181,
+        "success": 0,
+        "errors": 67181,
+        "min_ms": 3.799,
+        "max_ms": 287.969,
+        "mean_ms": 222.332434,
+        "stdev_ms": 21.389405,
+        "p50_ms": 219.833,
+        "p95_ms": 258.33,
+        "p99_ms": 278.477,
+        "requests_per_sec": 2233.950602
+      },
+      "/health": {
+        "requests": 69047,
+        "success": 0,
+        "errors": 69047,
+        "min_ms": 124.982,
+        "max_ms": 295.859,
+        "mean_ms": 216.236033,
+        "stdev_ms": 20.400769,
+        "p50_ms": 218.787,
+        "p95_ms": 246.193,
+        "p99_ms": 262.364,
+        "requests_per_sec": 2296.348368
+      },
+      "/api/data": {
+        "requests": 67654,
+        "success": 0,
+        "errors": 67654,
+        "min_ms": 131.379,
+        "max_ms": 283.041,
+        "mean_ms": 220.766022,
+        "stdev_ms": 10.151634,
+        "p50_ms": 219.365,
+        "p95_ms": 238.901,
+        "p99_ms": 256.188,
+        "requests_per_sec": 2249.924533
+      }
+    }
+  },
+  "Go": {
+    "Environment": "BME",
+    "endpoints": {
+      "/": {
+        "requests": 3595634,
+        "success": 3595634,
+        "errors": 0,
+        "min_ms": 0.067,
+        "max_ms": 144.563,
+        "mean_ms": 7.556191,
+        "stdev_ms": 10.54957,
+        "p50_ms": 2.302,
+        "p95_ms": 30.833,
+        "p99_ms": 45.017,
+        "requests_per_sec": 119460.684431
+      },
+      "/health": {
+        "requests": 3584429,
+        "success": 3584429,
+        "errors": 0,
+        "min_ms": 0.069,
+        "max_ms": 155.307,
+        "mean_ms": 7.673875,
+        "stdev_ms": 10.826744,
+        "p50_ms": 2.266,
+        "p95_ms": 31.414,
+        "p99_ms": 46.608,
+        "requests_per_sec": 119182.323573
+      },
+      "/api/data": {
+        "requests": 3558153,
+        "success": 3558153,
+        "errors": 0,
+        "min_ms": 0.067,
+        "max_ms": 125.212,
+        "mean_ms": 7.423523,
+        "stdev_ms": 10.250416,
+        "p50_ms": 2.383,
+        "p95_ms": 30.165,
+        "p99_ms": 43.963,
+        "requests_per_sec": 118333.693784
+      }
+    }
+  },
+  "Java": {
+    "Environment": "BME",
+    "endpoints": {
+      "/": {
+        "requests": 183630,
+        "success": 157293,
+        "errors": 26344,
+        "min_ms": 0.357,
+        "max_ms": 1906.797,
+        "mean_ms": 44.031802,
+        "stdev_ms": 55.456549,
+        "p50_ms": 41.923,
+        "p95_ms": 58.108,
+        "p99_ms": 161.669,
+        "requests_per_sec": 6110.763656
+      },
+      "/health": {
+        "requests": 199265,
+        "success": 167654,
+        "errors": 31633,
+        "min_ms": 0.331,
+        "max_ms": 1785.126,
+        "mean_ms": 41.902243,
+        "stdev_ms": 62.952724,
+        "p50_ms": 41.419,
+        "p95_ms": 51.735,
+        "p99_ms": 69.432,
+        "requests_per_sec": 6628.70421
+      },
+      "/api/data": {
+        "requests": 210173,
+        "success": 171605,
+        "errors": 38605,
+        "min_ms": 0.323,
+        "max_ms": 1827.486,
+        "mean_ms": 40.695283,
+        "stdev_ms": 68.573001,
+        "p50_ms": 40.988,
+        "p95_ms": 42.973,
+        "p99_ms": 71.372,
+        "requests_per_sec": 6994.407283
+      }
+    }
+  }
+}

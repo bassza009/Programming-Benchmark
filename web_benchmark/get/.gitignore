@@ -1,5 +1,5 @@
 *.csv
-*.json
+
 *.class
 go_server
 __pycache__/
