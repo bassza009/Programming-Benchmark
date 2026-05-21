@@ -1,4 +1,4 @@
-FROM openswoole/swoole:22.1.2-php8.4
+FROM openswoole/swoole:22.1.2-php8.3
 
 WORKDIR /app
 COPY server.php .
