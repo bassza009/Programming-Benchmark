@@ -19,6 +19,8 @@ def read_data():
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8001))
-    print(f"Python GET Server is running on port {port} with 4 workers")
-    uvicorn.run("server:app", host="0.0.0.0", port=port, workers=4, log_level="critical")
+    cpu_count = os.cpu_count() or 1
+    workers = cpu_count * 2
+    print(f"Python GET Server is running on port {port} with {workers} workers (cpu_count={cpu_count})")
+    uvicorn.run("server:app", host="0.0.0.0", port=port, workers=workers, log_level="critical")
     
