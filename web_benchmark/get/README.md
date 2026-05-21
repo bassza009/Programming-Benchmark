@@ -6,9 +6,9 @@ Benchmarks GET request performance across different programming languages and ru
 
 - **Python** (built-in http.server)
 - **Node.js** (native http module)
-- **PHP** (built-in server)
+- **PHP** (Swoole HTTP Server for concurrent async requests)
 - **Go** (net/http package)
-- **Java** (com.sun.net.httpserver)
+- **Java** (com.sun.net.httpserver with thread pool executor)
 
 ## Architecture
 
@@ -53,7 +53,10 @@ node server.js
 
 **PHP:**
 ```bash
-php -S localhost:8080 server.php
+php server.php
+# Server runs on port 8003 by default
+# Or set: PORT=8003 php server.php
+# Note: Requires Swoole extension (uses openswoole/swoole Docker image)
 ```
 
 **Go:**
@@ -64,9 +67,12 @@ go run server.go
 
 **Java:**
 ```bash
-# First time compilation needed
-javac -cp /path/to/json.jar server.java
-java -cp /path/to/json.jar:. server
+# Compilation
+javac server.java
+
+# Run (uses thread pool executor sized at 2x CPU cores)
+java server
+# Port 8005 by default (or set PORT environment variable)
 ```
 
 ### Running Benchmarks

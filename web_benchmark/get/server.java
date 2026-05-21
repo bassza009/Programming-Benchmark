@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
 
 
 public class server {
@@ -62,7 +63,7 @@ public class server {
         server.createContext("/", new GetHandler());
         server.createContext("/health", new GetHandler());
         server.createContext("/api/data", new GetHandler());
-        server.setExecutor(null);
+        server.setExecutor(Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2));
         
         System.err.println("Java GET Server running on port " + port);
         server.start();

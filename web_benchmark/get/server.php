@@ -1,37 +1,47 @@
 <?php
 /**
- * Simple GET HTTP server for benchmarking in PHP
- * Run with: php -S localhost:8080 server.php
+ * Concurrent GET HTTP server for benchmarking in PHP using Swoole
+ * Runs with Swoole HTTP Server for true concurrency
  */
 
-$port = $_ENV['PORT'] ?? 8080;
+use Swoole\HTTP\Server;
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method Not Allowed']);
-    exit;
-}
+$port = (int)($_ENV['PORT'] ?? 8003);
 
-header('Content-Type: application/json');
+$server = new Server("0.0.0.0", $port);
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$server->on("request", function ($request, $response) {
+    if ($request->server['request_method'] !== 'GET') {
+        $response->setStatusCode(405);
+        $response->header('Content-Type', 'application/json');
+        $response->end(json_encode(['error' => 'Method Not Allowed']));
+        return;
+    }
 
-if ($path === '/' || $path === '') {
-    echo json_encode([
-        'status' => 'ok',
-        'message' => 'Hello from PHP GET Server',
-        'language' => 'PHP'
-    ]);
-} elseif ($path === '/health') {
-    echo json_encode(['status' => 'healthy']);
-} elseif (strpos($path, '/api/data') === 0) {
-    echo json_encode([
-        'data' => 'benchmark_data',
-        'timestamp' => 1234567890,
-        'value' => 42
-    ]);
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Not found']);
-}
+    $response->header('Content-Type', 'application/json');
+
+    $path = $request->server['request_uri'];
+
+    if ($path === '/' || $path === '') {
+        $response->end(json_encode([
+            'status' => 'ok',
+            'message' => 'Hello from PHP GET Server',
+            'language' => 'PHP'
+        ]));
+    } elseif ($path === '/health') {
+        $response->end(json_encode(['status' => 'healthy']));
+    } elseif (strpos($path, '/api/data') === 0) {
+        $response->end(json_encode([
+            'data' => 'benchmark_data',
+            'timestamp' => 1234567890,
+            'value' => 42
+        ]));
+    } else {
+        $response->setStatusCode(404);
+        $response->end(json_encode(['error' => 'Not found']));
+    }
+});
+
+echo "Swoole HTTP Server running on 0.0.0.0:" . $port . "\n";
+$server->start();
 ?>
