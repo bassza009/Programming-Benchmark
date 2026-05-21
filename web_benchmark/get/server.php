@@ -7,13 +7,17 @@ use Swoole\HTTP\Server;
 $port = (int)($_ENV['PORT'] ?? 8003);
 $server = new Server("0.0.0.0", $port);
 
-// 🚀 ปลดล็อคพลัง Swoole: สั่งให้สร้าง Worker เท่ากับจำนวน Core CPU x 2 (เพื่อความแฟร์!)
+// 🚀 ระบบหา CPU Core แบบถึกทน 100% (ใช้คำสั่ง nproc ของ Linux แทน)
+$cpu_cores = (int)shell_exec('nproc');
+if ($cpu_cores < 1) {
+    $cpu_cores = 4; // ถ้าหาไม่เจอ ให้ตั้งค่าพื้นฐานไว้ที่ 4 คอร์
+}
+
 $server->set([
-    'worker_num' => swoole_cpu_num() * 2,
+    'worker_num' => $cpu_cores * 2,
 ]);
 
 $server->on("request", function ($request, $response) {
-    // 💡 Swoole ต้องใช้คีย์ตัวพิมพ์เล็ก (request_method, request_uri)
     $method = $request->server['request_method'] ?? '';
     $path = $request->server['request_uri'] ?? '/';
 
@@ -46,6 +50,6 @@ $server->on("request", function ($request, $response) {
     }
 });
 
-echo "Swoole HTTP Server running on 0.0.0.0:" . $port . " with " . (swoole_cpu_num() * 2) . " workers\n";
+echo "Swoole HTTP Server running on 0.0.0.0:" . $port . " with " . ($cpu_cores * 2) . " workers\n";
 $server->start();
 ?>
