@@ -1,18 +1,20 @@
 # GET Request Benchmark
 
-Benchmarks GET request performance across different programming languages and runtimes.
+Benchmarks GET request performance across different programming languages and web frameworks/runtimes.
 
-## Supported Languages
+## Supported Languages and Frameworks
 
-- **Python** (built-in http.server)
-- **Node.js** (native http module)
-- **PHP** (Swoole HTTP Server for concurrent async requests)
-- **Go** (net/http package)
-- **Java** (com.sun.net.httpserver with thread pool executor)
+- **Python** (FastAPI + Uvicorn)
+- **Node.js** (native `http` module with cluster)
+- **PHP** (Swoole HTTP server)
+- **Go** (standard `net/http` package)
+- **Java** (`com.sun.net.httpserver` with thread pool executor)
+
+> To change the benchmarked language/framework, update the corresponding server implementation and Dockerfile, then rerun `run_bme_wrk.py` or `run_dkr_wrk.py`.
 
 ## Architecture
 
-Each language implements a simple HTTP GET server with these endpoints:
+Each language/framework implementation exposes a simple HTTP GET server with these endpoints:
 
 - `GET /` - Returns basic server info (JSON)
 - `GET /health` - Health check endpoint
@@ -26,11 +28,8 @@ Each language implements a simple HTTP GET server with these endpoints:
 # Build and start all servers
 docker-compose up --build
 
-# In another terminal, run benchmark
-python3 benchmark.py [duration] [threads]
-
-# Example: 30 second benchmark with 4 threads
-python3 benchmark.py 30 4
+# In another terminal, run Docker benchmark
+python3 run_dkr_wrk.py
 
 # Stop servers
 docker-compose down
@@ -78,14 +77,11 @@ java server
 ### Running Benchmarks
 
 ```bash
-# Default: 30 seconds, 4 threads
-python3 benchmark.py
+# Run local Bare Metal Environment benchmark
+python3 run_bme_wrk.py
 
-# Custom: 60 seconds duration, 8 threads
-python3 benchmark.py 60 8
-
-# For quick test: 10 seconds, 2 threads
-python3 benchmark.py 10 2
+# Run Docker benchmark
+python3 run_dkr_wrk.py
 ```
 
 ## New wrk Benchmarking
@@ -108,9 +104,9 @@ python3 run_dkr_wrk.py
 
 > Ensure `wrk` is installed and servers are already running for `run_bme_wrk.py`.
 
-## Benchmark Script Features
+## Legacy Benchmark Script Features
 
-The `benchmark.py` script:
+The `benchmark.py` script remains available for legacy local benchmarking, but current tests use `run_bme_wrk.py` and `run_dkr_wrk.py`.
 
 - Tests multiple endpoints (`/`, `/health`, `/api/data`)
 - Concurrent request generation using thread pool
@@ -245,7 +241,8 @@ get/
 ├── Dockerfile.go          # Go container
 ├── Dockerfile.java        # Java container
 ├── docker-compose.yml     # Multi-container orchestration
-├── benchmark.py           # Python benchmark script
+├── run_bme_wrk.py           # Python benchmark bme. script
+├── run_dkr_wrk.py           # Python benchmark dkr. 
 ├── benchmark.sh           # Bash benchmark script (requires wrk)
 └── README.md              # This file
 ```
