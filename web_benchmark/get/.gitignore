@@ -1,7 +1,0 @@
-*.csv
-
-*.class
-go_server
-__pycache__/
-*.png
-myenv
