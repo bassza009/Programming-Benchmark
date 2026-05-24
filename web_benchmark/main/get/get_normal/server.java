@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono; // 💡 เปลี่ยนจาก Flux เป็น Mono
 import reactor.core.scheduler.Schedulers;
 
 import javax.sql.DataSource;
@@ -42,8 +42,9 @@ public class server {
             .andRoute(GET("/raw/4join"), req -> ok().body(query4Join(), List.class));
     }
 
-    private static Flux<List<?>> query1Table() {
-        return Flux.fromCallable(() -> {
+    // 💡 เปลี่ยนจาก Flux เป็น Mono ทั้งหมด
+    private static Mono<List<?>> query1Table() {
+        return Mono.fromCallable(() -> {
             List<Map<String, Object>> results = new LinkedList<>();
             try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement();
@@ -60,8 +61,8 @@ public class server {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private static Flux<List<?>> query2Join() {
-        return Flux.fromCallable(() -> {
+    private static Mono<List<?>> query2Join() {
+        return Mono.fromCallable(() -> {
             List<Map<String, Object>> results = new LinkedList<>();
             try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement();
@@ -77,8 +78,8 @@ public class server {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private static Flux<List<?>> query3Join() {
-        return Flux.fromCallable(() -> {
+    private static Mono<List<?>> query3Join() {
+        return Mono.fromCallable(() -> {
             List<Map<String, Object>> results = new LinkedList<>();
             try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement();
@@ -95,8 +96,8 @@ public class server {
         }).subscribeOn(Schedulers.boundedElastic());
     }
 
-    private static Flux<List<?>> query4Join() {
-        return Flux.fromCallable(() -> {
+    private static Mono<List<?>> query4Join() {
+        return Mono.fromCallable(() -> {
             List<Map<String, Object>> results = new LinkedList<>();
             try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement();

@@ -1,11 +1,16 @@
 import aiomysql
 import asyncio
+import warnings
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import uvicorn
 import logging
 
-app = FastAPI()
+# ปิด Warning น่ารำคาญจาก aiomysql (เรื่อง Table already exists)
+warnings.filterwarnings('ignore', module='aiomysql')
+warnings.filterwarnings('ignore', category=Warning)
+
 pool = None
 
 logging.getLogger("uvicorn.access").disabled = True
@@ -79,6 +84,17 @@ async def insert_mock_data(conn, cursor):
 
     await conn.commit()
 
+#เปลี่ยนมาใช้ระบบ lifespan แทน on_event (รองรับ FastAPI ตัวใหม่)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await init_db()
+    yield
+    if pool:
+        pool.close()
+        await pool.wait_closed()
+
+app = FastAPI(lifespan=lifespan)
+
 @app.get("/")
 async def root():
     return {"status": "success", "message": "Hello Benchmark"}
@@ -114,15 +130,6 @@ async def raw_4join():
             await cursor.execute("SELECT u.name, p.age, o.total_amount, oi.product_name FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id JOIN order_items oi ON o.id = oi.order_id LIMIT 100")
             result = await cursor.fetchall()
             return result
-
-@app.on_event("startup")
-async def startup():
-    await init_db()
-
-@app.on_event("shutdown")
-async def shutdown():
-    pool.close()
-    await pool.wait_closed()
 
 if __name__ == "__main__":
     import multiprocessing
