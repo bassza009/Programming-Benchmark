@@ -53,8 +53,7 @@ python server.py
 
 ### Java
 ```bash
-mvn clean package
-java -jar target/benchmark-0.0.1-SNAPSHOT.jar
+mvn spring-boot:run
 ```
 
 ### PHP Swoole
