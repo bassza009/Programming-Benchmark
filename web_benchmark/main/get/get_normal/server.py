@@ -134,4 +134,9 @@ async def raw_4join():
 if __name__ == "__main__":
     import multiprocessing
     workers = multiprocessing.cpu_count() * 2
+    
+    print(f"server port 8001 amount {workers} Workers)...")
+   
+    
+    # ถ้าอยากให้มี Log ขึ้น ให้เปลี่ยน "critical" เป็น "info" ครับ
     uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers)
