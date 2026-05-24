@@ -1,16 +1,5 @@
 package com.benchmark;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -19,9 +8,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.*;
+import javax.sql.DataSource;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
+import org.springframework.web.reactive.function.server.RouterFunction;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @SpringBootApplication
 public class server {
@@ -41,7 +43,6 @@ public class server {
             .andRoute(GET("/raw/3join"), req -> ok().body(query3Join(), List.class))
             .andRoute(GET("/raw/4join"), req -> ok().body(query4Join(), List.class));
     }
-
 
     private static Mono<List<Map<String, Object>>> query1Table() {
         return Mono.fromCallable(() -> {
@@ -101,4 +102,59 @@ public class server {
             List<Map<String, Object>> results = new LinkedList<>();
             try (Connection conn = dataSource.getConnection();
                  Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("
+                 ResultSet rs = stmt.executeQuery("SELECT u.name, p.age, o.total_amount, oi.product_name FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id JOIN order_items oi ON o.id = oi.order_id LIMIT 100")) {
+                while (rs.next()) {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("name", rs.getString("name"));
+                    row.put("age", rs.getInt("age"));
+                    row.put("total_amount", rs.getDouble("total_amount"));
+                    row.put("product_name", rs.getString("product_name"));
+                    results.add(row);
+                }
+            }
+            return results;
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private static void initDatabase() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/benchmark_db");
+        config.setUsername("admin");
+        config.setPassword("secret");
+        config.setMaximumPoolSize(100);
+        config.setMinimumIdle(10);
+        dataSource = new HikariDataSource(config);
+
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100))");
+            stmt.execute("CREATE TABLE IF NOT EXISTS profiles (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, age INT, address VARCHAR(255))");
+            stmt.execute("CREATE TABLE IF NOT EXISTS orders (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, total_amount DECIMAL(10, 2))");
+            stmt.execute("CREATE TABLE IF NOT EXISTS order_items (id INT AUTO_INCREMENT PRIMARY KEY, order_id INT, product_name VARCHAR(100), price DECIMAL(10, 2))");
+
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM users");
+            if (rs.next() && rs.getInt(1) == 0) {
+                insertMockData(conn);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void insertMockData(Connection conn) throws Exception {
+        for (int i = 1; i <= 10000; i++) {
+            try (Statement stmt = conn.createStatement()) {
+                stmt.execute("INSERT INTO users (name, email) VALUES ('User" + i + "', 'user" + i + "@example.com')");
+                stmt.execute("INSERT INTO profiles (user_id, age, address) VALUES (" + i + ", " + (20 + i % 50) + ", 'Address " + i + "')");
+                stmt.execute("INSERT INTO orders (user_id, total_amount) VALUES (" + i + ", " + (100.0 + i) + ")");
+
+                if (i % 10 == 0) {
+                    for (int j = 0; j < 5; j++) {
+                        stmt.execute("INSERT INTO order_items (order_id, product_name, price) VALUES (" + i + ", 'Product" + j + "', " + (10.0 + j) + ")");
+                    }
+                }
+            }
+        }
+    }
+}
