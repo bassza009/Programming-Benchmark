@@ -34,30 +34,6 @@ func initDB() error {
 }
 
 func initSchema() error {
-	schema := `
-	CREATE TABLE IF NOT EXISTS users (
-		id INT AUTO_INCREMENT PRIMARY KEY,
-		name VARCHAR(100),
-		email VARCHAR(100)
-	);
-	CREATE TABLE IF NOT EXISTS profiles (
-		id INT AUTO_INCREMENT PRIMARY KEY,
-		user_id INT,
-		age INT,
-		address VARCHAR(255)
-	);
-	CREATE TABLE IF NOT EXISTS orders (
-		id INT AUTO_INCREMENT PRIMARY KEY,
-		user_id INT,
-		total_amount DECIMAL(10, 2)
-	);
-	CREATE TABLE IF NOT EXISTS order_items (
-		id INT AUTO_INCREMENT PRIMARY KEY,
-		order_id INT,
-		product_name VARCHAR(100),
-		price DECIMAL(10, 2)
-	);
-	`
 
 	for _, stmt := range []string{
 		`CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100))`,
