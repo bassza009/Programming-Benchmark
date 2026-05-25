@@ -7,5 +7,5 @@ COPY Server.java src/main/java/com/benchmark/
 
 RUN mvn clean package -DskipTests -q
 
-EXPOSE 8080
+EXPOSE 8005
 CMD ["java", "-jar", "target/benchmark-0.0.1-SNAPSHOT.jar"]

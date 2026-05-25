@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: Dockerfile.go
     ports:
-      - "8080:8080"
+      - "8004:8004"
     depends_on:
       mysql:
         condition: service_healthy
@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: Dockerfile.nodejs
     ports:
-      - "8081:8080"
+      - "8002:8002"
     depends_on:
       mysql:
         condition: service_healthy
@@ -41,7 +41,7 @@ services:
       context: .
       dockerfile: Dockerfile.python
     ports:
-      - "8082:8080"
+      - "8001:8001"
     depends_on:
       mysql:
         condition: service_healthy
@@ -51,7 +51,7 @@ services:
       context: .
       dockerfile: Dockerfile.java
     ports:
-      - "8083:8080"
+      - "8005:8005"
     depends_on:
       mysql:
         condition: service_healthy
@@ -61,7 +61,7 @@ services:
       context: .
       dockerfile: Dockerfile.php
     ports:
-      - "8084:8080"
+      - "8003:8003"
     depends_on:
       mysql:
         condition: service_healthy

@@ -9,5 +9,5 @@ RUN pecl install swoole pdo_mysql && \
 
 COPY server.php .
 
-EXPOSE 8080
+EXPOSE 8003
 CMD ["php", "server.php"]

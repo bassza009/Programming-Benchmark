@@ -11,5 +11,5 @@ RUN go mod init benchmark && \
 
 RUN go build -o server server.go
 
-EXPOSE 8080
+EXPOSE 8004
 CMD ["./server"]
