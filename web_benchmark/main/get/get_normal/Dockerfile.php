@@ -2,10 +2,12 @@ FROM php:8.2-cli-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache git autoconf g++ make mysql-client
+RUN apk add --no-cache git autoconf g++ make mysql-client linux-headers
 
-RUN pecl install swoole pdo_mysql && \
-    docker-php-ext-enable swoole pdo_mysql
+
+RUN docker-php-ext-install pdo_mysql && \
+    pecl install swoole && \
+    docker-php-ext-enable swoole
 
 COPY server.php .
 

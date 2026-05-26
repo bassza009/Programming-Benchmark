@@ -1,0 +1,222 @@
+{
+  "Python": {
+    "Environment": "Docker",
+    "endpoints": {
+      "/": {
+        "requests": 129550,
+        "success": 129550,
+        "errors": 0,
+        "min_ms": 46.06,
+        "max_ms": 271.227,
+        "mean_ms": 115.578069,
+        "stdev_ms": 20.345906,
+        "p50_ms": 115.895,
+        "p95_ms": 149.078,
+        "p99_ms": 170.184,
+        "requests_per_sec": 4309.215894
+      },
+      "/health": {
+        "requests": 113807,
+        "success": 113807,
+        "errors": 0,
+        "min_ms": 19.39,
+        "max_ms": 319.519,
+        "mean_ms": 131.555503,
+        "stdev_ms": 73.94304,
+        "p50_ms": 143.947,
+        "p95_ms": 244.803,
+        "p99_ms": 264.98,
+        "requests_per_sec": 3784.678979
+      },
+      "/api/data": {
+        "requests": 120800,
+        "success": 120800,
+        "errors": 0,
+        "min_ms": 26.812,
+        "max_ms": 289.416,
+        "mean_ms": 123.860835,
+        "stdev_ms": 72.837938,
+        "p50_ms": 153.053,
+        "p95_ms": 224.815,
+        "p99_ms": 244.913,
+        "requests_per_sec": 4017.864062
+      }
+    }
+  },
+  "Node": {
+    "Environment": "Docker",
+    "endpoints": {
+      "/": {
+        "requests": 179468,
+        "success": 179468,
+        "errors": 271,
+        "min_ms": 1.771,
+        "max_ms": 1972.295,
+        "mean_ms": 71.908557,
+        "stdev_ms": 51.498168,
+        "p50_ms": 74.843,
+        "p95_ms": 88.923,
+        "p99_ms": 93.018,
+        "requests_per_sec": 5970.111122
+      },
+      "/health": {
+        "requests": 181116,
+        "success": 181116,
+        "errors": 348,
+        "min_ms": 0.371,
+        "max_ms": 1990.969,
+        "mean_ms": 67.690424,
+        "stdev_ms": 65.464132,
+        "p50_ms": 68.748,
+        "p95_ms": 91.583,
+        "p99_ms": 103.581,
+        "requests_per_sec": 6025.752075
+      },
+      "/api/data": {
+        "requests": 175161,
+        "success": 175161,
+        "errors": 346,
+        "min_ms": 0.479,
+        "max_ms": 1998.51,
+        "mean_ms": 70.000774,
+        "stdev_ms": 66.923152,
+        "p50_ms": 71.109,
+        "p95_ms": 96.005,
+        "p99_ms": 112.131,
+        "requests_per_sec": 5826.219074
+      }
+    }
+  },
+  "PHP": {
+    "Environment": "Docker",
+    "endpoints": {
+      "/": {
+        "requests": 3798986,
+        "success": 3798986,
+        "errors": 0,
+        "min_ms": 0.358,
+        "max_ms": 13.933,
+        "mean_ms": 2.063322,
+        "stdev_ms": 0.58656,
+        "p50_ms": 1.911,
+        "p95_ms": 3.756,
+        "p99_ms": 4.198,
+        "requests_per_sec": 126504.789001
+      },
+      "/health": {
+        "requests": 3901330,
+        "success": 3901330,
+        "errors": 0,
+        "min_ms": 0.525,
+        "max_ms": 17.817,
+        "mean_ms": 2.013696,
+        "stdev_ms": 0.57388,
+        "p50_ms": 1.87,
+        "p95_ms": 3.712,
+        "p99_ms": 4.025,
+        "requests_per_sec": 129899.318065
+      },
+      "/api/data": {
+        "requests": 3983335,
+        "success": 3983335,
+        "errors": 0,
+        "min_ms": 0.575,
+        "max_ms": 7.907,
+        "mean_ms": 2.007265,
+        "stdev_ms": 0.626128,
+        "p50_ms": 1.804,
+        "p95_ms": 3.674,
+        "p99_ms": 3.941,
+        "requests_per_sec": 132332.121105
+      }
+    }
+  },
+  "Go": {
+    "Environment": "Docker",
+    "endpoints": {
+      "/": {
+        "requests": 3581100,
+        "success": 3581100,
+        "errors": 0,
+        "min_ms": 0.068,
+        "max_ms": 138.993,
+        "mean_ms": 7.832458,
+        "stdev_ms": 11.020414,
+        "p50_ms": 2.385,
+        "p95_ms": 32.076,
+        "p99_ms": 47.463,
+        "requests_per_sec": 119061.931222
+      },
+      "/health": {
+        "requests": 3565568,
+        "success": 3565568,
+        "errors": 0,
+        "min_ms": 0.066,
+        "max_ms": 143.548,
+        "mean_ms": 7.619353,
+        "stdev_ms": 10.672804,
+        "p50_ms": 2.417,
+        "p95_ms": 31.155,
+        "p99_ms": 46.171,
+        "requests_per_sec": 118556.657497
+      },
+      "/api/data": {
+        "requests": 3534433,
+        "success": 3534433,
+        "errors": 0,
+        "min_ms": 0.07,
+        "max_ms": 137.621,
+        "mean_ms": 7.517846,
+        "stdev_ms": 10.414167,
+        "p50_ms": 2.405,
+        "p95_ms": 30.639,
+        "p99_ms": 44.827,
+        "requests_per_sec": 117492.335927
+      }
+    }
+  },
+  "Java": {
+    "Environment": "Docker",
+    "endpoints": {
+      "/": {
+        "requests": 497280,
+        "success": 244797,
+        "errors": 252483,
+        "min_ms": 0.23,
+        "max_ms": 1668.769,
+        "mean_ms": 19.551451,
+        "stdev_ms": 50.699394,
+        "p50_ms": 4.923,
+        "p95_ms": 44.312,
+        "p99_ms": 178.167,
+        "requests_per_sec": 16544.511383
+      },
+      "/health": {
+        "requests": 502695,
+        "success": 246389,
+        "errors": 256306,
+        "min_ms": 0.181,
+        "max_ms": 1725.067,
+        "mean_ms": 18.607472,
+        "stdev_ms": 38.936557,
+        "p50_ms": 4.855,
+        "p95_ms": 44.229,
+        "p99_ms": 157.888,
+        "requests_per_sec": 16719.584829
+      },
+      "/api/data": {
+        "requests": 508348,
+        "success": 247997,
+        "errors": 260360,
+        "min_ms": 0.212,
+        "max_ms": 1673.827,
+        "mean_ms": 23.573314,
+        "stdev_ms": 84.518189,
+        "p50_ms": 4.766,
+        "p95_ms": 44.434,
+        "p99_ms": 223.808,
+        "requests_per_sec": 16908.279565
+      }
+    }
+  }
+}

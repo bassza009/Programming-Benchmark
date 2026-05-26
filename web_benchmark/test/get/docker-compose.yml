@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  python_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    ports:
+      - "8001:8080"
+    environment:
+      - PORT=8080
+    cpus: '1'
+    mem_limit: 512m
+    networks:
+      - benchmark_network
+
+  nodejs_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.nodejs
+    ports:
+      - "8002:8080"
+    environment:
+      - PORT=8080
+    cpus: '1'
+    mem_limit: 512m
+    networks:
+      - benchmark_network
+
+  php_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    ports:
+      - "8003:8080"
+    environment:
+      - PORT=8080
+    cpus: '1'
+    mem_limit: 512m
+    networks:
+      - benchmark_network
+
+  go_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.go
+    ports:
+      - "8004:8080"
+    environment:
+      - PORT=8080
+    cpus: '1'
+    mem_limit: 512m
+    networks:
+      - benchmark_network
+
+  java_server:
+    build:
+      context: .
+      dockerfile: Dockerfile.java
+    ports:
+      - "8005:8080"
+    environment:
+      - PORT=8080
+    cpus: '1'
+    mem_limit: 1024m
+    networks:
+      - benchmark_network
+
+networks:
+  benchmark_network:
+    driver: bridge
