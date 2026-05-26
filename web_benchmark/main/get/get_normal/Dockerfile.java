@@ -8,4 +8,5 @@ COPY src_java/main/java/com/benchmark/server.java src/main/java/com/benchmark/
 RUN mvn clean package -DskipTests -q
 
 EXPOSE 8005
-CMD ["java", "-jar", "target/benchmark-0.0.1-SNAPSHOT.jar"]
+
+CMD ["sh", "-c", "java -jar target/*.jar"]
