@@ -1,7 +1,7 @@
 {
-  "name": "get_orm",
+  "name": "benchmark/php-orm",
   "require": {
-    "illuminate/database": "^10.0"
+    "illuminate/database": "^13.12"
   },
   "autoload": {
     "psr-4": {
