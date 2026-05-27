@@ -2,7 +2,8 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy import Column, Integer, String, ForeignKey, Numeric, select, func, text
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base, relationship
 import uvicorn
 
@@ -49,7 +50,7 @@ engine = create_async_engine(
     max_overflow=0,
     future=True,
 )
-AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+AsyncSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 async def init_db():
     async with engine.begin() as conn:

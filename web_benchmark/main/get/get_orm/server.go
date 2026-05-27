@@ -13,7 +13,7 @@ import (
 )
 
 type User struct {
-	ID      uint   `gorm:"primaryKey" json:"id"`
+	ID      int32  `gorm:"primaryKey" json:"id"`
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Profile Profile
@@ -21,22 +21,22 @@ type User struct {
 }
 
 type Profile struct {
-	ID      uint   `gorm:"primaryKey" json:"-"`
-	UserID  uint   `json:"-"`
+	ID      int32  `gorm:"primaryKey" json:"-"`
+	UserID  int32  `json:"-"`
 	Age     int    `json:"age"`
 	Address string `json:"address"`
 }
 
 type Order struct {
-	ID          uint        `gorm:"primaryKey" json:"-"`
-	UserID      uint        `json:"-"`
+	ID          int32       `gorm:"primaryKey" json:"-"`
+	UserID      int32       `json:"-"`
 	TotalAmount float64     `json:"total_amount"`
 	OrderItems  []OrderItem `json:"-"`
 }
 
 type OrderItem struct {
-	ID          uint    `gorm:"primaryKey" json:"-"`
-	OrderID     uint    `json:"-"`
+	ID          int32   `gorm:"primaryKey" json:"-"`
+	OrderID     int32   `json:"-"`
 	ProductName string  `json:"product_name"`
 	Price       float64 `json:"price"`
 }
