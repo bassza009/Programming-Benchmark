@@ -27,8 +27,8 @@ public class BenchmarkController {
                 .setMaxResults(100)
                 .getResultList();
         return users.stream()
-                .map(u -> Map.of("id", u.getId(), "name", u.getName(), "email", u.getEmail()))
-                .collect(Collectors.toList());
+            
+                .map(u -> Map.<String, Object>of("id", u.getId(), "name", u.getName(), "email", u.getEmail())).collect(Collectors.toList());
     }
 
     @GetMapping("/orm/2join")
