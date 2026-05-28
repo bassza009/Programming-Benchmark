@@ -90,7 +90,7 @@ const AppDataSource = new DataSource({
   username: "admin",
   password: "secret",
   database: "benchmark_db",
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: [UserSchema, ProfileSchema, OrderSchema, OrderItemSchema],
   extra: { connectionLimit: 100 }
