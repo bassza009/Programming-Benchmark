@@ -162,8 +162,7 @@ class BenchmarkServer {
 
         $server->on('Request', function ($request, $response) {
             $path = $request->server['request_uri'];
-            $pdo = $this->dbPool->get();
-            Capsule::connection()->setPdo($pdo);
+            
 
             try {
                 if ($path === '/') {
@@ -198,8 +197,10 @@ class BenchmarkServer {
 
                 $response->header('Content-Type', 'application/json');
                 $response->end(json_encode($result));
-            } finally {
-                $this->dbPool->put($pdo);
+            } catch (Exception $e) {
+                $response->status(500);
+                
+                $response->end(json_encode(['error' => 'Internal Server Error', 'message' => $e->getMessage()]));
             }
         });
 
