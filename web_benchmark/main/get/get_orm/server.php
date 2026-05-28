@@ -146,9 +146,19 @@ class BenchmarkServer {
     public function start() {
         $server = new Swoole\Http\Server('0.0.0.0', 8003);
         $server->set([
-            'worker_num' => swoole_cpu_num(),
+            'worker_num' =>100,
+            'enable_coroutine' => false,
             'log_file' => '/dev/null',
         ]);
+
+        $server->on('workerStart', function ($server, $workerId) {
+            $pdo = new PDO('mysql:host=127.0.0.1;port=3306;dbname=benchmark_db;charset=utf8mb4', 'admin', 'secret', [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+                Capsule::connection()->setPdo($pdo);
+        });
 
         $server->on('Request', function ($request, $response) {
             $path = $request->server['request_uri'];
