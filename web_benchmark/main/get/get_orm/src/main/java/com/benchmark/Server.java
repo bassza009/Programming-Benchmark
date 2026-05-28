@@ -4,47 +4,86 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SpringBootApplication
-@RestController
 public class Server {
-
     public static void main(String[] args) {
         SpringApplication.run(Server.class, args);
     }
+}
 
-    @Autowired
-    private UserRepository userRepository;
+@RestController
+class BenchmarkController {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping("/")
-    public Map<String, String> index() {
+    public Map<String, String> root() {
         return Map.of("status", "success", "message", "Hello Benchmark");
     }
 
     @GetMapping("/orm/1table")
-    public List<User> orm1() {
-        return userRepository.findTop100ByOrderByIdAsc();
+    public List<Map<String, Object>> ormOneTable() {
+        List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class)
+                .setMaxResults(100)
+                .getResultList();
+        return users.stream().map(u -> {
+            Map<String, Object> map = new HashMap<>();
+            // 💡 เรียกใช้ตัวแปรตรงๆ และใช้ HashMap เพื่อป้องกัน Error จากค่า Null
+            map.put("id", u.id);
+            map.put("name", u.name);
+            map.put("email", u.email);
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("/orm/2join")
-    public List<Map<String, Object>> orm2() {
-        return userRepository.get2Join();
+    public List<Map<String, Object>> ormTwoJoin() {
+        List<Object[]> rows = entityManager.createQuery(
+                        "SELECT u.name, p.age FROM User u JOIN u.profile p", Object[].class)
+                .setMaxResults(100)
+                .getResultList();
+        return rows.stream().map(row -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("age", row[1]);
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("/orm/3join")
-    public List<Map<String, Object>> orm3() {
-        return userRepository.get3Join();
+    public List<Map<String, Object>> ormThreeJoin() {
+        List<Object[]> rows = entityManager.createQuery(
+                        "SELECT u.name, p.age, o.totalAmount FROM User u JOIN u.profile p JOIN u.orders o", Object[].class)
+                .setMaxResults(100)
+                .getResultList();
+        return rows.stream().map(row -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("age", row[1]);
+            map.put("total_amount", row[2]);
+            return map;
+        }).collect(Collectors.toList());
     }
 
     @GetMapping("/orm/4join")
-    public List<Map<String, Object>> orm4() {
-        return userRepository.get4Join();
+    public List<Map<String, Object>> ormFourJoin() {
+        List<Object[]> rows = entityManager.createQuery(
+                        "SELECT u.name, p.age, o.totalAmount, oi.productName FROM OrderItem oi JOIN oi.order o JOIN o.user u JOIN u.profile p", Object[].class)
+                .setMaxResults(100)
+                .getResultList();
+        return rows.stream().map(row -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", row[0]);
+            map.put("age", row[1]);
+            map.put("total_amount", row[2]);
+            map.put("product_name", row[3]);
+            return map;
+        }).collect(Collectors.toList());
     }
 }
 
@@ -100,30 +139,4 @@ class OrderItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     public Order order;
-}
-
-@Repository
-interface UserRepository extends JpaRepository<User, Integer> {
-    List<User> findTop100ByOrderByIdAsc();
-
-    @Query(value = "SELECT new map(u.name as name, p.age as age) FROM User u JOIN u.profile p")
-    List<Map<String, Object>> get2Join(org.springframework.data.domain.Pageable pageable);
-
-    default List<Map<String, Object>> get2Join() {
-        return get2Join(org.springframework.data.domain.PageRequest.of(0, 100));
-    }
-
-    @Query(value = "SELECT new map(u.name as name, p.age as age, o.totalAmount as total_amount) FROM User u JOIN u.profile p JOIN u.orders o")
-    List<Map<String, Object>> get3Join(org.springframework.data.domain.Pageable pageable);
-
-    default List<Map<String, Object>> get3Join() {
-        return get3Join(org.springframework.data.domain.PageRequest.of(0, 100));
-    }
-
-    @Query(value = "SELECT new map(u.name as name, p.age as age, o.totalAmount as total_amount, oi.productName as product_name) FROM User u JOIN u.profile p JOIN u.orders o JOIN o.orderItems oi")
-    List<Map<String, Object>> get4Join(org.springframework.data.domain.Pageable pageable);
-
-    default List<Map<String, Object>> get4Join() {
-        return get4Join(org.springframework.data.domain.PageRequest.of(0, 100));
-    }
 }

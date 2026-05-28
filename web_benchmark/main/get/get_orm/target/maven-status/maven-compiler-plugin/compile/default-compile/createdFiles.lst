@@ -1,6 +1,6 @@
 com/benchmark/Order.class
 com/benchmark/OrderItem.class
-com/benchmark/UserRepository.class
 com/benchmark/Profile.class
 com/benchmark/User.class
 com/benchmark/Server.class
+com/benchmark/BenchmarkController.class
