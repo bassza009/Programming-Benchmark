@@ -1,14 +1,15 @@
 package com.benchmark;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @RestController
 public class BenchmarkController {
@@ -22,22 +23,21 @@ public class BenchmarkController {
     }
 
     @GetMapping("/orm/1table")
-        public List<Map<String, Object>> ormOneTable() {
-            List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class)
-                    .setMaxResults(100)
-                    .getResultList();
-            return users.stream()
-                    .map(u -> {
-                        // 💡 เปลี่ยนมาใช้ HashMap แทน Map.of()
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", u.getId());
-                        map.put("name", u.getName());
-                        map.put("email", u.getEmail());
-                        return map;
-                    })
-                    .collect(Collectors.toList());
+    public List<Map<String, Object>> ormOneTable() {
+      
+        List<Object[]> rows = entityManager.createQuery(
+                "SELECT u.id, u.name, u.email FROM User u", Object[].class)
+                .setMaxResults(100)
+                .getResultList();
+                
+        return rows.stream().map(row -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[0]);
+            map.put("name", row[1]);
+            map.put("email", row[2]);
+            return map;
+        }).collect(Collectors.toList());
     }
-
     @GetMapping("/orm/2join")
     public List<Map<String, Object>> ormTwoJoin() {
         List<Object[]> rows = entityManager.createQuery(
