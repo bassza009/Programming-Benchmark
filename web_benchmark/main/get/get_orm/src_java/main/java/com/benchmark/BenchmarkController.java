@@ -22,13 +22,20 @@ public class BenchmarkController {
     }
 
     @GetMapping("/orm/1table")
-    public List<Map<String, Object>> ormOneTable() {
-        List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class)
-                .setMaxResults(100)
-                .getResultList();
-        return users.stream()
-            
-                .map(u -> Map.<String, Object>of("id", u.getId(), "name", u.getName(), "email", u.getEmail())).collect(Collectors.toList());
+        public List<Map<String, Object>> ormOneTable() {
+            List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class)
+                    .setMaxResults(100)
+                    .getResultList();
+            return users.stream()
+                    .map(u -> {
+                        // 💡 เปลี่ยนมาใช้ HashMap แทน Map.of()
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("id", u.getId());
+                        map.put("name", u.getName());
+                        map.put("email", u.getEmail());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
     }
 
     @GetMapping("/orm/2join")
