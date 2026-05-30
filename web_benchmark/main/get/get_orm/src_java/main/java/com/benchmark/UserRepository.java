@@ -1,18 +1,17 @@
 package com.benchmark;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.*;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     
-    @Query("SELECT u FROM User u")
-    List<User> get1Table(org.springframework.data.domain.Pageable pageable);
+    // 💡 ใช้ DTO ในการรับข้อมูลเพื่อความเร็วสูงสุดและกัน JSON วนลูป
+    @Query("SELECT new com.benchmark.UserDTO(u.id, u.name, u.email) FROM User u")
+    List<UserDTO> get1Table(org.springframework.data.domain.Pageable pageable);
 
-    default List<User> get1Table() {
+    default List<UserDTO> get1Table() {
         return get1Table(org.springframework.data.domain.PageRequest.of(0, 100));
     }
 
