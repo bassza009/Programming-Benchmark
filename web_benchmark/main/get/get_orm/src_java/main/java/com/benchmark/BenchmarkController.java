@@ -15,7 +15,8 @@ public class BenchmarkController {
     }
 
     @GetMapping("/orm/1table")
-    public List<UserDTO> ormOneTable() {
+    public List<Map<String, Object>> ormOneTable() {
+        // 🚀 ดึงข้อมูลจาก Native Query ตรงๆ
         return userRepository.get1Table();
     }
 
