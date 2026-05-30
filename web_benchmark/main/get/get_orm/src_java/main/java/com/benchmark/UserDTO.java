@@ -1,13 +1,5 @@
 package com.benchmark;
 
-public class UserDTO {
-    public Integer id;
-    public String name;
-    public String email;
-
-    public UserDTO(Integer id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
+// 💡 ใช้ Java Record: สั้น กระชับ เร็วปรู๊ดปร๊าด และเป็น Immutable ขนานแท้
+public record UserDTO(Integer id, String name, String email) {
 }
