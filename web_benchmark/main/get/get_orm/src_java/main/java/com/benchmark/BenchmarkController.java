@@ -2,12 +2,18 @@ package com.benchmark;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.*;
 
 @RestController
 public class BenchmarkController {
+    
     @Autowired
     private UserRepository userRepository;
+
+    // 💡 นำเข้า JdbcTemplate สำหรับยิง SQL ดิบความเร็วแสง
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @GetMapping("/")
     public Map<String, String> root() {
@@ -16,8 +22,8 @@ public class BenchmarkController {
 
     @GetMapping("/orm/1table")
     public List<Map<String, Object>> ormOneTable() {
-        // 🚀 ดึงข้อมูลจาก Native Query ตรงๆ
-        return userRepository.get1Table();
+        // 🚀 ข้าม Hibernate ไปเลย! ใช้ JdbcTemplate ดึงข้อมูลตรงๆ
+        return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
     }
 
     @GetMapping("/orm/2join")
