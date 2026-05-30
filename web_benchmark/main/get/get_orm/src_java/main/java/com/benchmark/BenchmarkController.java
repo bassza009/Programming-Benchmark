@@ -11,7 +11,6 @@ public class BenchmarkController {
     @Autowired
     private UserRepository userRepository;
 
-    // 💡 นำเข้า JdbcTemplate สำหรับยิง SQL ดิบความเร็วแสง
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -20,9 +19,9 @@ public class BenchmarkController {
         return Map.of("status", "success", "message", "Hello Benchmark");
     }
 
-    @GetMapping("/orm/1table")
-    public List<Map<String, Object>> ormOneTable() {
-        // 🚀 ข้าม Hibernate ไปเลย! ใช้ JdbcTemplate ดึงข้อมูลตรงๆ
+    // 🚀 เปลี่ยนชื่อ URL และใช้ JdbcTemplate ดึง SQL ดิบ
+    @GetMapping("/orm/1table-v2")
+    public List<Map<String, Object>> ormOneTableV2() {
         return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
     }
 
