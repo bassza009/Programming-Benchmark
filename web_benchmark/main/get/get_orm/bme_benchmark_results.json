@@ -3,31 +3,31 @@
     "Environment": "BME",
     "endpoints": {
       "/orm/1table": {
-        "requests": 46943,
-        "requests_per_sec": 1560.265042,
-        "latency_mean_ms": 64.483819,
-        "latency_max_ms": 322.778,
+        "requests": 46935,
+        "requests_per_sec": 1559.538847,
+        "latency_mean_ms": 64.53278,
+        "latency_max_ms": 316.477,
         "errors": 0
       },
       "/orm/2join": {
-        "requests": 49055,
-        "requests_per_sec": 1629.956457,
-        "latency_mean_ms": 61.177288,
-        "latency_max_ms": 172.116,
+        "requests": 49255,
+        "requests_per_sec": 1636.449089,
+        "latency_mean_ms": 60.936447,
+        "latency_max_ms": 162.967,
         "errors": 0
       },
       "/orm/3join": {
-        "requests": 47188,
-        "requests_per_sec": 1571.140453,
-        "latency_mean_ms": 63.547343,
-        "latency_max_ms": 249.641,
+        "requests": 46881,
+        "requests_per_sec": 1560.806066,
+        "latency_mean_ms": 63.956313,
+        "latency_max_ms": 178.871,
         "errors": 0
       },
       "/orm/4join": {
-        "requests": 53878,
-        "requests_per_sec": 1790.714177,
-        "latency_mean_ms": 55.749637,
-        "latency_max_ms": 159.102,
+        "requests": 53362,
+        "requests_per_sec": 1773.150215,
+        "latency_mean_ms": 56.290901,
+        "latency_max_ms": 152.763,
         "errors": 0
       }
     }
@@ -36,31 +36,31 @@
     "Environment": "BME",
     "endpoints": {
       "/orm/1table": {
-        "requests": 31476,
-        "requests_per_sec": 1047.453476,
-        "latency_mean_ms": 106.183721,
-        "latency_max_ms": 2272.497,
+        "requests": 33094,
+        "requests_per_sec": 1101.267236,
+        "latency_mean_ms": 97.236219,
+        "latency_max_ms": 1919.622,
         "errors": 0
       },
       "/orm/2join": {
-        "requests": 2013,
-        "requests_per_sec": 66.972152,
-        "latency_mean_ms": 1457.164986,
-        "latency_max_ms": 2098.919,
+        "requests": 1990,
+        "requests_per_sec": 66.216532,
+        "latency_mean_ms": 1470.004244,
+        "latency_max_ms": 2093.669,
         "errors": 0
       },
       "/orm/3join": {
-        "requests": 138,
-        "requests_per_sec": 4.590798,
-        "latency_mean_ms": 7421.418,
-        "latency_max_ms": 8707.175,
+        "requests": 126,
+        "requests_per_sec": 4.190791,
+        "latency_mean_ms": 8847.0255,
+        "latency_max_ms": 8972.898,
         "errors": 0
       },
       "/orm/4join": {
-        "requests": 172,
-        "requests_per_sec": 5.72167,
-        "latency_mean_ms": 8252.635673,
-        "latency_max_ms": 9973.778,
+        "requests": 173,
+        "requests_per_sec": 5.752958,
+        "latency_mean_ms": 8838.552432,
+        "latency_max_ms": 9962.194,
         "errors": 0
       }
     }
@@ -69,31 +69,31 @@
     "Environment": "BME",
     "endpoints": {
       "/orm/1table": {
-        "requests": 88584,
-        "requests_per_sec": 2943.261869,
-        "latency_mean_ms": 40.569575,
-        "latency_max_ms": 703.068,
+        "requests": 90020,
+        "requests_per_sec": 2991.133426,
+        "latency_mean_ms": 43.345075,
+        "latency_max_ms": 565.405,
         "errors": 0
       },
       "/orm/2join": {
-        "requests": 76611,
-        "requests_per_sec": 2546.411237,
-        "latency_mean_ms": 46.267433,
-        "latency_max_ms": 500.012,
+        "requests": 76275,
+        "requests_per_sec": 2535.056567,
+        "latency_mean_ms": 44.046543,
+        "latency_max_ms": 327.818,
         "errors": 0
       },
       "/orm/3join": {
-        "requests": 73033,
-        "requests_per_sec": 2429.460794,
-        "latency_mean_ms": 43.567211,
-        "latency_max_ms": 239.662,
+        "requests": 72607,
+        "requests_per_sec": 2414.292243,
+        "latency_mean_ms": 44.387047,
+        "latency_max_ms": 271.361,
         "errors": 0
       },
       "/orm/4join": {
-        "requests": 98846,
-        "requests_per_sec": 3284.410636,
-        "latency_mean_ms": 35.225049,
-        "latency_max_ms": 328.748,
+        "requests": 97804,
+        "requests_per_sec": 3250.867926,
+        "latency_mean_ms": 36.060366,
+        "latency_max_ms": 306.832,
         "errors": 0
       }
     }
@@ -102,31 +102,31 @@
     "Environment": "BME",
     "endpoints": {
       "/orm/1table": {
-        "requests": 165549,
-        "requests_per_sec": 5508.394071,
-        "latency_mean_ms": 20.146697,
-        "latency_max_ms": 144.292,
+        "requests": 162281,
+        "requests_per_sec": 5398.597365,
+        "latency_mean_ms": 20.655074,
+        "latency_max_ms": 160.006,
         "errors": 0
       },
       "/orm/2join": {
-        "requests": 126245,
-        "requests_per_sec": 4201.036807,
-        "latency_mean_ms": 25.56734,
-        "latency_max_ms": 227.454,
+        "requests": 125795,
+        "requests_per_sec": 4185.519444,
+        "latency_mean_ms": 25.902932,
+        "latency_max_ms": 245.638,
         "errors": 0
       },
       "/orm/3join": {
-        "requests": 98588,
-        "requests_per_sec": 3280.000117,
-        "latency_mean_ms": 34.415262,
-        "latency_max_ms": 297.912,
+        "requests": 97791,
+        "requests_per_sec": 3253.626564,
+        "latency_mean_ms": 34.714158,
+        "latency_max_ms": 371.234,
         "errors": 0
       },
       "/orm/4join": {
-        "requests": 121866,
-        "requests_per_sec": 4051.511033,
-        "latency_mean_ms": 27.637359,
-        "latency_max_ms": 262.378,
+        "requests": 120008,
+        "requests_per_sec": 3990.444984,
+        "latency_mean_ms": 28.093997,
+        "latency_max_ms": 219.27,
         "errors": 0
       }
     }
@@ -135,31 +135,31 @@
     "Environment": "BME",
     "endpoints": {
       "/orm/1table": {
-        "requests": 8167,
-        "requests_per_sec": 271.543938,
-        "latency_mean_ms": 382.751116,
-        "latency_max_ms": 1822.94,
-        "errors": 8167
+        "requests": 7983,
+        "requests_per_sec": 265.424,
+        "latency_mean_ms": 393.408725,
+        "latency_max_ms": 1915.446,
+        "errors": 7983
       },
       "/orm/2join": {
-        "requests": 103538,
-        "requests_per_sec": 3440.088558,
-        "latency_mean_ms": 31.495191,
-        "latency_max_ms": 484.29,
+        "requests": 103261,
+        "requests_per_sec": 3432.172131,
+        "latency_mean_ms": 32.181223,
+        "latency_max_ms": 520.998,
         "errors": 0
       },
       "/orm/3join": {
-        "requests": 92971,
-        "requests_per_sec": 3088.895989,
-        "latency_mean_ms": 32.307502,
-        "latency_max_ms": 141.098,
+        "requests": 90108,
+        "requests_per_sec": 2993.432308,
+        "latency_mean_ms": 33.345989,
+        "latency_max_ms": 115.241,
         "errors": 0
       },
       "/orm/4join": {
-        "requests": 132057,
-        "requests_per_sec": 4389.002915,
-        "latency_mean_ms": 22.741973,
-        "latency_max_ms": 71.241,
+        "requests": 129939,
+        "requests_per_sec": 4318.126547,
+        "latency_mean_ms": 23.114026,
+        "latency_max_ms": 70.529,
         "errors": 0
       }
     }
