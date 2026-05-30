@@ -1,16 +1,18 @@
 package com.benchmark;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import java.util.*;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     
-    @Query(value = "SELECT new map(u.id as id, u.name as name, u.email as email) FROM User u")
-    List<Map<String, Object>> get1Table(org.springframework.data.domain.Pageable pageable);
+    @Query("SELECT u FROM User u")
+    List<User> get1Table(org.springframework.data.domain.Pageable pageable);
 
-    default List<Map<String, Object>> get1Table() {
+    default List<User> get1Table() {
         return get1Table(org.springframework.data.domain.PageRequest.of(0, 100));
     }
 

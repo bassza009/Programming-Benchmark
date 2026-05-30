@@ -15,7 +15,7 @@ public class BenchmarkController {
     }
 
     @GetMapping("/orm/1table")
-    public List<Map<String, Object>> ormOneTable() {
+        public List<User> ormOneTable() {
         return userRepository.get1Table();
     }
 
