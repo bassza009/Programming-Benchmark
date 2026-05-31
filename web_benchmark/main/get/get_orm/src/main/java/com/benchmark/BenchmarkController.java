@@ -16,17 +16,11 @@ public class BenchmarkController {
 
     @GetMapping("/")
     public Map<String, String> root() {
-        return Map.of("status", "success", "message", "Hello Benchmark");
+        return Map.of("status", "success", "message", "Hello Benchmark Docker");
     }
 
-    // 🚀 ใช้ JdbcTemplate ดึง SQL ดิบทั้งสองด่านไปเลย!
     @GetMapping("/orm/1table")
     public List<Map<String, Object>> ormOneTable() {
-        return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
-    }
-
-    @GetMapping("/orm/1table-v2")
-    public List<Map<String, Object>> ormOneTableV2() {
         return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
     }
 

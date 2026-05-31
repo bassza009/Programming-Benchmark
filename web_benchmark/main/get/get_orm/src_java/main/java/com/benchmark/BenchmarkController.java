@@ -16,10 +16,13 @@ public class BenchmarkController {
 
     @GetMapping("/")
     public Map<String, String> root() {
-        return Map.of("status", "success", "message", "Hello Benchmark");
+        return Map.of("status", "success", "message", "Hello Benchmark Docker");
     }
 
+<<<<<<< HEAD
     // 🚀 เปลี่ยนชื่อ URL และใช้ JdbcTemplate ดึง SQL ดิบ
+=======
+>>>>>>> 28a6333c2758152a4057a328e69d689bf2638ac9
     @GetMapping("/orm/1table")
     public List<Map<String, Object>> ormOneTable() {
         return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
