@@ -14,9 +14,10 @@ RUN apk add --no-cache \
     mysql-client \
     curl
 
-RUN docker-php-ext-install pdo_mysql && \
-    yes "" | pecl install swoole && \
+RUN pecl install swoole && \
     docker-php-ext-enable swoole
+
+RUN docker-php-ext-install pdo_mysql
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
