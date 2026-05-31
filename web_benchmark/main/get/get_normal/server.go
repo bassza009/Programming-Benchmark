@@ -98,7 +98,7 @@ func main() {
 	})
 
 	app.Get("/raw/1table", func(c *fiber.Ctx) error {
-		rows, err := db.Query("SELECT * FROM users LIMIT 100")
+		rows, err := db.Query("SELECT id, name, email FROM users LIMIT 100")
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 		}
