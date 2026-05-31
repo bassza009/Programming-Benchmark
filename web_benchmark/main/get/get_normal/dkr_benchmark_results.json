@@ -3,31 +3,31 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/1table": {
-        "requests": 63536,
-        "requests_per_sec": 2111.004144,
-        "latency_mean_ms": 47.260951,
-        "latency_max_ms": 115.065,
+        "requests": 64261,
+        "requests_per_sec": 2136.309448,
+        "latency_mean_ms": 46.725968,
+        "latency_max_ms": 110.228,
         "errors": 0
       },
       "/raw/2join": {
-        "requests": 64365,
-        "requests_per_sec": 2140.291387,
-        "latency_mean_ms": 46.63578,
-        "latency_max_ms": 84.564,
+        "requests": 64632,
+        "requests_per_sec": 2148.545429,
+        "latency_mean_ms": 46.439834,
+        "latency_max_ms": 83.061,
         "errors": 0
       },
       "/raw/3join": {
-        "requests": 63428,
-        "requests_per_sec": 2109.018585,
-        "latency_mean_ms": 47.32619,
-        "latency_max_ms": 92.132,
+        "requests": 63201,
+        "requests_per_sec": 2101.681675,
+        "latency_mean_ms": 47.492649,
+        "latency_max_ms": 142.521,
         "errors": 0
       },
       "/raw/4join": {
-        "requests": 53452,
-        "requests_per_sec": 1776.500946,
-        "latency_mean_ms": 56.196525,
-        "latency_max_ms": 166.271,
+        "requests": 52904,
+        "requests_per_sec": 1758.508669,
+        "latency_mean_ms": 56.724164,
+        "latency_max_ms": 154.156,
         "errors": 0
       }
     }
@@ -36,31 +36,31 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/1table": {
-        "requests": 183060,
-        "requests_per_sec": 6094.75415,
-        "latency_mean_ms": 19.961247,
-        "latency_max_ms": 226.932,
+        "requests": 183391,
+        "requests_per_sec": 6103.762126,
+        "latency_mean_ms": 20.774972,
+        "latency_max_ms": 201.648,
         "errors": 0
       },
       "/raw/2join": {
-        "requests": 163032,
-        "requests_per_sec": 5426.995407,
-        "latency_mean_ms": 21.913309,
-        "latency_max_ms": 227.508,
+        "requests": 163607,
+        "requests_per_sec": 5447.599548,
+        "latency_mean_ms": 22.005277,
+        "latency_max_ms": 289.847,
         "errors": 0
       },
       "/raw/3join": {
-        "requests": 131991,
-        "requests_per_sec": 4393.308907,
-        "latency_mean_ms": 28.029621,
-        "latency_max_ms": 278.729,
+        "requests": 133340,
+        "requests_per_sec": 4436.894116,
+        "latency_mean_ms": 27.705946,
+        "latency_max_ms": 296.536,
         "errors": 0
       },
       "/raw/4join": {
-        "requests": 57372,
-        "requests_per_sec": 1907.095858,
-        "latency_mean_ms": 58.422252,
-        "latency_max_ms": 444.098,
+        "requests": 58453,
+        "requests_per_sec": 1945.018335,
+        "latency_mean_ms": 57.516133,
+        "latency_max_ms": 409.474,
         "errors": 0
       }
     }
@@ -69,32 +69,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/1table": {
-        "requests": 3672137,
-        "requests_per_sec": 122263.881693,
-        "latency_mean_ms": 0.516789,
-        "latency_max_ms": 15.3,
-        "errors": 3672137
+        "requests": 3603919,
+        "requests_per_sec": 120000.832433,
+        "latency_mean_ms": 0.527495,
+        "latency_max_ms": 7.72,
+        "errors": 3603919
       },
       "/raw/2join": {
-        "requests": 3711270,
-        "requests_per_sec": 123561.270145,
-        "latency_mean_ms": 0.516126,
-        "latency_max_ms": 8.834,
-        "errors": 3711270
+        "requests": 3638535,
+        "requests_per_sec": 121134.902433,
+        "latency_mean_ms": 0.518925,
+        "latency_max_ms": 6.153,
+        "errors": 3638535
       },
       "/raw/3join": {
-        "requests": 3673412,
-        "requests_per_sec": 122300.880424,
-        "latency_mean_ms": 0.515479,
-        "latency_max_ms": 7.866,
-        "errors": 3673412
+        "requests": 3780645,
+        "requests_per_sec": 125876.645352,
+        "latency_mean_ms": 0.506665,
+        "latency_max_ms": 6.785,
+        "errors": 3780645
       },
       "/raw/4join": {
-        "requests": 3704176,
-        "requests_per_sec": 123336.279634,
-        "latency_mean_ms": 0.518645,
-        "latency_max_ms": 12.883,
-        "errors": 3704176
+        "requests": 3649661,
+        "requests_per_sec": 121500.077418,
+        "latency_mean_ms": 0.531181,
+        "latency_max_ms": 13.84,
+        "errors": 3649661
       }
     }
   },
@@ -102,32 +102,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/1table": {
-        "requests": 4018600,
-        "requests_per_sec": 133895.428024,
-        "latency_mean_ms": 0.858739,
-        "latency_max_ms": 21.672,
-        "errors": 4018600
+        "requests": 4153055,
+        "requests_per_sec": 138319.68817,
+        "latency_mean_ms": 0.732691,
+        "latency_max_ms": 18.754,
+        "errors": 4153055
       },
       "/raw/2join": {
-        "requests": 4165825,
-        "requests_per_sec": 138809.973359,
-        "latency_mean_ms": 0.769882,
-        "latency_max_ms": 18.942,
-        "errors": 4165825
+        "requests": 4160062,
+        "requests_per_sec": 138584.954109,
+        "latency_mean_ms": 0.782897,
+        "latency_max_ms": 18.48,
+        "errors": 4160062
       },
       "/raw/3join": {
-        "requests": 4156911,
-        "requests_per_sec": 138507.572115,
-        "latency_mean_ms": 0.77482,
-        "latency_max_ms": 21.036,
-        "errors": 4156911
+        "requests": 4196742,
+        "requests_per_sec": 139807.631927,
+        "latency_mean_ms": 0.720758,
+        "latency_max_ms": 21.835,
+        "errors": 4196742
       },
       "/raw/4join": {
-        "requests": 4227827,
-        "requests_per_sec": 140845.397462,
-        "latency_mean_ms": 0.745122,
-        "latency_max_ms": 18.84,
-        "errors": 4227827
+        "requests": 4121113,
+        "requests_per_sec": 137318.01447,
+        "latency_mean_ms": 0.812281,
+        "latency_max_ms": 17.024,
+        "errors": 4121113
       }
     }
   },
@@ -135,32 +135,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/1table": {
-        "requests": 92494,
-        "requests_per_sec": 3077.773186,
-        "latency_mean_ms": 40.349335,
-        "latency_max_ms": 825.143,
-        "errors": 92494
+        "requests": 93329,
+        "requests_per_sec": 3105.960376,
+        "latency_mean_ms": 32.152109,
+        "latency_max_ms": 96.198,
+        "errors": 93329
       },
       "/raw/2join": {
-        "requests": 97106,
-        "requests_per_sec": 3231.656697,
-        "latency_mean_ms": 30.899944,
-        "latency_max_ms": 97.011,
-        "errors": 97106
+        "requests": 96138,
+        "requests_per_sec": 3198.305947,
+        "latency_mean_ms": 31.215922,
+        "latency_max_ms": 78.305,
+        "errors": 96138
       },
       "/raw/3join": {
-        "requests": 97881,
-        "requests_per_sec": 3257.903064,
-        "latency_mean_ms": 30.64852,
-        "latency_max_ms": 77.683,
-        "errors": 97881
+        "requests": 97455,
+        "requests_per_sec": 3242.13709,
+        "latency_mean_ms": 30.786286,
+        "latency_max_ms": 78.864,
+        "errors": 97455
       },
       "/raw/4join": {
-        "requests": 96051,
-        "requests_per_sec": 3196.998707,
-        "latency_mean_ms": 31.238329,
-        "latency_max_ms": 79.332,
-        "errors": 96051
+        "requests": 92459,
+        "requests_per_sec": 3076.63967,
+        "latency_mean_ms": 32.44695,
+        "latency_max_ms": 79.567,
+        "errors": 92459
       }
     }
   }
