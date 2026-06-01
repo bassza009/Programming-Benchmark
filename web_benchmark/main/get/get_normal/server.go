@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -35,6 +34,31 @@ func initDB() error {
 }
 
 func initSchema() error {
+	schema := `
+	CREATE TABLE IF NOT EXISTS users (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		name VARCHAR(100),
+		email VARCHAR(100)
+	);
+	CREATE TABLE IF NOT EXISTS profiles (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		user_id INT,
+		age INT,
+		address VARCHAR(255)
+	);
+	CREATE TABLE IF NOT EXISTS orders (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		user_id INT,
+		total_amount DECIMAL(10, 2)
+	);
+	CREATE TABLE IF NOT EXISTS order_items (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		order_id INT,
+		product_name VARCHAR(100),
+		price DECIMAL(10, 2)
+	);
+	`
+
 	for _, stmt := range []string{
 		`CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100))`,
 		`CREATE TABLE IF NOT EXISTS profiles (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, age INT, address VARCHAR(255))`,
@@ -57,29 +81,16 @@ func initSchema() error {
 }
 
 func insertMockData() {
-	fmt.Println("⏳ [Go] กำลังสร้างข้อมูลจำลอง 35,000 แถว (รอสักครู่นะครับ)...")
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
 	for i := 1; i <= 10000; i++ {
-		name := fmt.Sprintf("User%d", i)
-		email := fmt.Sprintf("user%d@example.com", i)
-		address := fmt.Sprintf("Address %d", i)
-
-		tx.Exec("INSERT INTO users (name, email) VALUES (?, ?)", name, email)
-		tx.Exec("INSERT INTO profiles (user_id, age, address) VALUES (?, ?, ?)", i, 20+i%50, address)
-		tx.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", i, 100.0+float64(i))
-
+		db.Exec("INSERT INTO users (name, email) VALUES (?, ?)", "User"+string(rune(i)), "user"+string(rune(i))+"@example.com")
+		db.Exec("INSERT INTO profiles (user_id, age, address) VALUES (?, ?, ?)", i, 20+i%50, "Address "+string(rune(i)))
+		db.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", i, 100.0+float64(i))
 		if i%10 == 0 {
 			for j := 0; j < 5; j++ {
-				prodName := fmt.Sprintf("Product%d", j)
-				tx.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", i, prodName, 10.0+float64(j))
+				db.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", i, "Product"+string(rune(j)), 10.0+float64(j))
 			}
 		}
 	}
-	tx.Commit()
-	fmt.Println("[Go] สร้างข้อมูลจำลองเสร็จสิ้น!")
 }
 
 func main() {
@@ -98,7 +109,7 @@ func main() {
 	})
 
 	app.Get("/raw/1table", func(c *fiber.Ctx) error {
-		rows, err := db.Query("SELECT id, name, email FROM users LIMIT 100")
+		rows, err := db.Query("SELECT * FROM users LIMIT 100")
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 		}
@@ -175,7 +186,5 @@ func main() {
 		return c.JSON(results)
 	})
 
-	// 💡 เพิ่มข้อความยืนยันเมื่อเซิร์ฟเวอร์เปิดสำเร็จ
-	fmt.Println("Go Server running port 8004!")
 	app.Listen(":8004")
 }

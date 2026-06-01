@@ -18,12 +18,11 @@ docker-compose up -d
 
 This will start:
 - MySQL on port 3306
-- Python FastAPI server on port 8001
-- Node.js Fastify server on port 8002
-- PHP Swoole server on port 8003
-- Go Fiber server on port 8004
-- Java Spring Boot server on port 8005
-
+- Go Fiber server on port 8080
+- Node.js Fastify server on port 8081
+- Python FastAPI server on port 8082
+- Java Spring Boot server on port 8083
+- PHP Swoole server on port 8084
 
 ## Endpoints
 
@@ -54,7 +53,8 @@ python server.py
 
 ### Java
 ```bash
-mvn spring-boot:run
+mvn clean package
+java -jar target/benchmark-0.0.1-SNAPSHOT.jar
 ```
 
 ### PHP Swoole
@@ -62,16 +62,13 @@ mvn spring-boot:run
 php server.php
 ```
 
-> Note: when running locally, these servers listen on ports 8001–8005.
-
 ## Benchmarking with wrk
 
 ```bash
-//benchmark bme.
-python3 run_bme_wrk
-//benchmark dkr.
-python3 run_bme_wrk
+bash run_wrk.sh [URL]
+# Default: bash run_wrk.sh http://127.0.0.1:8080/
 ```
+
 ## Database Schema
 
 - **users**: id, name, email

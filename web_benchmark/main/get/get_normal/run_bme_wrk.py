@@ -21,10 +21,8 @@ def run_wrk(port: int, endpoint: str) -> dict:
     cmd = [
         "wrk",
         "-t4",
-        "-c100",
+        "-c500",
         "-d30s",
-        "--timeout",
-        "10s",
         "-s",
         LUA_REPORTER,
         url,

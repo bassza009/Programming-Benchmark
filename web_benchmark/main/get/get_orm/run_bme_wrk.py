@@ -9,8 +9,8 @@ LANGUAGE_PORTS = {
     "Go": 8004,
     "Java": 8005,
 }
-
 ENDPOINTS = ["/orm/1table", "/orm/2join", "/orm/3join", "/orm/4join"]
+
 OUTPUT_FILE = "bme_benchmark_results.json"
 LUA_REPORTER = "wrk_json_reporter.lua"
 

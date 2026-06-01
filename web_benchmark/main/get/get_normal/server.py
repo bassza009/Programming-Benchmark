@@ -1,16 +1,11 @@
 import aiomysql
 import asyncio
-import warnings
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import uvicorn
 import logging
 
-# ปิด Warning น่ารำคาญจาก aiomysql (เรื่อง Table already exists)
-warnings.filterwarnings('ignore', module='aiomysql')
-warnings.filterwarnings('ignore', category=Warning)
-
+app = FastAPI()
 pool = None
 
 logging.getLogger("uvicorn.access").disabled = True
@@ -84,17 +79,6 @@ async def insert_mock_data(conn, cursor):
 
     await conn.commit()
 
-#เปลี่ยนมาใช้ระบบ lifespan แทน on_event (รองรับ FastAPI ตัวใหม่)
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await init_db()
-    yield
-    if pool:
-        pool.close()
-        await pool.wait_closed()
-
-app = FastAPI(lifespan=lifespan)
-
 @app.get("/")
 async def root():
     return {"status": "success", "message": "Hello Benchmark"}
@@ -131,12 +115,16 @@ async def raw_4join():
             result = await cursor.fetchall()
             return result
 
+@app.on_event("startup")
+async def startup():
+    await init_db()
+
+@app.on_event("shutdown")
+async def shutdown():
+    pool.close()
+    await pool.wait_closed()
+
 if __name__ == "__main__":
     import multiprocessing
     workers = multiprocessing.cpu_count() * 2
-    
-    print(f"server port 8001 amount {workers} Workers)...")
-   
-    
-    # ถ้าอยากให้มี Log ขึ้น ให้เปลี่ยน "critical" เป็น "info" ครับ
     uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers)
