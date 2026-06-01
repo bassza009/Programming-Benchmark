@@ -1,11 +1,9 @@
-FROM maven:3.8-openjdk-17
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY pom.xml .
-COPY Server.java src/main/java/com/benchmark/
-
-RUN mvn clean package -DskipTests -q
+COPY target/*.jar app.jar
 
 EXPOSE 8005
-CMD ["java", "-jar", "target/benchmark-0.0.1-SNAPSHOT.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

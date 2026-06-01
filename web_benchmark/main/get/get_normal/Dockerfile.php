@@ -4,8 +4,9 @@ WORKDIR /app
 
 RUN apk add --no-cache autoconf build-base linux-headers brotli-dev openssl-dev curl-dev pkgconfig
 
-RUN pecl install swoole pdo_mysql && \
-    docker-php-ext-enable swoole pdo_mysql
+RUN pecl install swoole && docker-php-ext-enable swoole
+
+RUN docker-php-ext-install pdo_mysql
 
 COPY server.php .
 
