@@ -170,26 +170,48 @@ Single endpoint test:
 ./run_wrk.sh http://127.0.0.1:8001/raw/post/1table
 ```
 
-Manual wrk command:
-```bash
-wrk -t4 -c500 -d30s -s post_script.lua http://127.0.0.1:8001/raw/post/1table
-```
+### Bare Metal Environment (BME)
 
-### Using Python Benchmark Script
-
-Run benchmarks across all languages:
+Run benchmarks across all languages on local system:
 ```bash
 # Ensure all servers are running on ports 8001-8005
-python3 run_wrk.py
+python3 run_bme_wrk.py
 ```
 
 This script will:
-1. Test all 5 language implementations
-2. Run all 4 POST endpoints for each language
-3. Collect performance metrics
-4. Save results to `wrk_benchmark_results.json`
+- Test all 5 language implementations (Python, Node, PHP, Go, Java)
+- Run all 4 POST endpoints for each language
+- Collect detailed performance metrics (requests/sec, latency, errors)
+- Save results to `bme_benchmark_results.json`
 
-**Note:** All servers must be running before executing the Python benchmark script.
+### Docker Environment (DKR)
+
+Run benchmarks using Docker containers:
+```bash
+python3 run_dkr_wrk.py
+```
+
+This script will:
+- Build/pull Docker images for each language (bench-python, bench-node, etc.)
+- Start containers for each language sequentially
+- Run all 4 POST endpoints for each container
+- Collect detailed performance metrics
+- Save results to `dkr_benchmark_results.json`
+
+**Note:** Ensure Docker is installed and running before executing the Docker benchmark script.
+
+### Manual wrk Command
+
+Test specific endpoint:
+```bash
+wrk -t4 -c500 -d30s -s wrk_json_reporter.lua http://127.0.0.1:8001/raw/post/1table
+```
+
+Flags:
+- `-t4` - 4 threads
+- `-c500` - 500 concurrent connections
+- `-d30s` - 30 second duration
+- `-s wrk_json_reporter.lua` - Use JSON reporter for structured output
 
 ## Files
 
