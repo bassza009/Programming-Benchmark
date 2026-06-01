@@ -163,16 +163,33 @@ Each server:
 
 ## Benchmarking
 
-Use tools like `wrk` or `Apache Bench` to benchmark:
+### Using wrk (Shell Script)
 
+Single endpoint test:
 ```bash
-wrk -t12 -c400 -d30s --script=post_script.lua http://127.0.0.1:8001/raw/post/1table
+./run_wrk.sh http://127.0.0.1:8001/raw/post/1table
 ```
 
-Create `post_script.lua` for wrk:
-```lua
-wrk.method = "POST"
+Manual wrk command:
+```bash
+wrk -t4 -c500 -d30s -s post_script.lua http://127.0.0.1:8001/raw/post/1table
 ```
+
+### Using Python Benchmark Script
+
+Run benchmarks across all languages:
+```bash
+# Ensure all servers are running on ports 8001-8005
+python3 run_wrk.py
+```
+
+This script will:
+1. Test all 5 language implementations
+2. Run all 4 POST endpoints for each language
+3. Collect performance metrics
+4. Save results to `wrk_benchmark_results.json`
+
+**Note:** All servers must be running before executing the Python benchmark script.
 
 ## Files
 
