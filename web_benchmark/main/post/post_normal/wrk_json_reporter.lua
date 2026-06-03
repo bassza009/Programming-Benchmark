@@ -1,8 +1,13 @@
 request = function()
    wrk.method = "POST"
-   wrk.body   = '{"user_id": 1, "test": "benchmark"}'
    wrk.headers["Content-Type"] = "application/json"
-   return wrk.format(nil)
+   request = function()
+    
+    local random_id = math.random(10000000, 999999999)
+    local body_str = '{"name": "Bench User", "email": "user_' .. random_id .. '@example.com"}'
+    
+    return wrk.format(nil, nil, nil, body_str)
+end
 end
 
 done = function(summary, latency, requests)
