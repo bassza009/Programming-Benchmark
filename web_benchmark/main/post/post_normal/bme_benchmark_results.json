@@ -1,0 +1,51 @@
+{
+  "Python": {
+    "Environment": "BME",
+    "endpoints": {}
+  },
+  "Node": {
+    "Environment": "BME",
+    "endpoints": {}
+  },
+  "PHP": {
+    "Environment": "BME",
+    "endpoints": {}
+  },
+  "Go": {
+    "Environment": "BME",
+    "endpoints": {}
+  },
+  "Java": {
+    "Environment": "BME",
+    "endpoints": {
+      "/raw/post/1table": {
+        "requests": 154891,
+        "requests_per_sec": 5147.394861,
+        "latency_mean_ms": 98.641874,
+        "latency_max_ms": 761.873,
+        "errors": 3
+      },
+      "/raw/post/2table": {
+        "requests": 107010,
+        "requests_per_sec": 3553.630295,
+        "latency_mean_ms": 138.436704,
+        "latency_max_ms": 643.481,
+        "errors": 5
+      },
+      "/raw/post/3table": {
+        "requests": 51009,
+        "requests_per_sec": 1695.370484,
+        "latency_mean_ms": 160.489965,
+        "latency_max_ms": 1857.265,
+        "errors": 4
+      },
+      "/raw/post/4table": {
+        "requests": 59129,
+        "requests_per_sec": 1961.973959,
+        "latency_mean_ms": 217.528877,
+        "latency_max_ms": 1988.822,
+        "errors": 3
+      }
+    }
+  }
+}

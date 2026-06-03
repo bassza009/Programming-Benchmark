@@ -1,3 +1,8 @@
+request = function()
+   wrk.method = "POST"
+   return wrk.format(nil)
+end
+
 done = function(summary, latency, requests)
    io.write("{\n")
    io.write(string.format('  "requests": %d,\n', summary.requests))
