@@ -1,5 +1,7 @@
 request = function()
    wrk.method = "POST"
+   wrk.body   = '{"user_id": 1, "test": "benchmark"}'
+   wrk.headers["Content-Type"] = "application/json"
    return wrk.format(nil)
 end
 
