@@ -56,18 +56,7 @@ class BenchmarkServer {
             price DECIMAL(10, 2)
         )");
 
-        // Create Swoole connection pool
-        $this->db_pool = new \Swoole\Database\PDOPool(
-            (new \Swoole\Database\PDOConfig())
-                ->withDriver('mysql')
-                ->withHost($db_config['host'])
-                ->withPort($db_config['port'])
-                ->withUsername($db_config['user'])
-                ->withPassword($db_config['password'])
-                ->withDbname($db_config['database'])
-                ->withCharset('utf8mb4'),
-            100
-        );
+        
     }
 
     public function start() {
