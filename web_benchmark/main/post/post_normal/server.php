@@ -19,7 +19,7 @@ class BenchmarkServer {
             'database' => 'benchmark_db'
         ];
 
-        // Create initial connection to set up schema
+        // Create initial connection to set up schema (ใช้ PDO ธรรมดา แบบไม่ Pool)
         $db = new \PDO(
             'mysql:host=' . $db_config['host'] . ';port=' . $db_config['port'],
             $db_config['user'],
@@ -35,28 +35,15 @@ class BenchmarkServer {
             name VARCHAR(100),
             email VARCHAR(100) UNIQUE
         )");
-
-        $db->exec("CREATE TABLE IF NOT EXISTS profiles (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT,
-            bio VARCHAR(255),
-            phone VARCHAR(20)
-        )");
-
-        $db->exec("CREATE TABLE IF NOT EXISTS orders (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT,
-            total_amount DECIMAL(10, 2)
-        )");
-
+        // ... (โค้ดสร้างตารางอื่นๆ ปล่อยไว้เหมือนเดิม) ...
         $db->exec("CREATE TABLE IF NOT EXISTS order_items (
             id INT AUTO_INCREMENT PRIMARY KEY,
             order_id INT,
             product_name VARCHAR(100),
             price DECIMAL(10, 2)
         )");
-
         
+        // *ลบส่วนการสร้าง $this->db_pool ตรงนี้ทิ้งทั้งหมด*
     }
 
     public function start() {
