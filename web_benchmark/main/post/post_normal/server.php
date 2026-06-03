@@ -77,7 +77,27 @@ class BenchmarkServer {
             'worker_num' => swoole_cpu_num(),
             'log_file' => '/dev/null'
         ]);
-
+        
+        $http->on('WorkerStart', function ($server, $workerId) {
+            $db_config = [
+                'host' => '127.0.0.1',
+                'port' => 3306,
+                'user' => 'admin',
+                'password' => 'secret',
+                'database' => 'benchmark_db'
+            ];
+            $this->db_pool = new \Swoole\Database\PDOPool(
+                (new \Swoole\Database\PDOConfig())
+                    ->withDriver('mysql')
+                    ->withHost($db_config['host'])
+                    ->withPort($db_config['port'])
+                    ->withUsername($db_config['user'])
+                    ->withPassword($db_config['password'])
+                    ->withDbname($db_config['database'])
+                    ->withCharset('utf8mb4'),
+                100 // Pool size ต่อ Worker
+            );
+        });
         $http->on('Request', function (Request $request, Response $response) {
             $path = $request->server['path_info'];
             $method = $request->server['request_method'];
