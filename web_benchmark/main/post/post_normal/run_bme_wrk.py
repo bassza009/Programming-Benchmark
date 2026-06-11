@@ -22,7 +22,7 @@ def run_wrk(port: int, endpoint: str) -> dict:
         "wrk",
         "-t4",
         "-c500",
-        "-d30s",
+        "-d60s",
         "-s",
         LUA_REPORTER,
         url,
