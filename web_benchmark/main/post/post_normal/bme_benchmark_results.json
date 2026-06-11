@@ -3,32 +3,32 @@
     "Environment": "BME",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 197018,
-        "requests_per_sec": 6549.289957,
-        "latency_mean_ms": 79.141787,
-        "latency_max_ms": 692.072,
-        "errors": 25
+        "requests": 19417,
+        "requests_per_sec": 646.422569,
+        "latency_mean_ms": 90.533732,
+        "latency_max_ms": 1744.817,
+        "errors": 15
       },
       "/raw/post/2table": {
-        "requests": 156352,
-        "requests_per_sec": 5196.929706,
-        "latency_mean_ms": 97.524852,
-        "latency_max_ms": 649.913,
-        "errors": 19
+        "requests": 113591,
+        "requests_per_sec": 3773.967422,
+        "latency_mean_ms": 179.326673,
+        "latency_max_ms": 1985.798,
+        "errors": 61
       },
       "/raw/post/3table": {
-        "requests": 132082,
-        "requests_per_sec": 4389.572663,
-        "latency_mean_ms": 117.216968,
-        "latency_max_ms": 965.851,
-        "errors": 29
+        "requests": 97713,
+        "requests_per_sec": 3246.339035,
+        "latency_mean_ms": 213.748668,
+        "latency_max_ms": 1994.957,
+        "errors": 66
       },
       "/raw/post/4table": {
-        "requests": 85524,
-        "requests_per_sec": 2841.425758,
-        "latency_mean_ms": 204.845573,
-        "latency_max_ms": 1953.908,
-        "errors": 18
+        "requests": 71696,
+        "requests_per_sec": 2382.190772,
+        "latency_mean_ms": 264.231859,
+        "latency_max_ms": 1993.9,
+        "errors": 49
       }
     }
   },
@@ -36,32 +36,32 @@
     "Environment": "BME",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 172917,
-        "requests_per_sec": 5747.758952,
-        "latency_mean_ms": 154.200006,
-        "latency_max_ms": 1995.678,
-        "errors": 40
+        "requests": 134089,
+        "requests_per_sec": 4457.69681,
+        "latency_mean_ms": 225.572542,
+        "latency_max_ms": 1999.364,
+        "errors": 74
       },
       "/raw/post/2table": {
-        "requests": 135355,
-        "requests_per_sec": 4497.912295,
-        "latency_mean_ms": 116.793002,
-        "latency_max_ms": 1587.606,
-        "errors": 45
+        "requests": 103273,
+        "requests_per_sec": 3431.700461,
+        "latency_mean_ms": 235.697456,
+        "latency_max_ms": 1998.277,
+        "errors": 79
       },
       "/raw/post/3table": {
-        "requests": 121514,
-        "requests_per_sec": 4038.204792,
-        "latency_mean_ms": 125.697204,
-        "latency_max_ms": 1095.146,
-        "errors": 41
+        "requests": 93263,
+        "requests_per_sec": 3100.19535,
+        "latency_mean_ms": 252.145361,
+        "latency_max_ms": 1999.779,
+        "errors": 54
       },
       "/raw/post/4table": {
-        "requests": 86034,
-        "requests_per_sec": 2859.032491,
-        "latency_mean_ms": 177.169541,
-        "latency_max_ms": 947.404,
-        "errors": 37
+        "requests": 67338,
+        "requests_per_sec": 2237.500039,
+        "latency_mean_ms": 283.486262,
+        "latency_max_ms": 1994.477,
+        "errors": 55
       }
     }
   },
@@ -69,32 +69,32 @@
     "Environment": "BME",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 180006,
-        "requests_per_sec": 5983.031293,
-        "latency_mean_ms": 91.947933,
-        "latency_max_ms": 621.17,
-        "errors": 179975
+        "requests": 70933,
+        "requests_per_sec": 2357.063894,
+        "latency_mean_ms": 232.759136,
+        "latency_max_ms": 1376.977,
+        "errors": 60
       },
       "/raw/post/2table": {
-        "requests": 109997,
-        "requests_per_sec": 3655.698883,
-        "latency_mean_ms": 143.849046,
-        "latency_max_ms": 748.543,
-        "errors": 109967
+        "requests": 35797,
+        "requests_per_sec": 1189.755717,
+        "latency_mean_ms": 426.520936,
+        "latency_max_ms": 1990.508,
+        "errors": 40
       },
       "/raw/post/3table": {
-        "requests": 98912,
-        "requests_per_sec": 3295.08149,
-        "latency_mean_ms": 151.840782,
-        "latency_max_ms": 644.98,
-        "errors": 98882
+        "requests": 32921,
+        "requests_per_sec": 1093.706432,
+        "latency_mean_ms": 452.363748,
+        "latency_max_ms": 1573.513,
+        "errors": 18
       },
       "/raw/post/4table": {
-        "requests": 89998,
-        "requests_per_sec": 2989.950189,
-        "latency_mean_ms": 170.155295,
-        "latency_max_ms": 899.397,
-        "errors": 89969
+        "requests": 29386,
+        "requests_per_sec": 976.437214,
+        "latency_mean_ms": 506.603512,
+        "latency_max_ms": 1703.426,
+        "errors": 24
       }
     }
   },
@@ -102,32 +102,32 @@
     "Environment": "BME",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 251287,
-        "requests_per_sec": 8357.294034,
-        "latency_mean_ms": 65.541068,
-        "latency_max_ms": 620.998,
-        "errors": 91
+        "requests": 145076,
+        "requests_per_sec": 4821.90404,
+        "latency_mean_ms": 113.684314,
+        "latency_max_ms": 1173.648,
+        "errors": 125
       },
       "/raw/post/2table": {
-        "requests": 162176,
-        "requests_per_sec": 5391.51338,
-        "latency_mean_ms": 101.423157,
-        "latency_max_ms": 847.639,
-        "errors": 88
+        "requests": 109786,
+        "requests_per_sec": 3647.562519,
+        "latency_mean_ms": 149.428849,
+        "latency_max_ms": 1354.093,
+        "errors": 106
       },
       "/raw/post/3table": {
-        "requests": 126173,
-        "requests_per_sec": 4194.264037,
-        "latency_mean_ms": 130.470444,
-        "latency_max_ms": 1195.969,
-        "errors": 62
+        "requests": 96319,
+        "requests_per_sec": 3200.856637,
+        "latency_mean_ms": 170.643581,
+        "latency_max_ms": 1495.35,
+        "errors": 90
       },
       "/raw/post/4table": {
-        "requests": 84845,
-        "requests_per_sec": 2819.631548,
-        "latency_mean_ms": 194.049311,
-        "latency_max_ms": 1874.951,
-        "errors": 30
+        "requests": 71938,
+        "requests_per_sec": 2391.054032,
+        "latency_mean_ms": 228.359392,
+        "latency_max_ms": 1645.584,
+        "errors": 70
       }
     }
   },
@@ -135,32 +135,32 @@
     "Environment": "BME",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 194363,
-        "requests_per_sec": 6459.600172,
-        "latency_mean_ms": 91.539501,
-        "latency_max_ms": 1464.61,
-        "errors": 105
+        "requests": 113613,
+        "requests_per_sec": 3775.398655,
+        "latency_mean_ms": 134.311804,
+        "latency_max_ms": 868.675,
+        "errors": 96
       },
       "/raw/post/2table": {
-        "requests": 126379,
-        "requests_per_sec": 4199.935249,
-        "latency_mean_ms": 119.262893,
-        "latency_max_ms": 515.609,
-        "errors": 62
+        "requests": 94332,
+        "requests_per_sec": 3135.093162,
+        "latency_mean_ms": 159.114918,
+        "latency_max_ms": 579.058,
+        "errors": 95
       },
       "/raw/post/3table": {
-        "requests": 108114,
-        "requests_per_sec": 3592.680653,
-        "latency_mean_ms": 138.804601,
-        "latency_max_ms": 536.003,
-        "errors": 62
+        "requests": 83999,
+        "requests_per_sec": 2790.924536,
+        "latency_mean_ms": 178.875491,
+        "latency_max_ms": 734.903,
+        "errors": 89
       },
       "/raw/post/4table": {
-        "requests": 82393,
-        "requests_per_sec": 2737.383998,
-        "latency_mean_ms": 182.330097,
-        "latency_max_ms": 672.908,
-        "errors": 53
+        "requests": 69902,
+        "requests_per_sec": 2328.849377,
+        "latency_mean_ms": 213.679628,
+        "latency_max_ms": 665.164,
+        "errors": 76
       }
     }
   }
