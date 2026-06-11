@@ -3,32 +3,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 59795,
-        "requests_per_sec": 1987.571256,
-        "latency_mean_ms": 252.158419,
-        "latency_max_ms": 1999.939,
-        "errors": 109
+        "requests": 1015,
+        "requests_per_sec": 33.789563,
+        "latency_mean_ms": 192.332792,
+        "latency_max_ms": 524.206,
+        "errors": 1
       },
       "/raw/post/2table": {
-        "requests": 53843,
-        "requests_per_sec": 1791.155161,
-        "latency_mean_ms": 284.659199,
-        "latency_max_ms": 1999.101,
-        "errors": 74
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/3table": {
-        "requests": 49651,
-        "requests_per_sec": 1651.575485,
-        "latency_mean_ms": 287.650849,
-        "latency_max_ms": 1999.014,
-        "errors": 81
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/4table": {
-        "requests": 39679,
-        "requests_per_sec": 1318.688784,
-        "latency_mean_ms": 402.112125,
-        "latency_max_ms": 1999.034,
-        "errors": 48
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       }
     }
   },
@@ -36,32 +36,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 46217,
-        "requests_per_sec": 1536.181023,
-        "latency_mean_ms": 242.7263,
-        "latency_max_ms": 1999.842,
-        "errors": 70
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/2table": {
-        "requests": 39232,
-        "requests_per_sec": 1304.016495,
-        "latency_mean_ms": 401.918216,
-        "latency_max_ms": 1985.156,
-        "errors": 62
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/3table": {
-        "requests": 35891,
-        "requests_per_sec": 1192.996214,
-        "latency_mean_ms": 445.739371,
-        "latency_max_ms": 1996.127,
-        "errors": 60
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/4table": {
-        "requests": 26498,
-        "requests_per_sec": 880.453149,
-        "latency_mean_ms": 580.066288,
-        "latency_max_ms": 1999.836,
-        "errors": 41
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       }
     }
   },
@@ -69,32 +69,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 99019,
-        "requests_per_sec": 3292.309606,
-        "latency_mean_ms": 166.408499,
-        "latency_max_ms": 1128.47,
-        "errors": 98988
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/2table": {
-        "requests": 51995,
-        "requests_per_sec": 1727.381723,
-        "latency_mean_ms": 313.582834,
-        "latency_max_ms": 1750.158,
-        "errors": 51965
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/3table": {
-        "requests": 60818,
-        "requests_per_sec": 2020.471417,
-        "latency_mean_ms": 258.885319,
-        "latency_max_ms": 1211.986,
-        "errors": 60789
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/4table": {
-        "requests": 47337,
-        "requests_per_sec": 1572.696524,
-        "latency_mean_ms": 315.441394,
-        "latency_max_ms": 1123.399,
-        "errors": 47307
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       }
     }
   },
@@ -102,32 +102,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 84508,
-        "requests_per_sec": 2808.407383,
-        "latency_mean_ms": 195.144313,
-        "latency_max_ms": 1765.788,
-        "errors": 124
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/2table": {
-        "requests": 65893,
-        "requests_per_sec": 2190.091413,
-        "latency_mean_ms": 248.304457,
-        "latency_max_ms": 1987.602,
-        "errors": 111
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/3table": {
-        "requests": 56507,
-        "requests_per_sec": 1878.30572,
-        "latency_mean_ms": 289.204418,
-        "latency_max_ms": 1987.862,
-        "errors": 101
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/4table": {
-        "requests": 43338,
-        "requests_per_sec": 1440.277009,
-        "latency_mean_ms": 372.306032,
-        "latency_max_ms": 1999.969,
-        "errors": 62
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       }
     }
   },
@@ -135,32 +135,32 @@
     "Environment": "Docker",
     "endpoints": {
       "/raw/post/1table": {
-        "requests": 80340,
-        "requests_per_sec": 2669.743729,
-        "latency_mean_ms": 190.19114,
-        "latency_max_ms": 1222.363,
-        "errors": 133
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/2table": {
-        "requests": 62384,
-        "requests_per_sec": 2073.298879,
-        "latency_mean_ms": 240.989666,
-        "latency_max_ms": 928.358,
-        "errors": 116
+        "requests": 14,
+        "requests_per_sec": 0.465116,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 14
       },
       "/raw/post/3table": {
-        "requests": 57581,
-        "requests_per_sec": 1914.189486,
-        "latency_mean_ms": 260.862819,
-        "latency_max_ms": 986.731,
-        "errors": 93
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       },
       "/raw/post/4table": {
-        "requests": 48373,
-        "requests_per_sec": 1609.054801,
-        "latency_mean_ms": 309.771784,
-        "latency_max_ms": 1073.988,
-        "errors": 92
+        "requests": 0,
+        "requests_per_sec": 0.0,
+        "latency_mean_ms": 0.0,
+        "latency_max_ms": 0.0,
+        "errors": 0
       }
     }
   }

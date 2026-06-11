@@ -66,7 +66,7 @@ class BenchmarkServer {
                 ->withPassword($db_config['password'])
                 ->withDbname($db_config['database'])
                 ->withCharset('utf8mb4'),
-            100
+            10
         );
     }
 
