@@ -19,7 +19,7 @@ class BenchmarkServer {
             'database' => 'benchmark_db'
         ];
 
-        // Create initial connection to set up schema (ใช้ PDO ธรรมดา แบบไม่ Pool)
+        // Create initial connection to set up schema
         $db = new \PDO(
             'mysql:host=' . $db_config['host'] . ';port=' . $db_config['port'],
             $db_config['user'],
@@ -35,15 +35,28 @@ class BenchmarkServer {
             name VARCHAR(100),
             email VARCHAR(100) UNIQUE
         )");
-        // ... (โค้ดสร้างตารางอื่นๆ ปล่อยไว้เหมือนเดิม) ...
+
+        $db->exec("CREATE TABLE IF NOT EXISTS profiles (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            bio VARCHAR(255),
+            phone VARCHAR(20)
+        )");
+
+        $db->exec("CREATE TABLE IF NOT EXISTS orders (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            total_amount DECIMAL(10, 2)
+        )");
+
         $db->exec("CREATE TABLE IF NOT EXISTS order_items (
             id INT AUTO_INCREMENT PRIMARY KEY,
             order_id INT,
             product_name VARCHAR(100),
             price DECIMAL(10, 2)
         )");
+
         
-        // *ลบส่วนการสร้าง $this->db_pool ตรงนี้ทิ้งทั้งหมด*
     }
 
     public function start() {
@@ -101,7 +114,7 @@ class BenchmarkServer {
     private function postRaw1Table(Response $response) {
         $pdo = $this->db_pool->get();
         try {
-            $randomId = substr(uniqid(), 0, 8);
+            $randomId = bin2hex(random_bytes(4));
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -113,6 +126,7 @@ class BenchmarkServer {
             $response->setHeader('Content-Type', 'application/json');
             $response->end(json_encode(['user_id' => (int)$userId]));
         } catch (\Exception $e) {
+            $randomId = bin2hex(random_bytes(4));
             $response->setStatusCode(500);
             $response->setHeader('Content-Type', 'application/json');
             $response->end(json_encode(['error' => $e->getMessage()]));
@@ -126,7 +140,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = substr(uniqid(), 0, 8);
+            $randomId = bin2hex(random_bytes(4));
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -156,7 +170,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = substr(uniqid(), 0, 8);
+            $randomId = bin2hex(random_bytes(4));
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -189,7 +203,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = substr(uniqid(), 0, 8);
+            $randomId = bin2hex(random_bytes(4));
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -205,8 +219,8 @@ class BenchmarkServer {
             $orderId = $pdo->lastInsertId();
 
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)");
-            $stmt->execute([$orderId, "Product_${randomId}_1", 25.00]);
-            $stmt->execute([$orderId, "Product_${randomId}_2", 75.00]);
+            $stmt->execute([$orderId, "Product_{$randomId}_1", 25.00]);
+            $stmt->execute([$orderId, "Product_{$randomId}_2", 75.00]);
 
             $pdo->commit();
 
