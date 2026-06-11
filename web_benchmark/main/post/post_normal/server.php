@@ -56,7 +56,18 @@ class BenchmarkServer {
             price DECIMAL(10, 2)
         )");
 
-        
+        // Create Swoole connection pool
+        $this->db_pool = new \Swoole\Database\PDOPool(
+            (new \Swoole\Database\PDOConfig())
+                ->withDriver('mysql')
+                ->withHost($db_config['host'])
+                ->withPort($db_config['port'])
+                ->withUsername($db_config['user'])
+                ->withPassword($db_config['password'])
+                ->withDbname($db_config['database'])
+                ->withCharset('utf8mb4'),
+            100
+        );
     }
 
     public function start() {
@@ -66,27 +77,7 @@ class BenchmarkServer {
             'worker_num' => swoole_cpu_num(),
             'log_file' => '/dev/null'
         ]);
-        
-        $http->on('WorkerStart', function ($server, $workerId) {
-            $db_config = [
-                'host' => '127.0.0.1',
-                'port' => 3306,
-                'user' => 'admin',
-                'password' => 'secret',
-                'database' => 'benchmark_db'
-            ];
-            $this->db_pool = new \Swoole\Database\PDOPool(
-                (new \Swoole\Database\PDOConfig())
-                    ->withDriver('mysql')
-                    ->withHost($db_config['host'])
-                    ->withPort($db_config['port'])
-                    ->withUsername($db_config['user'])
-                    ->withPassword($db_config['password'])
-                    ->withDbname($db_config['database'])
-                    ->withCharset('utf8mb4'),
-                100 // Pool size ต่อ Worker
-            );
-        });
+
         $http->on('Request', function (Request $request, Response $response) {
             $path = $request->server['path_info'];
             $method = $request->server['request_method'];
@@ -114,7 +105,7 @@ class BenchmarkServer {
     private function postRaw1Table(Response $response) {
         $pdo = $this->db_pool->get();
         try {
-            $randomId = bin2hex(random_bytes(4));
+            $randomId = substr(uniqid(), 0, 8);
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -126,7 +117,6 @@ class BenchmarkServer {
             $response->setHeader('Content-Type', 'application/json');
             $response->end(json_encode(['user_id' => (int)$userId]));
         } catch (\Exception $e) {
-            $randomId = bin2hex(random_bytes(4));
             $response->setStatusCode(500);
             $response->setHeader('Content-Type', 'application/json');
             $response->end(json_encode(['error' => $e->getMessage()]));
@@ -140,7 +130,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = bin2hex(random_bytes(4));
+            $randomId = substr(uniqid(), 0, 8);
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -170,7 +160,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = bin2hex(random_bytes(4));
+            $randomId = substr(uniqid(), 0, 8);
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -203,7 +193,7 @@ class BenchmarkServer {
         try {
             $pdo->beginTransaction();
 
-            $randomId = bin2hex(random_bytes(4));
+            $randomId = substr(uniqid(), 0, 8);
             $email = "test_$randomId@example.com";
 
             $stmt = $pdo->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
@@ -219,8 +209,8 @@ class BenchmarkServer {
             $orderId = $pdo->lastInsertId();
 
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)");
-            $stmt->execute([$orderId, "Product_{$randomId}_1", 25.00]);
-            $stmt->execute([$orderId, "Product_{$randomId}_2", 75.00]);
+            $stmt->execute([$orderId, "Product_${randomId}_1", 25.00]);
+            $stmt->execute([$orderId, "Product_${randomId}_2", 75.00]);
 
             $pdo->commit();
 

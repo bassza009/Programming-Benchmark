@@ -137,8 +137,8 @@ async def post_3table():
 
 @app.post("/raw/post/4table")
 async def post_4table():
-    async with pool.acquire() as conn:
-        try:
+    try:
+        async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 await conn.begin()
 
@@ -162,11 +162,13 @@ async def post_4table():
 
                 await conn.commit()
                 return JSONResponse(status_code=201, content={"user_id": user_id})
-                
-        except Exception as e:
+    except Exception as e:
+        try:
             await conn.rollback()
-            return JSONResponse(status_code=500, content={"error": str(e)})
-        
+        except:
+            pass
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 @app.on_event("startup")
 async def startup():
     await init_db()
