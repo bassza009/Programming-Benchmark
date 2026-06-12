@@ -2,4 +2,4 @@ fastapi==0.104.1
 uvicorn==0.24.0
 aiomysql==0.2.0
 sqlalchemy==2.0.20
-asyncmy==0.3.0
+asyncmy==0.2.11
