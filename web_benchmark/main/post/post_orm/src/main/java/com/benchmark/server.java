@@ -67,7 +67,6 @@ class OrderItem {
 
 // --- Repositories ---
 interface UserRepository extends JpaRepository<User, Long> {}
-    }
 interface ProfileRepository extends JpaRepository<Profile, Long> {}
 interface OrderRepository extends JpaRepository<Order, Long> {}
 interface OrderItemRepository extends JpaRepository<OrderItem, Long> {}
