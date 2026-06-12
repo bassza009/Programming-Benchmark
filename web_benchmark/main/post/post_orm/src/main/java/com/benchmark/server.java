@@ -1,4 +1,4 @@
-package com.benchmark.orm;
+package com.benchmark;
 
 import jakarta.persistence.*;
 import org.springframework.boot.SpringApplication;
@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @SpringBootApplication
-public class server{
+public class server {
     public static void main(String[] args) {
-        SpringApplication.run(OrmApplication.class, args);
+        SpringApplication.run(server.class, args);
     }
 }
 
