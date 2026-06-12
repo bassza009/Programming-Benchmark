@@ -18,7 +18,19 @@ import java.util.UUID;
 @SpringBootApplication
 public class server {
     public static void main(String[] args) {
-        SpringApplication.run(server.class, args);
+        SpringApplication app = new SpringApplication(server.class);
+        
+        // ตั้งค่า Database และ Port ภายในไฟล์เดียวจบ (ไม่ต้องใช้ application.properties)
+        app.setDefaultProperties(Map.of(
+                "server.port", "8005",
+                "spring.datasource.url", "jdbc:mysql://127.0.0.1:3306/benchmark_db",
+                "spring.datasource.username", "admin",
+                "spring.datasource.password", "secret",
+                "spring.datasource.driver-class-name", "com.mysql.cj.jdbc.Driver",
+                "spring.jpa.hibernate.ddl-auto", "none"
+        ));
+        
+        app.run(args);
     }
 }
 
@@ -55,6 +67,7 @@ class OrderItem {
 
 // --- Repositories ---
 interface UserRepository extends JpaRepository<User, Long> {}
+    }
 interface ProfileRepository extends JpaRepository<Profile, Long> {}
 interface OrderRepository extends JpaRepository<Order, Long> {}
 interface OrderItemRepository extends JpaRepository<OrderItem, Long> {}
