@@ -136,7 +136,7 @@
     "endpoints": {
       "/raw/post/1table": {
         "requests": 101517,
-        "requests_per_sec": 3374.969718,
+        "requests_per_sec": 3374.969718,sudo kill -9 $(sudo lsof -t -i:8003)
         "latency_mean_ms": 150.033912,
         "latency_max_ms": 1018.306,
         "errors": 258
