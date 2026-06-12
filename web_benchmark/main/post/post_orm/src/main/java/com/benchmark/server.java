@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @SpringBootApplication
-public class OrmApplication {
+public class server{
     public static void main(String[] args) {
         SpringApplication.run(OrmApplication.class, args);
     }
