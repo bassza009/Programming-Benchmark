@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: benchmark-post-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: benchmark_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password --max_connections=500
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server-python:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    container_name: server-python-post
+    ports:
+      - "8001:8001"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: secret
+      DB_NAME: benchmark_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  server-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.nodejs
+    container_name: server-node-post
+    ports:
+      - "8002:8002"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: secret
+      DB_NAME: benchmark_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  server-php:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    container_name: server-php-post
+    ports:
+      - "8003:8003"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: secret
+      DB_NAME: benchmark_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  server-go:
+    build:
+      context: .
+      dockerfile: Dockerfile.go
+    container_name: server-go-post
+    ports:
+      - "8004:8004"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: secret
+      DB_NAME: benchmark_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  server-java:
+    build:
+      context: .
+      dockerfile: Dockerfile.java
+    container_name: server-java-post
+    ports:
+      - "8005:8005"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASS: secret
+      DB_NAME: benchmark_db
+    depends_on:
+      mysql:
+        condition: service_healthy
