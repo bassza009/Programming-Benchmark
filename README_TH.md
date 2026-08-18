@@ -209,22 +209,20 @@ Programming-Benchmark/
 ├── README.md                          # เอกสารคู่มือโครงการภาษาอังกฤษ (English)
 ├── README_TH.md                       # เอกสารคู่มือโครงการภาษาไทย (Thai)
 ├── main_web_benchmark/                # ชุดทดสอบเว็บเฟรมเวิร์กหลัก
-│   ├── frameworks/                    # เซิร์ฟเวอร์แยกตามภาษาและเฟรมเวิร์ก
-│   │   ├── go/                        # โค้ดภาษา Go (fiber, gin)
-│   │   ├── java/                      # โค้ดภาษา Java (springboot)
-│   │   ├── nodejs/                    # โค้ดภาษา Node.js (fastify, express)
-│   │   ├── php/                       # โค้ดภาษา PHP (swoole)
-│   │   ├── python/                    # โค้ดภาษา Python (fastapi, flask)
-│   │   ├── rust/                      # โค้ดต้นแบบภาษา Rust (actix)
-│   │   └── csharp/                    # โค้ดต้นแบบภาษา C# (aspnetcore)
 │   ├── GET/
 │   │   ├── get_no_index/              # การทดสอบ GET แบบไม่มี Secondary Index
-│   │   │   ├── run_bme_wrk.py
-│   │   │   └── run_dkr_wrk.py
+│   │   │   ├── frameworks/            # โค้ดเซิร์ฟเวอร์แยกตามภาษาและเฟรมเวิร์ก (go, java, nodejs, php, python)
+│   │   │   ├── docker-compose.yml     # คอนฟิกคอนเทนเนอร์เชื่อมโยงไปยังโฟลเดอร์ frameworks/
+│   │   │   ├── run_bme_wrk.py         # ตัวรัน Bare Metal
+│   │   │   └── run_dkr_wrk.py         # ตัวรัน Docker Container
 │   │   └── get_with_index/            # การทดสอบ GET แบบมี Secondary Index
+│   │       ├── frameworks/            # โค้ดเซิร์ฟเวอร์แยกตามภาษาและเฟรมเวิร์ก
+│   │       ├── docker-compose.yml
 │   │       ├── run_bme_wrk.py
 │   │       └── run_dkr_wrk.py
 │   ├── POST/                          # การทดสอบ POST ธุรกรรมการเขียน
+│   │   ├── frameworks/                # โค้ดเซิร์ฟเวอร์แยกตามภาษาและเฟรมเวิร์ก
+│   │   ├── docker-compose.yml
 │   │   ├── run_bme_wrk.py
 │   │   └── run_dkr_wrk.py
 │   ├── results/                       # รวบรวมผลลัพธ์และสรุปรายงาน

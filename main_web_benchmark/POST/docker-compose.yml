@@ -3,8 +3,8 @@ version: '3.8'
 services:
   server-python:
     build:
-      context: .
-      dockerfile: Dockerfile.python
+      context: frameworks/python/fastapi
+      dockerfile: Dockerfile
     container_name: server-python-post
     ports:
       - "8001:8001"
@@ -23,8 +23,8 @@ services:
 
   server-node:
     build:
-      context: .
-      dockerfile: Dockerfile.nodejs
+      context: frameworks/nodejs/fastify
+      dockerfile: Dockerfile
     container_name: server-node-post
     ports:
       - "8002:8002"
@@ -43,8 +43,8 @@ services:
 
   server-php:
     build:
-      context: .
-      dockerfile: Dockerfile.php
+      context: frameworks/php/swoole
+      dockerfile: Dockerfile
     container_name: server-php-post
     ports:
       - "8003:8003"
@@ -63,8 +63,8 @@ services:
 
   server-go:
     build:
-      context: .
-      dockerfile: Dockerfile.go
+      context: frameworks/go/fiber
+      dockerfile: Dockerfile
     container_name: server-go-post
     ports:
       - "8004:8004"
@@ -83,8 +83,8 @@ services:
 
   server-java:
     build:
-      context: .
-      dockerfile: Dockerfile.java
+      context: frameworks/java/springboot
+      dockerfile: Dockerfile
     container_name: server-java-post
     ports:
       - "8005:8005"

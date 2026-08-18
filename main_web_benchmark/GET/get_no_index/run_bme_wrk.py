@@ -15,12 +15,14 @@ try:
 except Exception:
     pass
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 LANGUAGES = [
-    {"name": "Python", "port": 8001, "cmd": ["python3", "server.py"]},
-    {"name": "Node.js", "port": 8002, "cmd": ["node", "server.js"]},
-    {"name": "PHP", "port": 8003, "cmd": ["php", "server.php"]},
-    {"name": "Go", "port": 8004, "cmd": ["./server"]},
-    {"name": "Java", "port": 8005, "cmd": ["java", "-jar", "app.jar"]}
+    {"name": "Python", "port": 8001, "cmd": ["python3", "server.py"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "python", "fastapi")},
+    {"name": "Node.js", "port": 8002, "cmd": ["node", "server.js"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "nodejs", "fastify")},
+    {"name": "PHP", "port": 8003, "cmd": ["php", "server.php"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "php", "swoole")},
+    {"name": "Go", "port": 8004, "cmd": ["./server"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "go", "fiber")},
+    {"name": "Java", "port": 8005, "cmd": ["java", "-jar", "app.jar"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "java", "springboot")}
 ]
 
 ENDPOINTS = [
@@ -127,7 +129,7 @@ def main():
         subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
         time.sleep(1)
 
-        proc = subprocess.Popen(lang["cmd"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        proc = subprocess.Popen(lang["cmd"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=lang.get("cwd"))
         
         print(f"     Waiting for {lang['name']} server to be ready on port {lang['port']}...")
         if not wait_for_server(lang['port'], max_wait=30):

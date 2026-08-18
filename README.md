@@ -208,22 +208,20 @@ Programming-Benchmark/
 ├── README.md                          # English suite documentation & research overview
 ├── README_TH.md                       # Thai suite documentation & research overview
 ├── main_web_benchmark/                # Main web framework benchmark suite
-│   ├── frameworks/                    # Modular Language & Framework servers
-│   │   ├── go/                        # Go implementations (fiber, gin)
-│   │   ├── java/                      # Java implementations (springboot)
-│   │   ├── nodejs/                    # Node.js implementations (fastify, express)
-│   │   ├── php/                       # PHP implementations (swoole)
-│   │   ├── python/                    # Python implementations (fastapi, flask)
-│   │   ├── rust/                      # Rust templates (actix)
-│   │   └── csharp/                    # C# templates (aspnetcore)
 │   ├── GET/
 │   │   ├── get_no_index/              # Read suite without secondary indexes
-│   │   │   ├── run_bme_wrk.py
-│   │   │   └── run_dkr_wrk.py
+│   │   │   ├── frameworks/            # Language & framework implementations (go, java, nodejs, php, python)
+│   │   │   ├── docker-compose.yml     # Container orchestration pointing to frameworks/
+│   │   │   ├── run_bme_wrk.py         # Bare metal multi-tier runner
+│   │   │   └── run_dkr_wrk.py         # Docker container multi-tier runner
 │   │   └── get_with_index/            # Read suite with secondary indexes
+│   │       ├── frameworks/            # Language & framework implementations (go, java, nodejs, php, python)
+│   │       ├── docker-compose.yml
 │   │       ├── run_bme_wrk.py
 │   │       └── run_dkr_wrk.py
 │   ├── POST/                          # Write / transaction benchmark suite
+│   │   ├── frameworks/                # Language & framework implementations (go, java, nodejs, php, python)
+│   │   ├── docker-compose.yml
 │   │   ├── run_bme_wrk.py
 │   │   └── run_dkr_wrk.py
 │   ├── results/                       # Aggregated results and reports
