@@ -1,9 +1,19 @@
 Suite,Environment,Tier,Language,1table (Req/s),1table Latency (ms),2table/2join (Req/s),2table/2join Latency (ms),3table/3join (Req/s),3table/3join Latency (ms),4table/4join (Req/s),4table/4join Latency (ms),Total Errors
-get_no_index,Bare Metal,Minimum (Light),Go,11913.15,9.34,5195.44,19.55,279.66,349.70,717.53,137.88,0
-get_no_index,Bare Metal,Minimum (Light),Java,12381.97,7.90,4832.28,21.03,274.36,356.29,729.32,135.82,0
-get_no_index,Bare Metal,Minimum (Light),Node.js,11118.16,9.05,4904.49,20.69,276.12,354.08,713.65,138.75,0
-get_no_index,Bare Metal,Minimum (Light),PHP,14488.03,7.45,5053.91,22.32,284.12,389.35,890.21,126.08,5
-get_no_index,Bare Metal,Minimum (Light),Python,1604.97,61.97,1899.09,52.38,278.58,350.41,666.53,148.51,0
+get_no_index,Bare Metal,Minimum (Light),Go,11928.00,9.30,5057.66,20.11,305.74,320.09,738.14,134.05,0
+get_no_index,Bare Metal,Minimum (Light),Java,11958.11,8.37,4760.66,21.31,314.57,312.12,747.31,132.62,0
+get_no_index,Bare Metal,Minimum (Light),Node.js,7016.52,16.30,4687.83,21.73,305.11,321.28,736.60,134.39,0
+get_no_index,Bare Metal,Minimum (Light),PHP,15762.22,7.27,4846.69,26.28,318.95,326.91,937.90,121.01,0
+get_no_index,Bare Metal,Minimum (Light),Python,1624.44,61.24,1914.72,51.95,305.79,320.55,696.35,142.21,0
+get_no_index,Bare Metal,Medium (Standard),Go,14278.26,144.64,4985.96,219.87,310.95,951.28,743.57,605.86,9488
+get_no_index,Bare Metal,Medium (Standard),Java,13148.71,79.38,4598.11,213.55,311.83,1015.61,735.55,1305.91,8472
+get_no_index,Bare Metal,Medium (Standard),Node.js,10410.97,109.50,4486.93,221.34,300.10,1479.41,708.49,1336.36,9516
+get_no_index,Bare Metal,Medium (Standard),PHP,16986.43,58.92,5091.11,200.57,313.49,1057.08,912.98,821.92,8600
+get_no_index,Bare Metal,Medium (Standard),Python,2199.80,450.30,2423.18,408.94,292.57,1407.92,643.09,1249.09,10793
+get_no_index,Bare Metal,Maximum (Stress),Go,15635.48,376.88,4900.73,628.78,309.87,1083.31,381.85,1051.63,77818
+get_no_index,Bare Metal,Maximum (Stress),Java,13046.57,519.44,4531.62,1696.31,310.44,1023.20,189.54,287.27,18153
+get_no_index,Bare Metal,Maximum (Stress),Node.js,8675.44,379.06,4268.16,1371.84,298.40,1459.40,64.23,0.00,101435
+get_no_index,Bare Metal,Maximum (Stress),PHP,16471.48,597.21,5101.99,1395.56,314.41,991.84,173.18,1541.46,76133
+get_no_index,Bare Metal,Maximum (Stress),Python,2004.71,468.81,2232.18,422.93,297.49,1327.73,193.70,748.90,59637
 get_no_index,Docker,Minimum (Light),Go,10988.10,10.67,6390.75,15.85,274.64,355.21,736.83,134.03,0
 get_no_index,Docker,Minimum (Light),Java,9231.73,12.24,5889.99,17.17,276.22,354.11,727.80,136.31,0
 get_no_index,Docker,Minimum (Light),Node.js,2041.90,49.18,2701.73,37.02,273.64,356.99,635.70,155.54,0
