@@ -12,13 +12,89 @@ SUMMARY_CSV = os.path.join(SCRIPT_DIR, "SUMMARY.csv")
 
 def generate_markdown(json_files):
     output = []
-    output.append("# 📊 Web Benchmark Comprehensive Results Summary\n")
-    output.append(f"Generated from {len(json_files)} test suite result datasets.\n")
+    output.append("# 📊 Web Framework Benchmark: Comprehensive Summary\n")
+    output.append("Multi-language performance evaluation across **Docker Containerized** and **Bare Metal (Host)** environments.\n")
 
+    # Load all datasets into memory
+    loaded_data = {}
     for fpath in json_files:
         fname = os.path.basename(fpath)
-        title = fname.replace("_dkr.json", " (Docker)").replace("_bme.json", " (Bare Metal)").replace(".json", "")
-        output.append(f"## 📁 Suite: `{title}`\n")
+        with open(fpath, "r") as f:
+            loaded_data[fname] = json.load(f)
+
+    # 1. Unified Side-by-Side Comparison Section (Dkr vs BME)
+    output.append("## ⚡ Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Tier)\n")
+    output.append("| Suite | Language | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | Overhead / Gain |")
+    output.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
+
+    # Check for matched suites (e.g. get_no_index)
+    suites = set([k.replace("_dkr.json", "").replace("_bme.json", "").replace(".json", "") for k in loaded_data.keys()])
+    for s in sorted(suites):
+        dkr_key = f"{s}_dkr.json"
+        bme_key = f"{s}_bme.json"
+        dkr_data = loaded_data.get(dkr_key)
+        bme_data = loaded_data.get(bme_key)
+
+        langs = set()
+        if dkr_data:
+            langs.update(dkr_data.keys())
+        if bme_data:
+            langs.update(bme_data.keys())
+
+        for lang in sorted(langs):
+            # Extract 1table min tier
+            dkr_rps = "-"
+            dkr_lat = "-"
+            bme_rps = "-"
+            bme_lat = "-"
+            gain = "N/A"
+
+            if dkr_data and lang in dkr_data:
+                d_val = (
+                    dkr_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/1table")
+                    or dkr_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or dkr_data[lang].get("endpoints", {}).get("/raw/1table")
+                    or dkr_data[lang].get("endpoints", {}).get("/raw/post/1table")
+                    or {}
+                )
+                if d_val:
+                    r = d_val.get("requests_per_sec", 0.0)
+                    l = d_val.get("latency_mean_ms", 0.0)
+                    dkr_rps = f"{r:,.2f}"
+                    dkr_lat = f"{l:.2f}ms"
+                    d_r_num = r
+
+            if bme_data and lang in bme_data:
+                b_val = (
+                    bme_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/1table")
+                    or bme_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or bme_data[lang].get("endpoints", {}).get("/raw/1table")
+                    or bme_data[lang].get("endpoints", {}).get("/raw/post/1table")
+                    or {}
+                )
+                if b_val:
+                    r = b_val.get("requests_per_sec", 0.0)
+                    l = b_val.get("latency_mean_ms", 0.0)
+                    bme_rps = f"{r:,.2f}"
+                    bme_lat = f"{l:.2f}ms"
+                    b_r_num = r
+
+            if dkr_rps != "-" and bme_rps != "-":
+                if d_r_num > 0:
+                    diff = ((b_r_num - d_r_num) / d_r_num) * 100
+                    gain = f"{'+' if diff > 0 else ''}{diff:.1f}% BME"
+
+            output.append(f"| **{s}** | **{lang}** | {dkr_rps} | {bme_rps} | {dkr_lat} | {bme_lat} | {gain} |")
+    output.append("\n---\n")
+
+    # 2. Detailed Breakdown by Suite
+    for fpath in json_files:
+        fname = os.path.basename(fpath)
+        is_bme = "_bme.json" in fname
+        env_label = "🖥️ Bare Metal (Host)" if is_bme else "🐳 Docker (Container)"
+        suite_name = fname.replace("_dkr.json", "").replace("_bme.json", "").replace(".json", "")
+
+        output.append(f"## 📁 Suite: `{suite_name}` — {env_label}\n")
         
         try:
             res = subprocess.run(["python3", COMPARE_SCRIPT, fpath], capture_output=True, text=True, check=True)

@@ -1,8 +1,30 @@
-# 📊 Web Benchmark Comprehensive Results Summary
+# 📊 Web Framework Benchmark: Comprehensive Summary
 
-Generated from 4 test suite result datasets.
+Multi-language performance evaluation across **Docker Containerized** and **Bare Metal (Host)** environments.
 
-## 📁 Suite: `get_no_index (Bare Metal)`
+## ⚡ Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Tier)
+
+| Suite | Language | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | Overhead / Gain |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **get_no_index** | **Go** | 10,988.10 | 11,913.15 | 10.67ms | 9.34ms | +8.4% BME |
+| **get_no_index** | **Java** | 9,231.73 | 12,381.97 | 12.24ms | 7.90ms | +34.1% BME |
+| **get_no_index** | **Node.js** | 2,041.90 | 11,118.16 | 49.18ms | 9.05ms | +444.5% BME |
+| **get_no_index** | **PHP** | 16,002.61 | 14,488.03 | 6.94ms | 7.45ms | -9.5% BME |
+| **get_no_index** | **Python** | 2,515.54 | 1,604.97 | 40.03ms | 61.97ms | -36.2% BME |
+| **get_with_index** | **Go** | 11,025.25 | - | 10.59ms | - | N/A |
+| **get_with_index** | **Java** | 8,825.93 | - | 12.83ms | - | N/A |
+| **get_with_index** | **Node.js** | 2,070.42 | - | 48.43ms | - | N/A |
+| **get_with_index** | **PHP** | 17,290.74 | - | 6.46ms | - | N/A |
+| **get_with_index** | **Python** | 2,521.69 | - | 39.48ms | - | N/A |
+| **post** | **Go** | 7,123.85 | - | 14.05ms | - | N/A |
+| **post** | **Java** | 5,708.88 | - | 17.63ms | - | N/A |
+| **post** | **Node.js** | 7,297.44 | - | 13.94ms | - | N/A |
+| **post** | **PHP** | 4,506.78 | - | 23.91ms | - | N/A |
+| **post** | **Python** | 7,045.07 | - | 14.41ms | - | N/A |
+
+---
+
+## 📁 Suite: `get_no_index` — 🖥️ Bare Metal (Host)
 
 # Benchmark Results Summary: get_no_index_bme.json
 
@@ -46,7 +68,7 @@ Generated from 4 test suite result datasets.
 
 ---
 
-## 📁 Suite: `get_no_index (Docker)`
+## 📁 Suite: `get_no_index` — 🐳 Docker (Container)
 
 # Benchmark Results Summary: get_no_index_dkr.json
 
@@ -166,7 +188,7 @@ Generated from 4 test suite result datasets.
 
 ---
 
-## 📁 Suite: `get_with_index (Docker)`
+## 📁 Suite: `get_with_index` — 🐳 Docker (Container)
 
 # Benchmark Results Summary: get_with_index_dkr.json
 
@@ -210,7 +232,7 @@ Generated from 4 test suite result datasets.
 
 ---
 
-## 📁 Suite: `post (Docker)`
+## 📁 Suite: `post` — 🐳 Docker (Container)
 
 # Benchmark Results Summary: post_dkr.json
 
