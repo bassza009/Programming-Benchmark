@@ -10,18 +10,31 @@ The suite measures **Raw SQL Query Performance** comparing **GET (read)** operat
 ## Benchmark Scope & Specification
 
 - **Focus Area:** Normal Raw SQL Queries **ONLY** (ORM models and abstraction layers are excluded).
-- **Database:** MySQL 8.0 instance running on port `3306` with 10,000 initial mock records.
+- **Database:** MySQL 8.0 instance running on port `3306` with tuned connection limits (`max_connections=10000`).
 - **Load Testing Tool:** `wrk` load generator with custom Lua JSON reporting script (`wrk_json_reporter.lua`).
 
 ### Tech Stack & Server Ports
 
-| Language | Framework | Database Driver / Client | Default Port |
-| :--- | :--- | :--- | :--- |
-| **Python** | FastAPI | `aiomysql` | `8001` |
-| **Node.js** | Fastify | `mysql2/promise` | `8002` |
-| **PHP** | Swoole | `PDO_MySQL` | `8003` |
-| **Go** | Fiber | `database/sql` (`go-sql-driver/mysql`) | `8004` |
-| **Java** | Spring Boot | `JdbcTemplate` / `HikariCP` | `8005` |
+| Language | Framework | Database Driver / Client | Default Port | Connection Pooling |
+| :--- | :--- | :--- | :--- | :--- |
+| **Python** | FastAPI | `aiomysql` | `8001` | Async Pool (50 conns/worker) |
+| **Node.js** | Fastify | `mysql2/promise` | `8002` | Connection Pool (50 conns/worker) |
+| **PHP** | Swoole | `PDO_MySQL` | `8003` | `Swoole\Database\PDOPool` (64 conns) |
+| **Go** | Fiber | `database/sql` (`go-sql-driver/mysql`) | `8004` | Standard Pool (100 max open) |
+| **Java** | Spring Boot | `JdbcTemplate` / `HikariCP` | `8005` | HikariCP Pool (100 max open) |
+
+---
+
+## Load Testing Tiers
+
+All runner scripts support multi-tier benchmarking to evaluate baseline throughput up to extreme concurrency:
+
+| Tier | Concurrency (`-c`) | Threads (`-t`) | Duration (`-d`) | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **`min`** | `100` | `2` | `10s` | Baseline latency & throughput verification |
+| **`med`** | `1,000` | `10` | `30s` | Standard production high-load concurrency |
+| **`max`** | `10,000` | `20` | `30s` | Extreme connection stress test |
+| **`all`** | All tiers | Sequential | Cumulative | Full benchmark matrix across all 3 tiers |
 
 ---
 
@@ -29,7 +42,7 @@ The suite measures **Raw SQL Query Performance** comparing **GET (read)** operat
 
 ```text
 main_web_benchmark/
-├── Pointofproject.md          # Project PRD and technical specification
+├── issue.md                   # Detailed audit report and issue explanations
 ├── README.md                  # Project documentation (this file)
 │
 ├── GET/                       # Read Benchmark Suite
@@ -72,35 +85,40 @@ main_web_benchmark/
 
 ## How to Run
 
+### CLI Options
+All `run_*.py` scripts support the following arguments:
+* `--tier {min,med,max,all}` (Default: `all`) - Choose load intensity tier.
+* `--no-warmup` (Default: False) - Disable the 3-second runtime warmup.
+
 ### 1. Running GET (No Index) Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/GET/get_no_index
-python3 run_bme_wrk.py
+python3 run_bme_wrk.py --tier all
 
 # Docker Containerized
 cd main_web_benchmark/GET/get_no_index
-python3 run_dkr_wrk.py
+python3 run_dkr_wrk.py --tier all
 ```
 
 ### 2. Running GET (With Index) Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/GET/get_with_index
-python3 run_bme_wrk.py
+python3 run_bme_wrk.py --tier all
 
 # Docker Containerized
 cd main_web_benchmark/GET/get_with_index
-python3 run_dkr_wrk.py
+python3 run_dkr_wrk.py --tier all
 ```
 
 ### 3. Running POST Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/POST
-python3 run_bme_wrk.py
+python3 run_bme_wrk.py --tier all
 
 # Docker Containerized
 cd main_web_benchmark/POST
-python3 run_dkr_wrk.py
+python3 run_dkr_wrk.py --tier all
 ```

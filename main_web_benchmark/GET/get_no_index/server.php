@@ -2,40 +2,60 @@
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
+use Swoole\Database\PDOConfig;
+use Swoole\Database\PDOPool;
 
 class AntigravityGetNoIndexServer {
     private $db_config;
+    private $pool = null;
 
     public function __construct() {
         $this->db_config = [
             'host' => getenv('DB_HOST') ?: '127.0.0.1',
-            'port' => getenv('DB_PORT') ?: 3306,
+            'port' => (int)(getenv('DB_PORT') ?: 3306),
             'user' => getenv('DB_USER') ?: 'admin',
             'password' => getenv('DB_PASS') ?: 'secret',
             'database' => getenv('DB_NAME') ?: 'benchmark_db'
         ];
-        $this->initDatabase();
     }
 
-    private function initDatabase() {
+    public function initPool($size = 64) {
+        if (class_exists('Swoole\Database\PDOPool')) {
+            $config = (new PDOConfig())
+                ->withHost($this->db_config['host'])
+                ->withPort($this->db_config['port'])
+                ->withDbName($this->db_config['database'])
+                ->withCharset('utf8mb4')
+                ->withUsername($this->db_config['user'])
+                ->withPassword($this->db_config['password'])
+                ->withDriver('mysql')
+                ->withOptions([
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+                ]);
+            $this->pool = new PDOPool($config, $size);
+        }
+    }
+
+    public function initDatabase() {
         try {
-            $db = new \PDO(
+            $pdo = new \PDO(
                 'mysql:host=' . $this->db_config['host'] . ';port=' . $this->db_config['port'],
                 $this->db_config['user'],
                 $this->db_config['password'],
                 [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
             );
 
-            $db->exec("CREATE DATABASE IF NOT EXISTS " . $this->db_config['database']);
-            $db->exec("USE " . $this->db_config['database']);
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS " . $this->db_config['database']);
+            $pdo->exec("USE " . $this->db_config['database']);
 
-            $db->exec("CREATE TABLE IF NOT EXISTS users (
+            $pdo->exec("CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100),
                 email VARCHAR(100)
             )");
 
-            $db->exec("CREATE TABLE IF NOT EXISTS profiles (
+            $pdo->exec("CREATE TABLE IF NOT EXISTS profiles (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT,
                 age INT,
@@ -44,22 +64,22 @@ class AntigravityGetNoIndexServer {
                 address VARCHAR(255)
             )");
 
-            $db->exec("CREATE TABLE IF NOT EXISTS orders (
+            $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT,
                 total_amount DECIMAL(10, 2)
             )");
 
-            $db->exec("CREATE TABLE IF NOT EXISTS order_items (
+            $pdo->exec("CREATE TABLE IF NOT EXISTS order_items (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 order_id INT,
                 product_name VARCHAR(100),
                 price DECIMAL(10, 2)
             )");
 
-            $stmt = $db->query("SELECT COUNT(*) FROM users");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM users");
             if ($stmt->fetchColumn() == 0) {
-                $this->insertMockData($db);
+                $this->insertMockData($pdo);
             }
         } catch (\Exception $e) {
             error_log("Database Init Error: " . $e->getMessage());
@@ -88,30 +108,42 @@ class AntigravityGetNoIndexServer {
         $db->commit();
     }
 
-    private function getPDO() {
+    private function getPdoConnection() {
+        if ($this->pool !== null) {
+            return $this->pool->get();
+        }
         return new \PDO(
             'mysql:host=' . $this->db_config['host'] . ';port=' . $this->db_config['port'] . ';dbname=' . $this->db_config['database'],
             $this->db_config['user'],
             $this->db_config['password'],
             [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::ATTR_PERSISTENT => true
             ]
         );
+    }
+
+    private function releasePdoConnection($pdo) {
+        if ($this->pool !== null && $pdo !== null) {
+            $this->pool->put($pdo);
+        }
     }
 
     public function handleRequest(Request $request, Response $response) {
         $uri = $request->server['request_uri'];
         $response->header("Content-Type", "application/json");
 
-        try {
-            $pdo = $this->getPDO();
+        if ($uri === '/') {
+            $response->status(200);
+            $response->end(json_encode(["status" => "success", "message" => "PHP Swoole GET No-Index Benchmark"]));
+            return;
+        }
 
-            if ($uri === '/') {
-                $response->status(200);
-                $response->end(json_encode(["status" => "success", "message" => "PHP Swoole GET No-Index Benchmark"]));
-                return;
-            }
+        $pdo = null;
+        try {
+            $pdo = $this->getPdoConnection();
+
             if ($uri === '/raw/1table') {
                 $stmt = $pdo->query("SELECT * FROM users LIMIT 100");
                 $response->status(200);
@@ -139,21 +171,28 @@ class AntigravityGetNoIndexServer {
 
             $response->status(404);
             $response->end(json_encode(["error" => "Not Found"]));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $response->status(500);
             $response->end(json_encode(["error" => $e->getMessage()]));
+        } finally {
+            $this->releasePdoConnection($pdo);
         }
     }
 }
 
 $server = new Server("0.0.0.0", 8003);
 $antigravity = new AntigravityGetNoIndexServer();
+$antigravity->initDatabase();
 
 $server->set([
     'worker_num' => swoole_cpu_num() * 2,
     'enable_coroutine' => true,
     'log_level' => SWOOLE_LOG_ERROR
 ]);
+
+$server->on("WorkerStart", function (Server $serv, int $workerId) use ($antigravity) {
+    $antigravity->initPool(64);
+});
 
 $server->on("request", function (Request $request, Response $response) use ($antigravity) {
     $antigravity->handleRequest($request, $response);

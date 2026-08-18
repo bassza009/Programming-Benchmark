@@ -1,3 +1,7 @@
+wrk.method = "POST"
+wrk.headers["Content-Type"] = "application/json"
+wrk.body = "{}"
+
 done = function(summary, latency, requests)
    local requests_per_sec = summary.duration > 0 and (summary.requests / (summary.duration / 1000000)) or 0
    local latency_mean_ms = latency.mean / 1000
