@@ -54,16 +54,28 @@ public class BenchmarkApplication {
     }
 
     private void seedData() {
+        List<Object[]> userBatch = new ArrayList<>(10000);
+        List<Object[]> profileBatch = new ArrayList<>(10000);
+        List<Object[]> orderBatch = new ArrayList<>(10000);
+        List<Object[]> itemBatch = new ArrayList<>(5000);
+
         for (int i = 1; i <= 10000; i++) {
-            jdbcTemplate.update("INSERT INTO users (name, email) VALUES (?, ?)", "User" + i, "user" + i + "@example.com");
-            jdbcTemplate.update("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)", i, 20 + (i % 50), "Address " + i, "Bio " + i, "555-" + i);
-            jdbcTemplate.update("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", i, 100.0 + i);
+            userBatch.add(new Object[]{"User" + i, "user" + i + "@example.com"});
+            profileBatch.add(new Object[]{i, 20 + (i % 50), "Bio " + i, "555-" + i, "Address " + i});
+            orderBatch.add(new Object[]{i, 100.0 + i});
 
             if (i % 10 == 0) {
                 for (int j = 0; j < 5; j++) {
-                    jdbcTemplate.update("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", i, "Product" + j, 10.0 + j);
+                    itemBatch.add(new Object[]{i, "Product" + j, 10.0 + j});
                 }
             }
+        }
+
+        jdbcTemplate.batchUpdate("INSERT INTO users (name, email) VALUES (?, ?)", userBatch);
+        jdbcTemplate.batchUpdate("INSERT INTO profiles (user_id, age, bio, phone, address) VALUES (?, ?, ?, ?, ?)", profileBatch);
+        jdbcTemplate.batchUpdate("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", orderBatch);
+        if (!itemBatch.isEmpty()) {
+            jdbcTemplate.batchUpdate("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", itemBatch);
         }
     }
 

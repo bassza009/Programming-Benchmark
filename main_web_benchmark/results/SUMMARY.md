@@ -1,6 +1,50 @@
 # 📊 Web Benchmark Comprehensive Results Summary
 
-Generated from 3 test suite result datasets.
+Generated from 4 test suite result datasets.
+
+## 📁 Suite: `get_no_index (Bare Metal)`
+
+# Benchmark Results Summary: get_no_index_bme.json
+
+## 🎯 Tier: Minimum (Light) (-t2 -c100 -d10s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🥇  | **PHP** | 14,488.03 | 7.45ms | 50.02ms | 0 |
+| 🥈  | **Java** | 12,381.97 | 7.90ms | 67.22ms | 0 |
+| 🥉  | **Go** | 11,913.15 | 9.34ms | 75.88ms | 0 |
+| 4.  | **Node.js** | 11,118.16 | 9.05ms | 97.12ms | 0 |
+| 5.  | **Python** | 1,604.97 | 61.97ms | 137.80ms | 0 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🥇  | **Go** | 5,195.44 | 19.55ms | 101.53ms | 0 |
+| 🥈  | **PHP** | 5,053.91 | 22.32ms | 161.31ms | 0 |
+| 🥉  | **Node.js** | 4,904.49 | 20.69ms | 129.80ms | 0 |
+| 4.  | **Java** | 4,832.28 | 21.03ms | 124.76ms | 0 |
+| 5.  | **Python** | 1,899.09 | 52.38ms | 112.00ms | 0 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🥇  | **PHP** | 284.12 | 389.35ms | 1975.74ms | 5 |
+| 🥈  | **Go** | 279.66 | 349.70ms | 657.78ms | 0 |
+| 🥉  | **Python** | 278.58 | 350.41ms | 730.81ms | 0 |
+| 4.  | **Node.js** | 276.12 | 354.08ms | 628.58ms | 0 |
+| 5.  | **Java** | 274.36 | 356.29ms | 661.92ms | 0 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 🥇  | **PHP** | 890.21 | 126.08ms | 1155.99ms | 0 |
+| 🥈  | **Java** | 729.32 | 135.82ms | 261.89ms | 0 |
+| 🥉  | **Go** | 717.53 | 137.88ms | 296.44ms | 0 |
+| 4.  | **Node.js** | 713.65 | 138.75ms | 280.40ms | 0 |
+| 5.  | **Python** | 666.53 | 148.51ms | 413.04ms | 0 |
+
+---
 
 ## 📁 Suite: `get_no_index (Docker)`
 

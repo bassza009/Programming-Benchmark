@@ -1,0 +1,197 @@
+{
+  "Python": {
+    "Environment": "BME",
+    "tiers": {
+      "min": {
+        "config": {
+          "name": "Minimum (Light)",
+          "threads": 2,
+          "connections": 100,
+          "duration": "10s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "requests_per_sec": 1604.97,
+            "latency_mean_ms": 61.97,
+            "latency_max_ms": 137.8,
+            "errors": 0
+          },
+          "/raw/2join": {
+            "requests_per_sec": 1899.09,
+            "latency_mean_ms": 52.38,
+            "latency_max_ms": 112.0,
+            "errors": 0
+          },
+          "/raw/3join": {
+            "requests_per_sec": 278.58,
+            "latency_mean_ms": 350.41,
+            "latency_max_ms": 730.81,
+            "errors": 0
+          },
+          "/raw/4join": {
+            "requests_per_sec": 666.53,
+            "latency_mean_ms": 148.51,
+            "latency_max_ms": 413.04,
+            "errors": 0
+          }
+        }
+      }
+    }
+  },
+  "Node.js": {
+    "Environment": "BME",
+    "tiers": {
+      "min": {
+        "config": {
+          "name": "Minimum (Light)",
+          "threads": 2,
+          "connections": 100,
+          "duration": "10s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "requests_per_sec": 11118.16,
+            "latency_mean_ms": 9.05,
+            "latency_max_ms": 97.12,
+            "errors": 0
+          },
+          "/raw/2join": {
+            "requests_per_sec": 4904.49,
+            "latency_mean_ms": 20.69,
+            "latency_max_ms": 129.8,
+            "errors": 0
+          },
+          "/raw/3join": {
+            "requests_per_sec": 276.12,
+            "latency_mean_ms": 354.08,
+            "latency_max_ms": 628.58,
+            "errors": 0
+          },
+          "/raw/4join": {
+            "requests_per_sec": 713.65,
+            "latency_mean_ms": 138.75,
+            "latency_max_ms": 280.4,
+            "errors": 0
+          }
+        }
+      }
+    }
+  },
+  "PHP": {
+    "Environment": "BME",
+    "tiers": {
+      "min": {
+        "config": {
+          "name": "Minimum (Light)",
+          "threads": 2,
+          "connections": 100,
+          "duration": "10s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "requests_per_sec": 14488.03,
+            "latency_mean_ms": 7.45,
+            "latency_max_ms": 50.02,
+            "errors": 0
+          },
+          "/raw/2join": {
+            "requests_per_sec": 5053.91,
+            "latency_mean_ms": 22.32,
+            "latency_max_ms": 161.31,
+            "errors": 0
+          },
+          "/raw/3join": {
+            "requests_per_sec": 284.12,
+            "latency_mean_ms": 389.35,
+            "latency_max_ms": 1975.74,
+            "errors": 5
+          },
+          "/raw/4join": {
+            "requests_per_sec": 890.21,
+            "latency_mean_ms": 126.08,
+            "latency_max_ms": 1155.99,
+            "errors": 0
+          }
+        }
+      }
+    }
+  },
+  "Go": {
+    "Environment": "BME",
+    "tiers": {
+      "min": {
+        "config": {
+          "name": "Minimum (Light)",
+          "threads": 2,
+          "connections": 100,
+          "duration": "10s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "requests_per_sec": 11913.15,
+            "latency_mean_ms": 9.34,
+            "latency_max_ms": 75.88,
+            "errors": 0
+          },
+          "/raw/2join": {
+            "requests_per_sec": 5195.44,
+            "latency_mean_ms": 19.55,
+            "latency_max_ms": 101.53,
+            "errors": 0
+          },
+          "/raw/3join": {
+            "requests_per_sec": 279.66,
+            "latency_mean_ms": 349.7,
+            "latency_max_ms": 657.78,
+            "errors": 0
+          },
+          "/raw/4join": {
+            "requests_per_sec": 717.53,
+            "latency_mean_ms": 137.88,
+            "latency_max_ms": 296.44,
+            "errors": 0
+          }
+        }
+      }
+    }
+  },
+  "Java": {
+    "Environment": "BME",
+    "tiers": {
+      "min": {
+        "config": {
+          "name": "Minimum (Light)",
+          "threads": 2,
+          "connections": 100,
+          "duration": "10s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "requests_per_sec": 12381.97,
+            "latency_mean_ms": 7.9,
+            "latency_max_ms": 67.22,
+            "errors": 0
+          },
+          "/raw/2join": {
+            "requests_per_sec": 4832.28,
+            "latency_mean_ms": 21.03,
+            "latency_max_ms": 124.76,
+            "errors": 0
+          },
+          "/raw/3join": {
+            "requests_per_sec": 274.36,
+            "latency_mean_ms": 356.29,
+            "latency_max_ms": 661.92,
+            "errors": 0
+          },
+          "/raw/4join": {
+            "requests_per_sec": 729.32,
+            "latency_mean_ms": 135.82,
+            "latency_max_ms": 261.89,
+            "errors": 0
+          }
+        }
+      }
+    }
+  }
+}

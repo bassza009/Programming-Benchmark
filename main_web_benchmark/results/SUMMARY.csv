@@ -1,4 +1,24 @@
 Suite,Environment,Tier,Threads,Connections,Duration,Endpoint,Rank,Language,Requests_Per_Sec,Avg_Latency_ms,Max_Latency_ms,Errors
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/1table,1,PHP,14488.03,7.45,50.02,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/1table,2,Java,12381.97,7.90,67.22,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/1table,3,Go,11913.15,9.34,75.88,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/1table,4,Node.js,11118.16,9.05,97.12,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/1table,5,Python,1604.97,61.97,137.80,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/2join,1,Go,5195.44,19.55,101.53,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/2join,2,PHP,5053.91,22.32,161.31,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/2join,3,Node.js,4904.49,20.69,129.80,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/2join,4,Java,4832.28,21.03,124.76,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/2join,5,Python,1899.09,52.38,112.00,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/3join,1,PHP,284.12,389.35,1975.74,5
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/3join,2,Go,279.66,349.70,657.78,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/3join,3,Python,278.58,350.41,730.81,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/3join,4,Node.js,276.12,354.08,628.58,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/3join,5,Java,274.36,356.29,661.92,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/4join,1,PHP,890.21,126.08,1155.99,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/4join,2,Java,729.32,135.82,261.89,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/4join,3,Go,717.53,137.88,296.44,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/4join,4,Node.js,713.65,138.75,280.40,0
+get_no_index,Bare Metal,Minimum (Light),2,100,10s,/raw/4join,5,Python,666.53,148.51,413.04,0
 get_no_index,Docker,Minimum (Light),2,100,10s,/raw/1table,1,PHP,16002.61,6.94,77.51,0
 get_no_index,Docker,Minimum (Light),2,100,10s,/raw/1table,2,Go,10988.10,10.67,92.46,0
 get_no_index,Docker,Minimum (Light),2,100,10s,/raw/1table,3,Java,9231.73,12.24,232.36,0
