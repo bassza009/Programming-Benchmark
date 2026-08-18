@@ -1,0 +1,9 @@
+{
+  "name": "benchmark-node-get-with-index",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "fastify": "^4.21.0",
+    "mysql2": "^3.6.0"
+  }
+}

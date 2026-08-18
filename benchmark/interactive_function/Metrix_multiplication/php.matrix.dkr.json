@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "command": "docker exec phpbench taskset -c 1 php -d opcache.jit=1255  -d opcache.enable_cli=1 -d opcache.jit_buffer_size=100M Metrixtestarray.php",
+      "mean": 64.25241702416,
+      "stddev": null,
+      "median": 64.25241702416,
+      "user": 0.0310132,
+      "system": 0.05755242,
+      "min": 64.25241702416,
+      "max": 64.25241702416,
+      "times": [
+        64.25241702416
+      ],
+      "exit_codes": [
+        0
+      ]
+    }
+  ]
+}

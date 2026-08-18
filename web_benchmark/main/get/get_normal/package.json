@@ -1,0 +1,17 @@
+{
+  "name": "get_normal",
+  "version": "1.0.0",
+  "description": "High-performance web servers in Go, Node.js, Python, Java, and PHP Swoole, all with MySQL integration for database I/O benchmarking.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^5.8.5",
+    "mysql2": "^3.22.3"
+  }
+}

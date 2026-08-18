@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "command": "taskset -c 0 php -d opcache.jit=1255  -d opcache.enable_cli=1 -d opcache.jit_buffer_size=100M Metrixtestarray.php",
+      "mean": 54.80060793406,
+      "stddev": null,
+      "median": 54.80060793406,
+      "user": 54.57456814,
+      "system": 0.21804837999999999,
+      "min": 54.80060793406,
+      "max": 54.80060793406,
+      "times": [
+        54.80060793406
+      ],
+      "exit_codes": [
+        0
+      ]
+    }
+  ]
+}

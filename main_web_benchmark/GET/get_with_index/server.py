@@ -17,28 +17,34 @@ DB_USER = os.getenv("DB_USER", "admin")
 DB_PASS = os.getenv("DB_PASS", "secret")
 DB_NAME = os.getenv("DB_NAME", "benchmark_db")
 
-async def init_db():
+async def init_db(retries=15):
     global pool
-    pool = await aiomysql.create_pool(
-        host=DB_HOST,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASS,
-        db=DB_NAME,
-        minsize=10,
-        maxsize=100,
-        autocommit=True
-    )
+    for i in range(retries):
+        try:
+            pool = await aiomysql.create_pool(
+                host=DB_HOST,
+                port=DB_PORT,
+                user=DB_USER,
+                password=DB_PASS,
+                db=DB_NAME,
+                minsize=5,
+                maxsize=50,
+                autocommit=True
+            )
+            break
+        except Exception as e:
+            if i == retries - 1:
+                raise e
+            await asyncio.sleep(1)
 
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
-            # WITH INDEXES for fast joins
+            # INDEXES on user_id / foreign keys
             await cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(100),
-                    email VARCHAR(100),
-                    INDEX idx_users_email (email)
+                    email VARCHAR(100)
                 )
             """)
 
@@ -78,20 +84,16 @@ async def init_db():
             if count[0] == 0:
                 await insert_mock_data(conn, cursor)
 
-            await conn.commit()
-
 async def insert_mock_data(conn, cursor):
-    for i in range(1, 10001):
-        await cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (f"User{i}", f"user{i}@example.com"))
-        await cursor.execute("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (%s, %s, %s, %s, %s)",
-                             (i, 20 + (i % 50), f"Address {i}", f"Bio {i}", f"555-{i}"))
-        await cursor.execute("INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)", (i, 100.0 + i))
+    user_vals = [(f"User{i}", f"user{i}@example.com") for i in range(1, 10001)]
+    prof_vals = [(i, 20 + (i % 50), f"Address {i}", f"Bio {i}", f"555-{i}") for i in range(1, 10001)]
+    ord_vals = [(i, 100.0 + i) for i in range(1, 10001)]
+    item_vals = [(i, f"Product{j}", 10.0 + j) for i in range(1, 10001) if i % 10 == 0 for j in range(5)]
 
-        if i % 10 == 0:
-            for j in range(5):
-                await cursor.execute("INSERT INTO order_items (order_id, product_name, price) VALUES (%s, %s, %s)",
-                                     (i, f"Product{j}", 10.0 + j))
-
+    await cursor.executemany("INSERT INTO users (name, email) VALUES (%s, %s)", user_vals)
+    await cursor.executemany("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (%s, %s, %s, %s, %s)", prof_vals)
+    await cursor.executemany("INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)", ord_vals)
+    await cursor.executemany("INSERT INTO order_items (order_id, product_name, price) VALUES (%s, %s, %s)", item_vals)
     await conn.commit()
 
 @app.get("/")
@@ -138,5 +140,5 @@ async def shutdown():
 
 if __name__ == "__main__":
     import multiprocessing
-    workers = multiprocessing.cpu_count() * 2
+    workers = min(multiprocessing.cpu_count(), 8)
     uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers)

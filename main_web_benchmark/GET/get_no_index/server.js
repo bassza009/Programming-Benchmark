@@ -1,5 +1,7 @@
 const fastify = require('fastify');
 const mysql = require('mysql2/promise');
+const cluster = require('cluster');
+const os = require('os');
 
 const app = fastify({ logger: false });
 let pool;
@@ -11,20 +13,16 @@ const DB_PASS = process.env.DB_PASS || 'secret';
 const DB_NAME = process.env.DB_NAME || 'benchmark_db';
 
 async function initDB() {
-  pool = await mysql.createPool({
+  const conn = await mysql.createConnection({
     host: DB_HOST,
     port: DB_PORT,
     user: DB_USER,
     password: DB_PASS,
-    database: DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 100,
-    queueLimit: 0
+    database: DB_NAME
   });
 
-  const connection = await pool.getConnection();
   try {
-    await connection.execute(`
+    await conn.execute(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100),
@@ -32,7 +30,7 @@ async function initDB() {
       )
     `);
 
-    await connection.execute(`
+    await conn.execute(`
       CREATE TABLE IF NOT EXISTS profiles (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -43,7 +41,7 @@ async function initDB() {
       )
     `);
 
-    await connection.execute(`
+    await conn.execute(`
       CREATE TABLE IF NOT EXISTS orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT,
@@ -51,7 +49,7 @@ async function initDB() {
       )
     `);
 
-    await connection.execute(`
+    await conn.execute(`
       CREATE TABLE IF NOT EXISTS order_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
         order_id INT,
@@ -60,25 +58,38 @@ async function initDB() {
       )
     `);
 
-    const [rows] = await connection.execute('SELECT COUNT(*) as count FROM users');
+    const [rows] = await conn.execute('SELECT COUNT(*) as count FROM users');
     if (rows[0].count === 0) {
-      await insertMockData(connection);
+      await insertMockData(conn);
     }
   } finally {
-    connection.release();
+    await conn.end();
   }
 }
 
-async function insertMockData(connection) {
-  for (let i = 1; i <= 10000; i++) {
-    await connection.execute('INSERT INTO users (name, email) VALUES (?, ?)', [`User${i}`, `user${i}@example.com`]);
-    await connection.execute('INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)', [i, 20 + (i % 50), `Address ${i}`, `Bio ${i}`, `555-${i}`]);
-    await connection.execute('INSERT INTO orders (user_id, total_amount) VALUES (?, ?)', [i, 100.0 + i]);
-
-    if (i % 10 === 0) {
-      for (let j = 0; j < 5; j++) {
-        await connection.execute('INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)', [i, `Product${j}`, 10.0 + j]);
+async function insertMockData(conn) {
+  const BATCH_SIZE = 1000;
+  for (let start = 1; start <= 10000; start += BATCH_SIZE) {
+    const end = start + BATCH_SIZE - 1;
+    const users = [];
+    const profiles = [];
+    const orders = [];
+    const items = [];
+    for (let i = start; i <= end; i++) {
+      users.push([`User${i}`, `user${i}@example.com`]);
+      profiles.push([i, 20 + (i % 50), `Address ${i}`, `Bio ${i}`, `555-${i}`]);
+      orders.push([i, 100.0 + i]);
+      if (i % 10 === 0) {
+        for (let j = 0; j < 5; j++) {
+          items.push([i, `Product${j}`, 10.0 + j]);
+        }
       }
+    }
+    await conn.query('INSERT INTO users (name, email) VALUES ?', [users]);
+    await conn.query('INSERT INTO profiles (user_id, age, address, bio, phone) VALUES ?', [profiles]);
+    await conn.query('INSERT INTO orders (user_id, total_amount) VALUES ?', [orders]);
+    if (items.length > 0) {
+      await conn.query('INSERT INTO order_items (order_id, product_name, price) VALUES ?', [items]);
     }
   }
 }
@@ -127,22 +138,35 @@ app.get('/raw/4join', async (request, reply) => {
   }
 });
 
-const cluster = require('cluster');
-const os = require('os');
-
-if (cluster.isMaster) {
-  const numCPUs = os.cpus().length;
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-  cluster.on('exit', () => {
-    cluster.fork();
-  });
-} else {
+if (cluster.isPrimary || cluster.isMaster) {
   initDB().then(() => {
-    app.listen({ port: 8002, host: '0.0.0.0' });
+    const numCPUs = Math.min(os.cpus().length, 8);
+    for (let i = 0; i < numCPUs; i++) {
+      cluster.fork();
+    }
+    cluster.on('exit', () => {
+      cluster.fork();
+    });
   }).catch(err => {
     console.error('Failed to initialize database:', err);
     process.exit(1);
+  });
+} else {
+  pool = mysql.createPool({
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    password: DB_PASS,
+    database: DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 50,
+    queueLimit: 0
+  });
+
+  app.listen({ port: 8002, host: '0.0.0.0' }, (err) => {
+    if (err) {
+      console.error('Failed to start server:', err);
+      process.exit(1);
+    }
   });
 }

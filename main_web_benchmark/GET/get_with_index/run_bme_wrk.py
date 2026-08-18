@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import time
+import urllib.request
 
 try:
     import resource
@@ -35,6 +36,19 @@ TIERS = {
     "max": {"name": "Maximum (Stress)", "threads": 20, "connections": 10000, "duration": "30s"}
 }
 
+def wait_for_server(port, max_wait=30):
+    start = time.time()
+    url = f"http://127.0.0.1:{port}/"
+    while time.time() - start < max_wait:
+        try:
+            req = urllib.request.Request(url)
+            with urllib.request.urlopen(req, timeout=2) as resp:
+                if resp.status == 200:
+                    return True
+        except Exception:
+            time.sleep(0.5)
+    return False
+
 def warmup(port, endpoint):
     url = f"http://127.0.0.1:{port}{endpoint}"
     cmd = ["wrk", "-t2", "-c20", "-d3s", "-s", "wrk_json_reporter.lua", url]
@@ -55,8 +69,14 @@ def run_wrk(port, endpoint, tier_cfg):
     ]
 
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        data = json.loads(res.stdout.strip())
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        stdout = res.stdout.strip()
+        json_start = stdout.find("{")
+        json_end = stdout.rfind("}") + 1
+        if json_start != -1 and json_end > json_start:
+            data = json.loads(stdout[json_start:json_end])
+            return data
+        data = json.loads(stdout)
         return data
     except Exception as e:
         print(f"  [!] Error running wrk for {url}: {e}")
@@ -88,7 +108,10 @@ def main():
         time.sleep(1)
 
         proc = subprocess.Popen(lang["cmd"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(6)
+        
+        print(f"     Waiting for {lang['name']} server to be ready on port {lang['port']}...")
+        if not wait_for_server(lang['port'], max_wait=30):
+            print(f"  [!] Timeout waiting for {lang['name']} server on port {lang['port']}")
 
         lang_results = {
             "Environment": "BME",
