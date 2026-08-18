@@ -209,6 +209,14 @@ Programming-Benchmark/
 ├── README.md                          # เอกสารคู่มือโครงการภาษาอังกฤษ (English)
 ├── README_TH.md                       # เอกสารคู่มือโครงการภาษาไทย (Thai)
 ├── main_web_benchmark/                # ชุดทดสอบเว็บเฟรมเวิร์กหลัก
+│   ├── frameworks/                    # เซิร์ฟเวอร์แยกตามภาษาและเฟรมเวิร์ก
+│   │   ├── go/                        # โค้ดภาษา Go (fiber, gin)
+│   │   ├── java/                      # โค้ดภาษา Java (springboot)
+│   │   ├── nodejs/                    # โค้ดภาษา Node.js (fastify, express)
+│   │   ├── php/                       # โค้ดภาษา PHP (swoole)
+│   │   ├── python/                    # โค้ดภาษา Python (fastapi, flask)
+│   │   ├── rust/                      # โค้ดต้นแบบภาษา Rust (actix)
+│   │   └── csharp/                    # โค้ดต้นแบบภาษา C# (aspnetcore)
 │   ├── GET/
 │   │   ├── get_no_index/              # การทดสอบ GET แบบไม่มี Secondary Index
 │   │   │   ├── run_bme_wrk.py

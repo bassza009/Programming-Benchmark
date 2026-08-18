@@ -208,6 +208,14 @@ Programming-Benchmark/
 ├── README.md                          # English suite documentation & research overview
 ├── README_TH.md                       # Thai suite documentation & research overview
 ├── main_web_benchmark/                # Main web framework benchmark suite
+│   ├── frameworks/                    # Modular Language & Framework servers
+│   │   ├── go/                        # Go implementations (fiber, gin)
+│   │   ├── java/                      # Java implementations (springboot)
+│   │   ├── nodejs/                    # Node.js implementations (fastify, express)
+│   │   ├── php/                       # PHP implementations (swoole)
+│   │   ├── python/                    # Python implementations (fastapi, flask)
+│   │   ├── rust/                      # Rust templates (actix)
+│   │   └── csharp/                    # C# templates (aspnetcore)
 │   ├── GET/
 │   │   ├── get_no_index/              # Read suite without secondary indexes
 │   │   │   ├── run_bme_wrk.py
