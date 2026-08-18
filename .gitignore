@@ -10,6 +10,6 @@ target/
 *.log
 *.tmp
 ~$*
-*_new.docx
-*_v2.docx
+*.docx
+create_word_doc*.py
 myenv/

@@ -1,6 +1,6 @@
 # โครงการ Project Antigravity: รายงานการทดสอบเปรียบเทียบประสิทธิภาพ Web Framework หลายภาษาและหลายสภาพแวดล้อม
 
-> **เอกสารสรุปภาพรวม วัตถุประสงค์ สถาปัตยกรรมระบบ รูปแบบการทดสอบ และบทวิเคราะห์เชิงลึก (ฉบับภาษาไทย)**
+> 🌐 **Language / ภาษา**: [English](README.md) | **ภาษาไทย (Thai)**
 
 ---
 
@@ -156,9 +156,8 @@ python3 compare_results.py GET/get_no_index/dkr_benchmark_results.json
 
 ---
 
-## 7. ไฟล์เอกสารและรายงานในโครงการ
+## 7. ข้อมูลสรุปและเอกสารอ้างอิง
 
-* 📄 **[`Project_Benchmark_Overview_TH.docx`](file:///D:/github/Programming-Benchmark/Project_Benchmark_Overview_TH.docx)**: ไฟล์ Microsoft Word ภาษาไทย จัดรูปแบบสวยงาม พร้อมตารางและกล่องข้อความสรุป
-* 📄 **[`Project_Benchmark_Overview.docx`](file:///D:/github/Programming-Benchmark/Project_Benchmark_Overview.docx)**: ไฟล์ Microsoft Word ภาษาอังกฤษ
-* 📄 **[`SUMMARY.md`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.md)**: ตารางสรุปคะแนนและตัวเลขสถิติอย่างละเอียดทุกภาษาและทุกระดับโหลด
-* 📊 **[`SUMMARY.csv`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.csv)**: ข้อมูลผลลัพธ์ในรูปแบบตาราง CSV สำหรับนำไปวิเคราะห์ต่อ
+* 📊 **[`main_web_benchmark/results/SUMMARY.md`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.md)**: ตารางสรุปคะแนนและตัวเลขสถิติอย่างละเอียดทุกภาษาและทุกระดับโหลด
+* 📊 **[`main_web_benchmark/results/SUMMARY.csv`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.csv)**: ข้อมูลผลลัพธ์ในรูปแบบตาราง CSV สำหรับนำไปวิเคราะห์ต่อ
+* 📜 **[`main_web_benchmark/issue.md`](file:///D:/github/Programming-Benchmark/main_web_benchmark/issue.md)**: รายงานการตรวจสอบทางเทคนิคและแนวทางการแก้ปัญหาคอขวด
