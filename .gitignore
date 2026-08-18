@@ -5,3 +5,8 @@ __pycache__/
 *.class
 .DS_Store
 .agents/
+target/
+*.jar.original
+*.log
+*.tmp
+myenv/

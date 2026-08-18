@@ -1,10 +1,10 @@
 # Fibonacci Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 Fibonacci is a recursive algorithm benchmark that demonstrates exponential time complexity (O(2^n)) and the dramatic importance of optimization through memoization, dynamic programming, and algorithmic improvements.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Sequence
 
@@ -41,7 +41,7 @@ F(n) = F(n-1) + F(n-2)     otherwise
 - Stock market patterns
 - Evolutionary trees
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -73,7 +73,7 @@ F(n) = F(n-1) + F(n-2)     otherwise
 - **Memoization**: Practical caching techniques
 - **Algorithm Selection**: When to use which approach
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 fibonacci/
@@ -91,7 +91,7 @@ fibonacci/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -135,7 +135,7 @@ docker build -f Dockerfile.python -t fib-py .
 docker run fib-py
 ```
 
-## ⚠️ Warning: VERY SLOW!
+##  Warning: VERY SLOW!
 
 **DO NOT run naive fibonacci for n > 40!**
 
@@ -145,7 +145,7 @@ Typical times for naive recursive algorithm:
 - fib(45): Hours
 - fib(50): Days or more!
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Execution Times (Naive Recursion)
 
@@ -186,7 +186,7 @@ Number of function calls: 29,860,703
 Calls per second: 123.4M calls/sec
 ```
 
-## 🔍 Algorithm Variants
+##  Algorithm Variants
 
 ### 1. Naive Recursion (SLOW!)
 
@@ -298,7 +298,7 @@ def fibonacci_matrix(n):
 
 **Performance**: fib(1,000,000) possible (but needs big integers)!
 
-## 💡 Comparison of Approaches
+##  Comparison of Approaches
 
 ### Performance Comparison
 
@@ -320,15 +320,15 @@ DP (iterative)    10,000x - 100,000x
 Matrix method     100,000x+ (for very large n)
 ```
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different n Values
 
 ```
 - fib(20): Very fast (< 1ms)
 - fib(30): Fast (10-100ms naive)
-- fib(35): Medium (seconds naive) ⚠️ Default
-- fib(40): Slow (minutes naive) ⚠️ Don't try naive!
+- fib(35): Medium (seconds naive)  Default
+- fib(40): Slow (minutes naive)  Don't try naive!
 - fib(100): Very large number (use DP)
 ```
 
@@ -357,7 +357,7 @@ for _ in range(10):
     fibonacci(35)
 ```
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Recursion Call Count
 
@@ -393,7 +393,7 @@ f(40) = 401,537,335 calls
 - Binary exponentiation
 - Fastest for very large n
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -422,7 +422,7 @@ This benchmark teaches:
    - Algorithm choice > language choice
    - Proper implementation essential
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Naive Recursion Too Slow
 
@@ -445,14 +445,14 @@ This benchmark teaches:
 - Integer overflow for large n
 - Different n values
 
-## 📚 References
+##  References
 
 - **Fibonacci**: https://en.wikipedia.org/wiki/Fibonacci_number
 - **Time Complexity**: https://en.wikipedia.org/wiki/Time_complexity
 - **Memoization**: https://en.wikipedia.org/wiki/Memoization
 - **Dynamic Programming**: https://en.wikipedia.org/wiki/Dynamic_programming
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run fib(35) with naive approach - observe slowness
 2. Compare with memoized version - huge speedup!
@@ -468,4 +468,4 @@ This benchmark teaches:
 **Difficulty Level**: Medium
 **Time to Complete**: 10-30 minutes per language
 **Prerequisite Knowledge**: Recursion, algorithm complexity, optimization
-**⚠️ WARNING**: Naive fibonacci(40+) takes extremely long!
+** WARNING**: Naive fibonacci(40+) takes extremely long!

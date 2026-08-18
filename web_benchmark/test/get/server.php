@@ -7,7 +7,7 @@ use Swoole\HTTP\Server;
 $port = (int)($_ENV['PORT'] ?? 8003);
 $server = new Server("0.0.0.0", $port);
 
-// 🚀 ระบบหา CPU Core แบบถึกทน 100% (ใช้คำสั่ง nproc ของ Linux แทน)
+//  ระบบหา CPU Core แบบถึกทน 100% (ใช้คำสั่ง nproc ของ Linux แทน)
 $cpu_cores = (int)shell_exec('nproc');
 if ($cpu_cores < 1) {
     $cpu_cores = 4; // ถ้าหาไม่เจอ ให้ตั้งค่าพื้นฐานไว้ที่ 4 คอร์

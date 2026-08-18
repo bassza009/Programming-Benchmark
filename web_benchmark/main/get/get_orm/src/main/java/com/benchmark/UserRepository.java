@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     
-    // 💡 ใช้ DTO ในการรับข้อมูลเพื่อความเร็วสูงสุดและกัน JSON วนลูป
+    //  ใช้ DTO ในการรับข้อมูลเพื่อความเร็วสูงสุดและกัน JSON วนลูป
     @Query(value = "SELECT id, name, email FROM users LIMIT 100", nativeQuery = true)
     List<Map<String, Object>> get1Table();
 

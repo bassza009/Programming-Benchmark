@@ -22,7 +22,7 @@ def format_table(results_file):
         for tier in tiers:
             tier_name = first_lang["tiers"][tier]["config"]["name"]
             tier_cfg = first_lang["tiers"][tier]["config"]
-            print(f"## 🎯 Tier: {tier_name} (-t{tier_cfg['threads']} -c{tier_cfg['connections']} -d{tier_cfg['duration']})\n")
+            print(f"## Tier: {tier_name} (-t{tier_cfg['threads']} -c{tier_cfg['connections']} -d{tier_cfg['duration']})\n")
 
             endpoints = list(first_lang["tiers"][tier]["endpoints"].keys())
             for ep in endpoints:
@@ -43,8 +43,7 @@ def format_table(results_file):
                 rows.sort(key=lambda x: x[1], reverse=True)
 
                 for rank, (lang, rps, lat_avg, lat_max, errs) in enumerate(rows, start=1):
-                    medal = "🥇 " if rank == 1 else ("🥈 " if rank == 2 else ("🥉 " if rank == 3 else f"{rank}. "))
-                    print(f"| {medal} | **{lang}** | {rps:,.2f} | {lat_avg:.2f}ms | {lat_max:.2f}ms | {errs} |")
+                    print(f"| #{rank} | **{lang}** | {rps:,.2f} | {lat_avg:.2f}ms | {lat_max:.2f}ms | {errs} |")
                 print()
     else:
         endpoints = list(first_lang["endpoints"].keys())
@@ -65,8 +64,7 @@ def format_table(results_file):
             rows.sort(key=lambda x: x[1], reverse=True)
 
             for rank, (lang, rps, lat_avg, lat_max, errs) in enumerate(rows, start=1):
-                medal = "🥇 " if rank == 1 else ("🥈 " if rank == 2 else ("🥉 " if rank == 3 else f"{rank}. "))
-                print(f"| {medal} | **{lang}** | {rps:,.2f} | {lat_avg:.2f}ms | {lat_max:.2f}ms | {errs} |")
+                print(f"| #{rank} | **{lang}** | {rps:,.2f} | {lat_avg:.2f}ms | {lat_max:.2f}ms | {errs} |")
             print()
 
 if __name__ == "__main__":

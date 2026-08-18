@@ -73,11 +73,11 @@ CREATE TABLE order_items (
 
 | Language | Framework | Port | Status |
 |----------|-----------|------|--------|
-| Python | FastAPI | 8001 | ✓ Working |
-| Node.js | Fastify | 8002 | ✓ Working |
+| Python | FastAPI | 8001 |  Working |
+| Node.js | Fastify | 8002 |  Working |
 | PHP | Swoole | 8003 | Created* |
-| Go | Fiber | 8004 | ✓ Working |
-| Java | Spring Boot WebFlux | 8005 | ✓ Working |
+| Go | Fiber | 8004 |  Working |
+| Java | Spring Boot WebFlux | 8005 |  Working |
 
 *PHP requires Swoole extension installation
 

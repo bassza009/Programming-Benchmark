@@ -1,10 +1,10 @@
 # Door Problem Benchmark
 
-## 🚪 Task Overview
+##  Task Overview
 
 The Door Problem is a classic algorithmic puzzle that tests performance on complex state management and iterative logic across different programming languages.
 
-## 📖 Problem Description
+##  Problem Description
 
 ### The Scenario
 
@@ -28,7 +28,7 @@ A door at position `n` gets toggled by every divisor of `n`. So:
 
 **Result**: Only doors at perfect square positions remain **open** (1, 4, 9, 16, 25, ...)
 
-## 🎯 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### Performance Aspects Tested
 
@@ -59,7 +59,7 @@ A door at position `n` gets toggled by every divisor of `n`. So:
 - **Event Processing**: Processing cascading events
 - **Permission Systems**: Toggle permissions for multiple users/resources
 
-## 📊 Implementation Variants
+##  Implementation Variants
 
 ### Version 1: Standard Door Array
 
@@ -92,7 +92,7 @@ for i = 1 to sqrt(1000000):
 **Time Complexity**: O(√n) - Much faster!
 **Trade-off**: Requires mathematical insight
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 door/
@@ -116,7 +116,7 @@ door/
 └── myenv/                  # Virtual environment (Python)
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -183,7 +183,7 @@ docker run door-php
 docker run door-java
 ```
 
-## 📈 Expected Results & Performance
+##  Expected Results & Performance
 
 ### Typical Execution Times (1,000,000 doors)
 
@@ -213,7 +213,7 @@ Execution time: 2.345 seconds
 Memory used: 1.2 MB
 ```
 
-## 🔍 Key Observations
+##  Key Observations
 
 ### Performance Factors
 
@@ -238,7 +238,7 @@ Memory used: 1.2 MB
    - Bitfield: Reduces memory 8x
    - Vectorization: SIMD instructions (if used)
 
-## 💡 Optimization Tips
+##  Optimization Tips
 
 ### For Python
 ```python
@@ -286,7 +286,7 @@ $doors = new SplFixedArray(1000001);
 // SplFixedArray is ~2x faster than arrays
 ```
 
-## 🧪 Variations to Try
+##  Variations to Try
 
 ### 1. Different Door Counts
 Test with different sizes:
@@ -320,7 +320,7 @@ time -v python3 door.py
 python3 -m memory_profiler door.py
 ```
 
-## 📊 Analysis Metrics
+##  Analysis Metrics
 
 ### Metrics to Track
 
@@ -356,7 +356,7 @@ time -v python3 door.py
 python3 -m cProfile door.py
 ```
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -380,7 +380,7 @@ This benchmark teaches:
    - Bottleneck identification
    - Optimization validation
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Out of Memory
 
@@ -411,14 +411,14 @@ doors = bitarray(1000001)
 - Check data types
 - Add debug output
 
-## 📚 References
+##  References
 
 - **Algorithm Analysis**: https://en.wikipedia.org/wiki/Analysis_of_algorithms
 - **Big O Notation**: https://en.wikipedia.org/wiki/Big_O_notation
 - **Perfect Squares**: https://en.wikipedia.org/wiki/Square_number
 - **Number Divisors**: https://en.wikipedia.org/wiki/Divisor
 
-## 📝 Implementation Checklist
+##  Implementation Checklist
 
 - [ ] Read and understand the problem
 - [ ] Choose language (or implement in all)
@@ -433,7 +433,7 @@ doors = bitarray(1000001)
 - [ ] Compare across languages
 - [ ] Document findings
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. **Run the benchmark** and observe times
 2. **Compare across languages** using provided implementations

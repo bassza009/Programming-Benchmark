@@ -37,7 +37,7 @@ if ! command -v docker-compose &> /dev/null; then
     exit 1
 fi
 
-echo "✓ All dependencies available"
+echo " All dependencies available"
 echo ""
 
 # Get duration and threads from arguments

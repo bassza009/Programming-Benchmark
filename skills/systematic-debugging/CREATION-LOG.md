@@ -89,13 +89,13 @@ Created 4 validation tests following skills/meta/testing-skills-with-subagents:
 ## Final Outcome
 
 Bulletproof skill that:
-- ✅ Clearly mandates root cause investigation
-- ✅ Resists time pressure rationalization
-- ✅ Provides concrete steps for each phase
-- ✅ Shows anti-patterns explicitly
-- ✅ Tested under multiple pressure scenarios
-- ✅ Clarifies relationship to TDD
-- ✅ Ready for use
+-  Clearly mandates root cause investigation
+-  Resists time pressure rationalization
+-  Provides concrete steps for each phase
+-  Shows anti-patterns explicitly
+-  Tested under multiple pressure scenarios
+-  Clarifies relationship to TDD
+-  Ready for use
 
 ## Key Insight
 

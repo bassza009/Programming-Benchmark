@@ -1,6 +1,6 @@
 <body>
 <div class="container">
-    <h1>🛠️ Environment Setup & System Architecture</h1>
+    <h1> Environment Setup & System Architecture</h1>
     <p>ส่วนนี้คือการเตรียมสภาพแวดล้อมสำหรับการทดลอง เพื่อให้มั่นใจว่าผลการวัดประสิทธิภาพ (Benchmarking) มีความแม่นยำและสามารถทำซ้ำได้ (Reproducible) </p>
     <h2>1. Hardware Specifications</h2>
     <p>เพื่อให้การทดลองอยู่ในสภาวะควบคุม (Controlled Conditions) เครื่องที่ใช้ทดสอบมีรายละเอียดดังนี้:</p>

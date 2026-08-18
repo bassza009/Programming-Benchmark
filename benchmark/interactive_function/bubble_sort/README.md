@@ -1,10 +1,10 @@
 # Bubble Sort Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 Bubble Sort is a fundamental sorting algorithm used to benchmark basic algorithmic performance, loop efficiency, and comparison operations across different programming languages.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Algorithm
 
@@ -44,7 +44,7 @@ end procedure
 
 **Space Complexity**: O(1) - Sorts in place, minimal extra memory
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -76,7 +76,7 @@ end procedure
 - **Cache Analysis**: Shows memory access patterns
 - **Education**: Teaching algorithm analysis and Big O notation
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 bubble_sort/
@@ -94,7 +94,7 @@ bubble_sort/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -141,7 +141,7 @@ docker build -f Dockerfile.python -t bubble-py .
 docker run bubble-py
 ```
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Sorting Times
 
@@ -175,7 +175,7 @@ Time: 0.0234 seconds
 Sorted successfully: [1, 2, 3, 4, 5, ...]
 ```
 
-## 🔍 Algorithm Analysis
+##  Algorithm Analysis
 
 ### Passes Through Array
 
@@ -195,7 +195,7 @@ For an array of size n:
 - **In-place sorting**: Yes
 - **Stable sort**: Yes (equal elements maintain order)
 
-## 💡 Optimization Techniques
+##  Optimization Techniques
 
 ### 1. Early Termination
 
@@ -250,7 +250,7 @@ arr.sort((a, b) => a - b);
 sort.Ints(arr)
 ```
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different Array Sizes
 
@@ -279,7 +279,7 @@ sort.Ints(arr)
 - Small range duplicates
 ```
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Metrics to Measure
 
@@ -315,7 +315,7 @@ python3 -m memory_profiler bubble.py
 python3 -m cProfile bubble.py
 ```
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -339,7 +339,7 @@ This benchmark teaches:
    - Profiling techniques
    - Statistical analysis
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Array Not Sorted Correctly
 
@@ -364,14 +364,14 @@ This benchmark teaches:
 - Random seed (for reproducibility)
 - Stability of sort
 
-## 📚 References
+##  References
 
 - **Bubble Sort**: https://en.wikipedia.org/wiki/Bubble_sort
 - **Sorting Algorithms**: https://en.wikipedia.org/wiki/Sorting_algorithm
 - **Comparison Sort**: https://en.wikipedia.org/wiki/Comparison_sort
 - **Big O Notation**: https://en.wikipedia.org/wiki/Big_O_notation
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run the benchmark with default size
 2. Measure execution time

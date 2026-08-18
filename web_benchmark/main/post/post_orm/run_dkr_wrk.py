@@ -19,7 +19,7 @@ CONTAINER_NAME = "bench_current"
 
 def run_wrk(port: int, endpoint: str) -> dict:
     url = f"http://127.0.0.1:{port}{endpoint}"
-    print(f"🚀 Running wrk for {url}")
+    print(f" Running wrk for {url}")
     cmd = [
         "wrk",
         "-t4",
@@ -46,16 +46,16 @@ def run_wrk(port: int, endpoint: str) -> dict:
 
             return json.loads(json_str)
         else:
-            print(f"⚠️  [Error] wrk failed to connect")
+            print(f"  [Error] wrk failed to connect")
             print(f"Details from wrk: {output.strip()} {result.stderr.strip()}")
             return None
     except Exception as e:
-        print(f"⚠️  [Error] Failed to run wrk: {e}")
+        print(f"  [Error] Failed to run wrk: {e}")
         return None
 
 
 def start_container(image: str, port: int) -> None:
-    print(f"🐳 Starting Docker container from image {image} on port {port}")
+    print(f" Starting Docker container from image {image} on port {port}")
     subprocess.run(
         ["docker", "run", "-d", "--network","host", "--name", CONTAINER_NAME, image],
         capture_output=True,
@@ -64,7 +64,7 @@ def start_container(image: str, port: int) -> None:
 
 
 def stop_container() -> None:
-    print(f"🛑 Stopping container {CONTAINER_NAME}")
+    print(f" Stopping container {CONTAINER_NAME}")
     subprocess.run(
         ["docker", "rm", "-f", CONTAINER_NAME],
         capture_output=True,
@@ -73,7 +73,7 @@ def stop_container() -> None:
 
 
 def main() -> None:
-    print("📊 Starting Docker benchmark run...")
+    print(" Starting Docker benchmark run...")
     aggregated = {}
 
     # Clean up any leftover containers
@@ -90,30 +90,30 @@ def main() -> None:
         try:
             start_container(image, port)
             container_started = True
-            print("⏳ Waiting 5 seconds for container initialization...")
+            print(" Waiting 5 seconds for container initialization...")
             time.sleep(5)
 
             for endpoint in ENDPOINTS:
                 metrics = run_wrk(port, endpoint)
                 if metrics:
                     language_data["endpoints"][endpoint] = metrics
-                    print(f"✅ Collected data for {language} {endpoint}")
+                    print(f" Collected data for {language} {endpoint}")
                 else:
-                    print(f"❌ Skipped {endpoint} due to error")
+                    print(f" Skipped {endpoint} due to error")
 
         except Exception as exc:
-            print(f"⚠️  Error while benchmarking {language}: {exc}")
+            print(f"  Error while benchmarking {language}: {exc}")
         finally:
             if container_started:
                 stop_container()
 
         aggregated[language] = language_data
 
-    print(f"\n💾 Writing aggregated results to {OUTPUT_FILE}")
+    print(f"\n Writing aggregated results to {OUTPUT_FILE}")
     with open(OUTPUT_FILE, "w", encoding="utf-8") as output_file:
         json.dump(aggregated, output_file, indent=2)
 
-    print("🎉 Docker benchmark run complete!")
+    print(" Docker benchmark run complete!")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 
 Complete benchmarking suite for testing algorithm performance across multiple programming languages.
 
-## 📊 Benchmark Overview
+##  Benchmark Overview
 
 This folder contains two categories of algorithm benchmarks:
 
@@ -10,15 +10,15 @@ This folder contains two categories of algorithm benchmarks:
 2. **Recursive Functions** - Function recursion performance testing
 
 Each benchmark is implemented in **5 programming languages**:
-- 🐍 **Python** - Interpreted, dynamic typing
-- 🔵 **Node.js** - Event-driven, JavaScript engine
-- 🟩 **Go** - Compiled, concurrent
-- 🔴 **PHP** - Scripted, web-focused
-- ☕ **Java** - Virtual machine, JIT compilation
+-  **Python** - Interpreted, dynamic typing
+-  **Node.js** - Event-driven, JavaScript engine
+-  **Go** - Compiled, concurrent
+-  **PHP** - Scripted, web-focused
+-  **Java** - Virtual machine, JIT compilation
 
 ---
 
-## 📁 Folder Structure
+##  Folder Structure
 
 ```
 benchmark/
@@ -37,9 +37,9 @@ benchmark/
 
 ---
 
-## 🎯 Interactive Functions (5 Tasks)
+##  Interactive Functions (5 Tasks)
 
-### 1. 🔄 Bubble Sort
+### 1.  Bubble Sort
 **Location**: `interactive_function/bubble_sort/`
 
 **What it does**:
@@ -72,7 +72,7 @@ python3 bubble.py       # Run Python only
 
 ---
 
-### 2. 🚪 Door Problem
+### 2.  Door Problem
 **Location**: `interactive_function/door/`
 
 **What it does**:
@@ -108,7 +108,7 @@ node door.js        # Run Node.js only
 
 ---
 
-### 3. 📊 Matrix Multiplication
+### 3.  Matrix Multiplication
 **Location**: `interactive_function/Metrix_multiplication/`
 
 **What it does**:
@@ -142,7 +142,7 @@ python3 Metrix.py       # Run Python only
 
 ---
 
-### 4. 🔢 Prime Number Count
+### 4.  Prime Number Count
 **Location**: `interactive_function/primeNumCount/`
 
 **What it does**:
@@ -174,7 +174,7 @@ go run prime.go      # Run Go only
 
 ---
 
-### 5. 🔐 Prisoners Problem
+### 5.  Prisoners Problem
 **Location**: `interactive_function/prisoners/`
 
 **What it does**:
@@ -205,9 +205,9 @@ java prisoners          # Run Java
 
 ---
 
-## 🔁 Recursive Functions (2 Tasks)
+##  Recursive Functions (2 Tasks)
 
-### 6. 🔢 Factorial
+### 6.  Factorial
 **Location**: `Recursive_function/factorial/`
 
 **What it does**:
@@ -247,7 +247,7 @@ python3 factorial.py
 
 ---
 
-### 7. 🐚 Fibonacci
+### 7.  Fibonacci
 **Location**: `Recursive_function/fibonacci/`
 
 **What it does**:
@@ -295,7 +295,7 @@ node fibonacci.js   # Run Node.js only
 
 ---
 
-## 🚀 Running Benchmarks
+##  Running Benchmarks
 
 ### Run All Benchmarks
 
@@ -358,16 +358,16 @@ docker run door-go
 
 ---
 
-## 📊 Performance Comparison
+##  Performance Comparison
 
 ### Language Ranking (by speed)
 
 **For Compute-Heavy Tasks**:
-1. 🔥 **Go** - Compiled, optimized (1x baseline)
-2. 🚀 **Java** - JVM + JIT (1.5-3x Go)
-3. ⚡ **Node.js** - V8 engine (2-5x Go)
-4. 🐍 **Python** - Interpreted (5-15x Go)
-5. 🟡 **PHP** - Scripted (10-25x Go)
+1.  **Go** - Compiled, optimized (1x baseline)
+2.  **Java** - JVM + JIT (1.5-3x Go)
+3.  **Node.js** - V8 engine (2-5x Go)
+4.  **Python** - Interpreted (5-15x Go)
+5.  **PHP** - Scripted (10-25x Go)
 
 **Factors Affecting Performance**:
 - JIT warmup (Java faster after 2-3 runs)
@@ -387,7 +387,7 @@ docker run door-go
 
 ---
 
-## 📈 Analysis Tools
+##  Analysis Tools
 
 ### Measuring Performance
 
@@ -423,7 +423,7 @@ python3 -m cProfile door.py | head -20
 
 ---
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 ### What These Benchmarks Teach
 
@@ -455,7 +455,7 @@ python3 -m cProfile door.py | head -20
 
 ---
 
-## 🔧 Customization
+##  Customization
 
 ### Modify Benchmark Parameters
 
@@ -492,7 +492,7 @@ const doors = new Uint8Array(1000001);
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -526,7 +526,7 @@ docker-compose logs -f
 
 ---
 
-## 📚 References
+##  References
 
 ### Complexity Analysis
 - [Big O Notation](https://en.wikipedia.org/wiki/Big_O_notation)
@@ -545,7 +545,7 @@ docker-compose logs -f
 
 ---
 
-## 📋 Quick Reference
+##  Quick Reference
 
 ### Run Each Benchmark
 
@@ -571,7 +571,7 @@ docker-compose logs -f
 
 ---
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. **Run all benchmarks** and observe results
 2. **Compare performance** across languages
@@ -583,7 +583,7 @@ docker-compose logs -f
 
 ---
 
-## 📞 Support
+##  Support
 
 For detailed information on specific benchmarks:
 - See individual README.md files in each folder

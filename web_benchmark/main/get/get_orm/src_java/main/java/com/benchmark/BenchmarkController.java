@@ -20,7 +20,7 @@ public class BenchmarkController {
     }
 
 <<<<<<< HEAD
-    // 🚀 เปลี่ยนชื่อ URL และใช้ JdbcTemplate ดึง SQL ดิบ
+    //  เปลี่ยนชื่อ URL และใช้ JdbcTemplate ดึง SQL ดิบ
 =======
 >>>>>>> 28a6333c2758152a4057a328e69d689bf2638ac9
     @GetMapping("/orm/1table")

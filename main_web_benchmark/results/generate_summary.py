@@ -12,7 +12,7 @@ SUMMARY_CSV = os.path.join(SCRIPT_DIR, "SUMMARY.csv")
 
 def generate_markdown(json_files):
     output = []
-    output.append("# 📊 Web Framework Benchmark: Comprehensive Summary\n")
+    output.append("# Web Framework Benchmark: Comprehensive Summary\n")
     output.append("Multi-language performance evaluation across **Docker Containerized** and **Bare Metal (Host)** environments.\n")
 
     # Load all datasets into memory
@@ -23,7 +23,7 @@ def generate_markdown(json_files):
             loaded_data[fname] = json.load(f)
 
     # 1. Unified Side-by-Side Comparison Section (Dkr vs BME)
-    output.append("## ⚡ Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Tier)\n")
+    output.append("## Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Tier)\n")
     output.append("| Suite | Language | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | Overhead / Gain |")
     output.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
 
@@ -91,10 +91,10 @@ def generate_markdown(json_files):
     for fpath in json_files:
         fname = os.path.basename(fpath)
         is_bme = "_bme.json" in fname
-        env_label = "🖥️ Bare Metal (Host)" if is_bme else "🐳 Docker (Container)"
+        env_label = "Bare Metal (Host)" if is_bme else "Docker (Container)"
         suite_name = fname.replace("_dkr.json", "").replace("_bme.json", "").replace(".json", "")
 
-        output.append(f"## 📁 Suite: `{suite_name}` — {env_label}\n")
+        output.append(f"## Suite: `{suite_name}` — {env_label}\n")
         
         try:
             res = subprocess.run(["python3", COMPARE_SCRIPT, fpath], capture_output=True, text=True, check=True)

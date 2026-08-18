@@ -17,7 +17,7 @@ LUA_REPORTER = "wrk_json_reporter.lua"
 
 def run_wrk(port: int, endpoint: str) -> dict:
     url = f"http://127.0.0.1:{port}{endpoint}"
-    print(f"🚀 Running wrk for {url}")
+    print(f" Running wrk for {url}")
     cmd = [
         "wrk",
         "-t4",
@@ -42,15 +42,15 @@ def run_wrk(port: int, endpoint: str) -> dict:
             json_str = json_str.replace("-nan", "0.0").replace("nan", "0.0").replace("inf", "0.0")
             return json.loads(json_str)
         else:
-            print(f"⚠️  [Error] wrk did not return JSON (check if server on port {port} is running)")
+            print(f"  [Error] wrk did not return JSON (check if server on port {port} is running)")
             return None
     except Exception as e:
-        print(f"⚠️  [Error] Failed to run wrk: {e}")
+        print(f"  [Error] Failed to run wrk: {e}")
         return None
 
 
 def main() -> None:
-    print("📊 Starting Bare Metal Environment benchmark run...")
+    print(" Starting Bare Metal Environment benchmark run...")
     aggregated = {}
 
     for language, port in LANGUAGE_PORTS.items():
@@ -61,17 +61,17 @@ def main() -> None:
             metrics = run_wrk(port, endpoint)
             if metrics:
                 language_data["endpoints"][endpoint] = metrics
-                print(f"✅ Collected data for {language} {endpoint}")
+                print(f" Collected data for {language} {endpoint}")
             else:
-                print(f"❌ Skipped {language} {endpoint} due to error")
+                print(f" Skipped {language} {endpoint} due to error")
 
         aggregated[language] = language_data
 
-    print(f"\n💾 Writing aggregated results to {OUTPUT_FILE}")
+    print(f"\n Writing aggregated results to {OUTPUT_FILE}")
     with open(OUTPUT_FILE, "w", encoding="utf-8") as output_file:
         json.dump(aggregated, output_file, indent=2)
 
-    print("🎉 Benchmark run complete!")
+    print(" Benchmark run complete!")
 
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 # Prisoners Problem Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 The Prisoners Problem is a complex logic puzzle that benchmarks conditional logic performance, decision trees, and problem-solving algorithm efficiency across different programming languages.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Classic Puzzle
 
@@ -44,7 +44,7 @@ The problem tests:
 - **State tracking**: Managing cap colors and deductions
 - **Conditional logic**: Complex if-then decision trees
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -76,7 +76,7 @@ The problem tests:
 - **Logic Puzzles**: Algorithm design
 - **Information Theory**: Signal/encoding problems
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 prisoners/
@@ -95,7 +95,7 @@ prisoners/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -139,7 +139,7 @@ docker build -f Dockerfile.python -t prisoners-py .
 docker run prisoners-py
 ```
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Execution Times
 
@@ -174,7 +174,7 @@ Results:
 - With optimal strategy: ~99% correct
 ```
 
-## 🔍 Algorithm Variants
+##  Algorithm Variants
 
 ### 1. Simple Random Strategy
 
@@ -232,7 +232,7 @@ def simulate_multiple(num_prisoners, iterations=10000):
     return total_random / iterations, total_optimal / iterations
 ```
 
-## 💡 Optimization Techniques
+##  Optimization Techniques
 
 ### 1. Avoid Recalculation
 
@@ -279,7 +279,7 @@ def simulate_numpy(num_prisoners, iterations):
     return np.mean(results)
 ```
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different Numbers of Prisoners
 
@@ -317,7 +317,7 @@ def simulate_numpy(num_prisoners, iterations):
 - 100,000 runs
 ```
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Computation Breakdown
 
@@ -343,7 +343,7 @@ For 100 prisoners, 10,000 simulations:
 - **Analysis**: O(iterations)
 - **Total**: O(n × iterations)
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -367,7 +367,7 @@ This benchmark teaches:
    - Mathematical reasoning
    - Code implementation
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Wrong Success Rate
 
@@ -391,14 +391,14 @@ This benchmark teaches:
 - Strategy implementation differences
 - Floating-point precision
 
-## 📚 References
+##  References
 
 - **Prisoners Problem**: https://en.wikipedia.org/wiki/Hat_problem
 - **Parity**: https://en.wikipedia.org/wiki/Parity_(mathematics)
 - **Strategy Games**: https://en.wikipedia.org/wiki/Game_theory
 - **Coding Theory**: https://en.wikipedia.org/wiki/Coding_theory
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run the benchmark
 2. Understand the optimal strategy

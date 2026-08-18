@@ -1,10 +1,10 @@
 # Factorial Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 Factorial is a recursive function benchmark that measures recursion performance, function call overhead, and stack management across different programming languages.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Algorithm
 
@@ -37,7 +37,7 @@ factorial(0) = 1
 factorial(1) = 1
 ```
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -69,7 +69,7 @@ factorial(1) = 1
 - **Teaching**: Fundamental recursion concept
 - **Algorithm Complexity**: Understanding recursive time
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 factorial/
@@ -88,7 +88,7 @@ factorial/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -132,7 +132,7 @@ docker build -f Dockerfile.python -t factorial-py .
 docker run factorial-py
 ```
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Execution Times
 
@@ -170,7 +170,7 @@ Number of recursive calls: 30
 Maximum stack depth: 30
 ```
 
-## 🔍 Algorithm Variants
+##  Algorithm Variants
 
 ### 1. Pure Recursion (Naive)
 
@@ -238,7 +238,7 @@ def factorial_memo(n):
 - Useful if computing multiple factorials
 - Same time per unique n, O(1) lookup for repeats
 
-## 💡 Optimization Techniques
+##  Optimization Techniques
 
 ### 1. Use Iterative Over Recursive
 
@@ -295,7 +295,7 @@ def large_factorial(n):
     return result
 ```
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different Values of n
 
@@ -333,7 +333,7 @@ Compare:
 - Tail-recursive
 - Iterative
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Recursion Overhead
 
@@ -364,7 +364,7 @@ For factorial(30):
 - factorial(50000) × 32 bytes = ~1.6 MB (approaching limit)
 - factorial(100000) = ~3.2 MB (likely stack overflow)
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -394,7 +394,7 @@ This benchmark teaches:
    - When to use each approach
    - Library function benefits
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Stack Overflow
 
@@ -425,14 +425,14 @@ This benchmark teaches:
 - Solution: Run multiple times
 - System load affecting measurements
 
-## 📚 References
+##  References
 
 - **Factorial**: https://en.wikipedia.org/wiki/Factorial
 - **Recursion**: https://en.wikipedia.org/wiki/Recursion_(computer_science)
 - **Tail-Call Optimization**: https://en.wikipedia.org/wiki/Tail_call
 - **Big O Notation**: https://en.wikipedia.org/wiki/Big_O_notation
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run factorial(30) benchmark
 2. Compare across languages

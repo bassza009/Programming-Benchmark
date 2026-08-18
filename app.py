@@ -120,7 +120,7 @@ class LandingPageHandler(http.server.SimpleHTTPRequestHandler):
 </head>
 <body>
     <header>
-        <h1>🚀 Welcome!</h1>
+        <h1> Welcome!</h1>
         <p>Your Amazing Python-Powered Website</p>
     </header>
     
@@ -133,15 +133,15 @@ class LandingPageHandler(http.server.SimpleHTTPRequestHandler):
         
         <section class="features">
             <div class="feature">
-                <h3>⚡ Fast</h3>
+                <h3> Fast</h3>
                 <p>Lightning-quick response times with Python's efficient HTTP server implementation.</p>
             </div>
             <div class="feature">
-                <h3>🔒 Simple</h3>
+                <h3> Simple</h3>
                 <p>No complex frameworks needed. Just pure Python serving your content.</p>
             </div>
             <div class="feature">
-                <h3>🎨 Beautiful</h3>
+                <h3> Beautiful</h3>
                 <p>Modern responsive design that looks great on all devices.</p>
             </div>
         </section>
@@ -156,6 +156,6 @@ class LandingPageHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     with socketserver.TCPServer(("", PORT), LandingPageHandler) as httpd:
-        print(f"🌐 Server running at http://localhost:{PORT}")
+        print(f" Server running at http://localhost:{PORT}")
         print("Press Ctrl+C to stop the server")
         httpd.serve_forever()

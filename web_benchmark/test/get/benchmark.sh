@@ -29,14 +29,14 @@ check_server() {
     
     while [ $attempt -lt $max_attempts ]; do
         if timeout 2 bash -c "cat < /dev/null > /dev/tcp/$host/$port" 2>/dev/null; then
-            echo "✓ Server on port $port is ready"
+            echo " Server on port $port is ready"
             return 0
         fi
         attempt=$((attempt + 1))
         sleep 1
     done
     
-    echo "✗ Failed to connect to server on port $port"
+    echo " Failed to connect to server on port $port"
     return 1
 }
 
@@ -54,7 +54,7 @@ echo ""
 
 # Check if wrk is available
 if ! command -v wrk &> /dev/null; then
-    echo "⚠️  wrk not found. Installing wrk..."
+    echo "  wrk not found. Installing wrk..."
     apt-get update && apt-get install -y build-essential libssl-dev git
     git clone https://github.com/wg/wrk.git /tmp/wrk
     cd /tmp/wrk

@@ -1,10 +1,10 @@
 # Matrix Multiplication Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 Matrix Multiplication is a compute-intensive benchmark that tests floating-point arithmetic performance, memory bandwidth, and compiler vectorization capabilities across different programming languages.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Algorithm
 
@@ -40,7 +40,7 @@ C = [4*9+5*6+6*3  4*8+5*5+6*2  ...]
 - **Standard**: O(n²) for result matrix + input matrices
 - **In-place**: Not practical for matrix multiplication
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -76,7 +76,7 @@ C = [4*9+5*6+6*3  4*8+5*5+6*2  ...]
 - **Physics Simulations**: Numerical methods
 - **Cryptography**: Matrix operations for encryption
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Metrix_multiplication/
@@ -96,7 +96,7 @@ Metrix_multiplication/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -140,7 +140,7 @@ docker build -f Dockerfile.python -t matrix-py .
 docker run matrix-py
 ```
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Execution Times
 
@@ -174,7 +174,7 @@ Result matrix created successfully
 Sample result[0][0]: 1234567.89
 ```
 
-## 🔍 Algorithm Variants
+##  Algorithm Variants
 
 ### 1. Standard Triple-Nested Loop
 
@@ -237,7 +237,7 @@ C = np.dot(A, B)  # Highly optimized!
 
 **Speed**: Often 10-100x faster using BLAS (Basic Linear Algebra Subprograms)
 
-## 💡 Optimization Techniques
+##  Optimization Techniques
 
 ### 1. Loop Ordering
 
@@ -320,7 +320,7 @@ C = C_np.tolist()
 
 **Speedup**: 50-100x faster!
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different Matrix Sizes
 
@@ -348,7 +348,7 @@ C = C_np.tolist()
 - Wide: 1000×100 × 100×1000
 ```
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Memory Bandwidth Impact
 
@@ -374,7 +374,7 @@ Typical cache performance:
 4. **Cache Misses**: L1, L2, L3 miss rates
 5. **Memory Bandwidth**: Gigabytes per second used
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -403,7 +403,7 @@ This benchmark teaches:
    - Library usage benefits
    - Hardware limitations
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Out of Memory
 
@@ -427,14 +427,14 @@ This benchmark teaches:
 - System background load
 - Compiler optimization flags
 
-## 📚 References
+##  References
 
 - **Matrix Multiplication**: https://en.wikipedia.org/wiki/Matrix_multiplication
 - **BLAS**: https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms
 - **Cache Optimization**: https://en.wikipedia.org/wiki/CPU_cache
 - **Strassen Algorithm**: https://en.wikipedia.org/wiki/Strassen_algorithm
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run benchmark with 500×500 matrices
 2. Compare across languages

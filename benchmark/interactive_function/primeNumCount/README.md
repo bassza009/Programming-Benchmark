@@ -1,10 +1,10 @@
 # Prime Number Count Benchmark
 
-## 📊 Task Overview
+##  Task Overview
 
 Prime Number Counting is a number-crunching benchmark that tests integer arithmetic performance, algorithmic efficiency, and loop optimization across different programming languages.
 
-## 🎯 Problem Description
+##  Problem Description
 
 ### The Task
 
@@ -32,7 +32,7 @@ Range          Count    Percentage
 1 - 1,000,000  78,498   7.8498%
 ```
 
-## 🎓 Why This Benchmark Matters
+##  Why This Benchmark Matters
 
 ### What It Tests
 
@@ -68,7 +68,7 @@ Range          Count    Percentage
 - **Data Structure Sizing**: Hash maps, bloom filters
 - **Number Theory**: Mathematical computations
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 primeNumCount/
@@ -86,7 +86,7 @@ primeNumCount/
 └── README.md              # This file
 ```
 
-## 🚀 Running the Benchmark
+##  Running the Benchmark
 
 ### Option 1: Run All Implementations
 
@@ -130,7 +130,7 @@ docker build -f Dockerfile.python -t prime-py .
 docker run prime-py
 ```
 
-## 📈 Expected Results
+##  Expected Results
 
 ### Typical Execution Times
 
@@ -160,7 +160,7 @@ First 20: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 6
 Last 20: [999853, 999863, 999883, 999931, 1000003, ...]
 ```
 
-## 🔍 Algorithm Variants
+##  Algorithm Variants
 
 ### 1. Trial Division (Basic)
 
@@ -251,7 +251,7 @@ def sieve_wheel(limit):
 - Better cache usage
 - ~2-3x faster
 
-## 💡 Optimization Techniques
+##  Optimization Techniques
 
 ### 1. Bitset Instead of Boolean Array
 
@@ -308,7 +308,7 @@ def sieve_numpy(limit):
 
 **Speed**: 10-50x faster!
 
-## 🧪 Variations to Test
+##  Variations to Test
 
 ### 1. Different Limits
 
@@ -337,7 +337,7 @@ def sieve_numpy(limit):
 # GPU acceleration
 ```
 
-## 📊 Performance Analysis
+##  Performance Analysis
 
 ### Sieve Performance Breakdown
 
@@ -357,7 +357,7 @@ For 1,000,000 limit with standard sieve:
 
 **L3 cache size**: Usually 8 MB (plenty of room)
 
-## 🎓 Learning Outcomes
+##  Learning Outcomes
 
 This benchmark teaches:
 
@@ -382,7 +382,7 @@ This benchmark teaches:
    - 10-50x with libraries
    - 3-4x with parallelization
 
-## 🔧 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Very Slow Execution
 
@@ -411,14 +411,14 @@ This benchmark teaches:
 - Use segmented sieve
 - Use generator approach
 
-## 📚 References
+##  References
 
 - **Prime Number**: https://en.wikipedia.org/wiki/Prime_number
 - **Sieve of Eratosthenes**: https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 - **Prime Counting Function**: https://en.wikipedia.org/wiki/Prime-counting_function
 - **Primality Test**: https://en.wikipedia.org/wiki/Primality_test
 
-## 🎯 Next Steps
+##  Next Steps
 
 1. Run benchmark with 1,000,000 limit
 2. Compare across languages
