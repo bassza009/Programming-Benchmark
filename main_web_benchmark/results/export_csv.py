@@ -3,35 +3,16 @@ import os
 import glob
 import json
 import csv
-import subprocess
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-COMPARE_SCRIPT = os.path.join(os.path.dirname(SCRIPT_DIR), "compare_results.py")
-SUMMARY_MD = os.path.join(SCRIPT_DIR, "SUMMARY.md")
-SUMMARY_CSV = os.path.join(SCRIPT_DIR, "SUMMARY.csv")
+RESULTS_DIR = os.path.dirname(os.path.abspath(__file__))
+CSV_FILE = os.path.join(RESULTS_DIR, "SUMMARY.csv")
 
-def generate_markdown(json_files):
-    output = []
-    output.append("# 📊 Web Benchmark Comprehensive Results Summary\n")
-    output.append(f"Generated from {len(json_files)} test suite result datasets.\n")
+def export_to_csv():
+    json_files = sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json")))
+    if not json_files:
+        print("No JSON files found in", RESULTS_DIR)
+        return
 
-    for fpath in json_files:
-        fname = os.path.basename(fpath)
-        title = fname.replace("_dkr.json", " (Docker)").replace("_bme.json", " (Bare Metal)").replace(".json", "")
-        output.append(f"## 📁 Suite: `{title}`\n")
-        
-        try:
-            res = subprocess.run(["python3", COMPARE_SCRIPT, fpath], capture_output=True, text=True, check=True)
-            output.append(res.stdout.strip())
-            output.append("\n---\n")
-        except Exception as e:
-            output.append(f"Error reading {fname}: {e}\n")
-
-    with open(SUMMARY_MD, "w") as f:
-        f.write("\n".join(output))
-    print(f"Markdown summary written to {SUMMARY_MD}")
-
-def generate_csv(json_files):
     rows = []
     headers = [
         "Suite",
@@ -51,6 +32,7 @@ def generate_csv(json_files):
 
     for fpath in json_files:
         fname = os.path.basename(fpath)
+        # Identify suite & environment
         if "_dkr" in fname:
             env = "Docker"
             suite = fname.replace("_dkr.json", "")
@@ -68,13 +50,14 @@ def generate_csv(json_files):
         is_multi_tier = "tiers" in first_lang
 
         if is_multi_tier:
-            for tier, tier_data in first_lang["tiers"].items():
-                t_cfg = tier_data.get("config", {})
+            tiers = list(first_lang["tiers"].keys())
+            for tier in tiers:
+                t_cfg = first_lang["tiers"][tier]["config"]
                 tier_name = t_cfg.get("name", tier)
                 threads = t_cfg.get("threads", "")
                 conns = t_cfg.get("connections", "")
                 dur = t_cfg.get("duration", "")
-                endpoints = list(tier_data["endpoints"].keys())
+                endpoints = list(first_lang["tiers"][tier]["endpoints"].keys())
 
                 for ep in endpoints:
                     ep_data = []
@@ -105,7 +88,8 @@ def generate_csv(json_files):
                             errs
                         ])
         else:
-            for ep in first_lang["endpoints"].keys():
+            endpoints = list(first_lang["endpoints"].keys())
+            for ep in endpoints:
                 ep_data = []
                 for lang_name, lang_data in data.items():
                     res = lang_data["endpoints"].get(ep, {})
@@ -134,19 +118,12 @@ def generate_csv(json_files):
                         errs
                     ])
 
-    with open(SUMMARY_CSV, "w", newline="") as f:
+    with open(CSV_FILE, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(headers)
         writer.writerows(rows)
-    print(f"CSV summary written to {SUMMARY_CSV} ({len(rows)} data rows)")
 
-def main():
-    json_files = sorted(glob.glob(os.path.join(SCRIPT_DIR, "*.json")))
-    if not json_files:
-        print("No result JSON files found in", SCRIPT_DIR)
-        return
-    generate_markdown(json_files)
-    generate_csv(json_files)
+    print(f"Successfully generated {CSV_FILE} with {len(rows)} data rows.")
 
 if __name__ == "__main__":
-    main()
+    export_to_csv()
