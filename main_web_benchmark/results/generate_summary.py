@@ -107,22 +107,25 @@ def generate_markdown(json_files):
         f.write("\n".join(output))
     print(f"Markdown summary written to {SUMMARY_MD}")
 
+def clean_ep_name(ep):
+    return ep.replace("/raw/post/", "").replace("/raw/", "")
+
 def generate_csv(json_files):
     rows = []
     headers = [
         "Suite",
         "Environment",
         "Tier",
-        "Threads",
-        "Connections",
-        "Duration",
-        "Endpoint",
-        "Rank",
         "Language",
-        "Requests_Per_Sec",
-        "Avg_Latency_ms",
-        "Max_Latency_ms",
-        "Errors"
+        "1table (Req/s)",
+        "1table Latency (ms)",
+        "2table/2join (Req/s)",
+        "2table/2join Latency (ms)",
+        "3table/3join (Req/s)",
+        "3table/3join Latency (ms)",
+        "4table/4join (Req/s)",
+        "4table/4join Latency (ms)",
+        "Total Errors"
     ]
 
     for fpath in json_files:
@@ -145,70 +148,77 @@ def generate_csv(json_files):
 
         if is_multi_tier:
             for tier, tier_data in first_lang["tiers"].items():
-                t_cfg = tier_data.get("config", {})
-                tier_name = t_cfg.get("name", tier)
-                threads = t_cfg.get("threads", "")
-                conns = t_cfg.get("connections", "")
-                dur = t_cfg.get("duration", "")
-                endpoints = list(tier_data["endpoints"].keys())
+                tier_name = tier_data.get("config", {}).get("name", tier)
 
-                for ep in endpoints:
-                    ep_data = []
-                    for lang_name, lang_data in data.items():
-                        res = lang_data["tiers"][tier]["endpoints"].get(ep, {})
-                        rps = res.get("requests_per_sec", 0.0)
-                        lat_avg = res.get("latency_mean_ms", 0.0)
-                        lat_max = res.get("latency_max_ms", 0.0)
-                        errs = res.get("errors", 0)
-                        ep_data.append((lang_name, rps, lat_avg, lat_max, errs))
+                for lang_name in sorted(data.keys()):
+                    lang_data = data[lang_name]
+                    endpoints = lang_data["tiers"][tier]["endpoints"]
+                    
+                    ep_map = {}
+                    total_errors = 0
+                    for ep_key, ep_res in endpoints.items():
+                        cleaned = clean_ep_name(ep_key)
+                        rps = ep_res.get("requests_per_sec", 0.0)
+                        lat = ep_res.get("latency_mean_ms", 0.0)
+                        errs = ep_res.get("errors", 0)
+                        total_errors += errs
+                        ep_map[cleaned] = (rps, lat)
 
-                    ep_data.sort(key=lambda x: x[1], reverse=True)
+                    val_1 = ep_map.get("1table", (0.0, 0.0))
+                    val_2 = ep_map.get("2join", ep_map.get("2table", (0.0, 0.0)))
+                    val_3 = ep_map.get("3join", ep_map.get("3table", (0.0, 0.0)))
+                    val_4 = ep_map.get("4join", ep_map.get("4table", (0.0, 0.0)))
 
-                    for rank, (lang, rps, lat_avg, lat_max, errs) in enumerate(ep_data, start=1):
-                        rows.append([
-                            suite,
-                            env,
-                            tier_name,
-                            threads,
-                            conns,
-                            dur,
-                            ep,
-                            rank,
-                            lang,
-                            f"{rps:.2f}",
-                            f"{lat_avg:.2f}",
-                            f"{lat_max:.2f}",
-                            errs
-                        ])
-        else:
-            for ep in first_lang["endpoints"].keys():
-                ep_data = []
-                for lang_name, lang_data in data.items():
-                    res = lang_data["endpoints"].get(ep, {})
-                    rps = res.get("requests_per_sec", 0.0)
-                    lat_avg = res.get("latency_mean_ms", 0.0)
-                    lat_max = res.get("latency_max_ms", 0.0)
-                    errs = res.get("errors", 0)
-                    ep_data.append((lang_name, rps, lat_avg, lat_max, errs))
-
-                ep_data.sort(key=lambda x: x[1], reverse=True)
-
-                for rank, (lang, rps, lat_avg, lat_max, errs) in enumerate(ep_data, start=1):
                     rows.append([
                         suite,
                         env,
-                        "Default",
-                        "",
-                        "",
-                        "",
-                        ep,
-                        rank,
-                        lang,
-                        f"{rps:.2f}",
-                        f"{lat_avg:.2f}",
-                        f"{lat_max:.2f}",
-                        errs
+                        tier_name,
+                        lang_name,
+                        f"{val_1[0]:.2f}",
+                        f"{val_1[1]:.2f}",
+                        f"{val_2[0]:.2f}",
+                        f"{val_2[1]:.2f}",
+                        f"{val_3[0]:.2f}",
+                        f"{val_3[1]:.2f}",
+                        f"{val_4[0]:.2f}",
+                        f"{val_4[1]:.2f}",
+                        total_errors
                     ])
+        else:
+            for lang_name in sorted(data.keys()):
+                lang_data = data[lang_name]
+                endpoints = lang_data.get("endpoints", {})
+                
+                ep_map = {}
+                total_errors = 0
+                for ep_key, ep_res in endpoints.items():
+                    cleaned = clean_ep_name(ep_key)
+                    rps = ep_res.get("requests_per_sec", 0.0)
+                    lat = ep_res.get("latency_mean_ms", 0.0)
+                    errs = ep_res.get("errors", 0)
+                    total_errors += errs
+                    ep_map[cleaned] = (rps, lat)
+
+                val_1 = ep_map.get("1table", (0.0, 0.0))
+                val_2 = ep_map.get("2join", ep_map.get("2table", (0.0, 0.0)))
+                val_3 = ep_map.get("3join", ep_map.get("3table", (0.0, 0.0)))
+                val_4 = ep_map.get("4join", ep_map.get("4table", (0.0, 0.0)))
+
+                rows.append([
+                    suite,
+                    env,
+                    "Default",
+                    lang_name,
+                    f"{val_1[0]:.2f}",
+                    f"{val_1[1]:.2f}",
+                    f"{val_2[0]:.2f}",
+                    f"{val_2[1]:.2f}",
+                    f"{val_3[0]:.2f}",
+                    f"{val_3[1]:.2f}",
+                    f"{val_4[0]:.2f}",
+                    f"{val_4[1]:.2f}",
+                    total_errors
+                ])
 
     with open(SUMMARY_CSV, "w", newline="") as f:
         writer = csv.writer(f)
