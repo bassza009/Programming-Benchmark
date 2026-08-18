@@ -11,11 +11,11 @@ Multi-language performance evaluation across **Docker Containerized** and **Bare
 | **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms | 16.30ms | +243.6% BME |
 | **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms | 7.27ms | -1.5% BME |
 | **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms | 61.24ms | -35.4% BME |
-| **get_with_index** | **Go** | 11,025.25 | - | 10.59ms | - | N/A |
-| **get_with_index** | **Java** | 8,825.93 | - | 12.83ms | - | N/A |
-| **get_with_index** | **Node.js** | 2,070.42 | - | 48.43ms | - | N/A |
-| **get_with_index** | **PHP** | 17,290.74 | - | 6.46ms | - | N/A |
-| **get_with_index** | **Python** | 2,521.69 | - | 39.48ms | - | N/A |
+| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms | 9.34ms | +7.9% BME |
+| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms | 8.51ms | +16.1% BME |
+| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms | 9.10ms | +440.9% BME |
+| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms | 6.27ms | -1.1% BME |
+| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms | 52.19ms | -25.4% BME |
 | **post** | **Go** | 7,123.85 | - | 14.05ms | - | N/A |
 | **post** | **Java** | 5,708.88 | - | 17.63ms | - | N/A |
 | **post** | **Node.js** | 7,297.44 | - | 13.94ms | - | N/A |
@@ -264,6 +264,126 @@ Multi-language performance evaluation across **Docker Containerized** and **Bare
 
 ---
 
+## Suite: `get_with_index` — Bare Metal (Host)
+
+# Benchmark Results Summary: get_with_index_bme.json
+
+## Tier: Minimum (Light) (-t2 -c100 -d10s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 16,817.10 | 6.27ms | 43.97ms | 0 |
+| #2 | **Go** | 11,824.33 | 9.34ms | 80.85ms | 0 |
+| #3 | **Java** | 11,760.51 | 8.51ms | 82.33ms | 0 |
+| #4 | **Node.js** | 11,071.53 | 9.10ms | 111.28ms | 0 |
+| #5 | **Python** | 1,908.37 | 52.19ms | 134.59ms | 0 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **Go** | 4,953.74 | 20.77ms | 137.88ms | 0 |
+| #2 | **PHP** | 4,919.76 | 22.03ms | 130.09ms | 0 |
+| #3 | **Node.js** | 4,770.45 | 21.28ms | 128.77ms | 0 |
+| #4 | **Java** | 4,753.98 | 21.53ms | 110.62ms | 0 |
+| #5 | **Python** | 1,699.80 | 58.48ms | 138.95ms | 0 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,628.55 | 31.70ms | 213.60ms | 0 |
+| #2 | **Node.js** | 3,184.87 | 33.57ms | 254.26ms | 0 |
+| #3 | **Java** | 3,130.51 | 33.73ms | 210.20ms | 0 |
+| #4 | **Go** | 3,121.11 | 34.07ms | 212.07ms | 0 |
+| #5 | **Python** | 1,643.14 | 60.49ms | 132.34ms | 0 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,989.65 | 30.44ms | 261.34ms | 0 |
+| #2 | **Node.js** | 3,820.54 | 27.94ms | 178.81ms | 0 |
+| #3 | **Go** | 3,699.54 | 28.37ms | 170.11ms | 0 |
+| #4 | **Java** | 3,645.88 | 28.32ms | 168.56ms | 0 |
+| #5 | **Python** | 1,483.07 | 66.98ms | 160.68ms | 0 |
+
+## Tier: Medium (Standard) (-t10 -c1000 -d30s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 16,843.73 | 59.84ms | 306.64ms | 0 |
+| #2 | **Go** | 14,257.13 | 145.59ms | 1999.13ms | 640 |
+| #3 | **Java** | 13,242.54 | 79.50ms | 1830.27ms | 0 |
+| #4 | **Node.js** | 10,523.78 | 107.29ms | 1993.07ms | 15 |
+| #5 | **Python** | 2,162.65 | 458.01ms | 693.51ms | 0 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 5,134.64 | 195.87ms | 1032.45ms | 0 |
+| #2 | **Go** | 5,006.93 | 212.30ms | 1999.59ms | 1656 |
+| #3 | **Java** | 4,629.21 | 211.30ms | 1057.91ms | 0 |
+| #4 | **Node.js** | 4,535.35 | 218.76ms | 941.00ms | 0 |
+| #5 | **Python** | 2,389.25 | 414.34ms | 660.31ms | 0 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,669.09 | 276.30ms | 1569.50ms | 0 |
+| #2 | **Go** | 3,189.53 | 293.65ms | 1999.67ms | 1825 |
+| #3 | **Java** | 3,140.37 | 312.71ms | 811.63ms | 0 |
+| #4 | **Node.js** | 2,844.69 | 349.15ms | 1425.39ms | 0 |
+| #5 | **Python** | 1,790.97 | 551.42ms | 1352.22ms | 0 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,824.53 | 263.64ms | 1347.38ms | 0 |
+| #2 | **Go** | 3,640.45 | 261.21ms | 1999.09ms | 1649 |
+| #3 | **Node.js** | 3,627.31 | 273.55ms | 1261.22ms | 0 |
+| #4 | **Java** | 3,581.65 | 274.60ms | 808.91ms | 0 |
+| #5 | **Python** | 1,656.44 | 595.70ms | 1030.54ms | 0 |
+
+## Tier: Maximum (Stress) (-t20 -c10000 -d30s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 16,556.08 | 595.37ms | 1967.33ms | 2 |
+| #2 | **Go** | 15,638.62 | 379.17ms | 1999.95ms | 24769 |
+| #3 | **Java** | 13,057.09 | 509.86ms | 1999.42ms | 1822 |
+| #4 | **Node.js** | 8,820.23 | 394.28ms | 1997.46ms | 4841 |
+| #5 | **Python** | 1,946.10 | 0.00ms | 0.00ms | 58562 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 5,106.07 | 1401.42ms | 1999.98ms | 63419 |
+| #2 | **Go** | 4,963.23 | 621.98ms | 1999.99ms | 34942 |
+| #3 | **Java** | 4,456.10 | 1682.57ms | 2000.00ms | 2707 |
+| #4 | **Node.js** | 4,394.46 | 1382.01ms | 2000.00ms | 84638 |
+| #5 | **Python** | 2,099.32 | 1728.75ms | 1999.99ms | 61294 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,600.80 | 1438.82ms | 1999.98ms | 81937 |
+| #2 | **Go** | 3,216.99 | 725.26ms | 1999.87ms | 34138 |
+| #3 | **Java** | 3,091.44 | 872.77ms | 1999.23ms | 79978 |
+| #4 | **Node.js** | 2,806.88 | 1172.78ms | 1999.96ms | 76776 |
+| #5 | **Python** | 1,651.45 | 606.11ms | 1999.87ms | 21128 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,845.49 | 1519.97ms | 1999.93ms | 82121 |
+| #2 | **Node.js** | 3,690.50 | 1049.41ms | 1999.95ms | 98715 |
+| #3 | **Go** | 3,672.74 | 694.67ms | 1999.99ms | 35447 |
+| #4 | **Java** | 3,534.02 | 1055.31ms | 1999.98ms | 88715 |
+| #5 | **Python** | 1,473.14 | 637.98ms | 1999.15ms | 19837 |
+
+---
+
 ## Suite: `get_with_index` — Docker (Container)
 
 # Benchmark Results Summary: get_with_index_dkr.json
@@ -273,38 +393,114 @@ Multi-language performance evaluation across **Docker Containerized** and **Bare
 ### Endpoint: `/raw/1table`
 | Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #1 | **PHP** | 17,290.74 | 6.46ms | 67.95ms | 0 |
-| #2 | **Go** | 11,025.25 | 10.59ms | 87.97ms | 0 |
-| #3 | **Java** | 8,825.93 | 12.83ms | 198.85ms | 0 |
-| #4 | **Python** | 2,521.69 | 39.48ms | 120.24ms | 0 |
-| #5 | **Node.js** | 2,070.42 | 48.43ms | 311.15ms | 0 |
+| #1 | **PHP** | 17,011.24 | 7.51ms | 96.70ms | 0 |
+| #2 | **Go** | 10,958.75 | 10.71ms | 102.28ms | 0 |
+| #3 | **Java** | 10,133.17 | 10.80ms | 178.96ms | 0 |
+| #4 | **Python** | 2,557.69 | 41.69ms | 126.52ms | 0 |
+| #5 | **Node.js** | 2,046.80 | 49.07ms | 291.83ms | 0 |
 
 ### Endpoint: `/raw/2join`
 | Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #1 | **PHP** | 5,319.85 | 21.79ms | 178.40ms | 0 |
-| #2 | **Go** | 5,134.39 | 19.72ms | 103.95ms | 0 |
-| #3 | **Java** | 4,473.91 | 22.94ms | 200.01ms | 0 |
-| #4 | **Python** | 2,794.40 | 35.87ms | 121.76ms | 0 |
-| #5 | **Node.js** | 2,454.18 | 40.80ms | 178.42ms | 0 |
+| #1 | **PHP** | 5,276.09 | 22.92ms | 287.36ms | 0 |
+| #2 | **Go** | 5,030.60 | 20.13ms | 97.95ms | 0 |
+| #3 | **Java** | 4,494.07 | 22.94ms | 176.16ms | 0 |
+| #4 | **Python** | 2,805.20 | 35.72ms | 116.05ms | 0 |
+| #5 | **Node.js** | 2,450.58 | 40.78ms | 210.77ms | 0 |
 
 ### Endpoint: `/raw/3join`
 | Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #1 | **PHP** | 3,713.40 | 31.52ms | 287.63ms | 0 |
-| #2 | **Go** | 3,273.10 | 32.62ms | 296.70ms | 0 |
-| #3 | **Java** | 3,076.09 | 34.24ms | 224.71ms | 0 |
-| #4 | **Python** | 2,035.89 | 50.24ms | 182.47ms | 0 |
-| #5 | **Node.js** | 1,850.64 | 53.98ms | 220.75ms | 0 |
+| #1 | **PHP** | 4,014.67 | 28.04ms | 269.35ms | 0 |
+| #2 | **Go** | 3,581.67 | 29.81ms | 261.78ms | 0 |
+| #3 | **Java** | 3,354.98 | 31.46ms | 260.69ms | 0 |
+| #4 | **Python** | 2,122.19 | 47.60ms | 161.99ms | 0 |
+| #5 | **Node.js** | 1,893.46 | 52.69ms | 258.88ms | 0 |
 
 ### Endpoint: `/raw/4join`
 | Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| #1 | **PHP** | 3,863.85 | 30.34ms | 274.26ms | 0 |
-| #2 | **Java** | 3,650.21 | 28.65ms | 208.09ms | 0 |
-| #3 | **Go** | 3,601.68 | 29.38ms | 198.21ms | 0 |
-| #4 | **Python** | 1,890.68 | 53.74ms | 188.25ms | 0 |
-| #5 | **Node.js** | 1,688.02 | 58.95ms | 195.26ms | 0 |
+| #1 | **PHP** | 4,470.94 | 25.42ms | 235.56ms | 0 |
+| #2 | **Go** | 3,982.66 | 26.58ms | 165.41ms | 0 |
+| #3 | **Java** | 3,845.52 | 27.23ms | 163.85ms | 0 |
+| #4 | **Python** | 1,947.60 | 51.11ms | 129.65ms | 0 |
+| #5 | **Node.js** | 1,684.62 | 59.05ms | 214.95ms | 0 |
+
+## Tier: Medium (Standard) (-t10 -c1000 -d30s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 16,403.98 | 63.96ms | 453.82ms | 0 |
+| #2 | **Go** | 13,277.43 | 142.49ms | 1999.93ms | 550 |
+| #3 | **Java** | 11,613.94 | 89.36ms | 1362.05ms | 0 |
+| #4 | **Python** | 2,329.39 | 425.51ms | 739.41ms | 0 |
+| #5 | **Node.js** | 2,036.96 | 422.71ms | 1997.95ms | 572 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 5,235.89 | 200.20ms | 1377.05ms | 0 |
+| #2 | **Go** | 4,977.04 | 220.49ms | 1997.93ms | 1704 |
+| #3 | **Java** | 4,604.26 | 216.07ms | 576.26ms | 0 |
+| #4 | **Python** | 2,598.55 | 381.28ms | 769.50ms | 0 |
+| #5 | **Node.js** | 2,432.73 | 367.50ms | 1988.31ms | 567 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,971.57 | 275.66ms | 1974.75ms | 0 |
+| #2 | **Go** | 3,482.90 | 274.97ms | 1999.46ms | 1757 |
+| #3 | **Java** | 3,329.01 | 298.23ms | 1409.87ms | 0 |
+| #4 | **Python** | 1,959.19 | 504.62ms | 1240.63ms | 0 |
+| #5 | **Node.js** | 1,820.82 | 473.24ms | 1998.96ms | 583 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 4,112.19 | 271.17ms | 1952.51ms | 0 |
+| #2 | **Go** | 3,989.93 | 256.33ms | 1999.54ms | 1690 |
+| #3 | **Java** | 3,734.20 | 267.83ms | 1479.92ms | 16 |
+| #4 | **Python** | 1,717.99 | 574.49ms | 1174.24ms | 0 |
+| #5 | **Node.js** | 1,553.25 | 528.73ms | 1973.97ms | 611 |
+
+## Tier: Maximum (Stress) (-t20 -c10000 -d30s)
+
+### Endpoint: `/raw/1table`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 15,837.98 | 613.35ms | 1999.83ms | 505 |
+| #2 | **Go** | 14,179.98 | 396.84ms | 1999.87ms | 26089 |
+| #3 | **Java** | 11,588.66 | 675.54ms | 1999.82ms | 2402 |
+| #4 | **Node.js** | 2,007.38 | 558.10ms | 1992.98ms | 1160 |
+| #5 | **Python** | 1,977.48 | 1119.75ms | 1996.87ms | 57455 |
+
+### Endpoint: `/raw/2join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 4,935.11 | 1320.59ms | 1999.99ms | 57204 |
+| #2 | **Go** | 4,598.37 | 645.04ms | 1999.93ms | 37374 |
+| #3 | **Java** | 4,232.42 | 1762.05ms | 2000.00ms | 15896 |
+| #4 | **Node.js** | 2,223.00 | 509.82ms | 1988.11ms | 1557 |
+| #5 | **Python** | 2,120.06 | 1301.90ms | 1994.16ms | 62331 |
+
+### Endpoint: `/raw/3join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 2,878.36 | 1347.10ms | 1999.95ms | 62994 |
+| #2 | **Java** | 2,536.31 | 1000.01ms | 1999.42ms | 70873 |
+| #3 | **Go** | 2,530.12 | 953.93ms | 1999.82ms | 40068 |
+| #4 | **Node.js** | 1,255.75 | 1287.50ms | 1999.98ms | 12406 |
+| #5 | **Python** | 1,172.58 | 1155.14ms | 1998.88ms | 38468 |
+
+### Endpoint: `/raw/4join`
+| Rank | Language | Requests/sec | Avg Latency (ms) | Max Latency (ms) | Errors |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| #1 | **PHP** | 3,888.71 | 1373.98ms | 1999.98ms | 49545 |
+| #2 | **Go** | 3,696.52 | 1025.28ms | 1999.97ms | 45434 |
+| #3 | **Java** | 3,465.73 | 1507.68ms | 2000.00ms | 87439 |
+| #4 | **Python** | 1,249.78 | 1120.18ms | 1999.73ms | 23176 |
+| #5 | **Node.js** | 1,092.88 | 1430.24ms | 1999.98ms | 14119 |
 
 ---
 

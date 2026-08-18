@@ -29,11 +29,36 @@ get_no_index,Docker,Maximum (Stress),Java,11354.82,685.67,5364.46,1416.72,240.95
 get_no_index,Docker,Maximum (Stress),Node.js,2005.32,589.88,2436.20,516.88,233.48,1447.56,0.00,0.00,20967
 get_no_index,Docker,Maximum (Stress),PHP,15494.73,621.56,6275.77,1204.53,244.34,1008.27,66.99,1621.97,61766
 get_no_index,Docker,Maximum (Stress),Python,2218.18,633.89,2355.07,498.66,254.30,1121.09,174.25,855.59,36220
-get_with_index,Docker,Minimum (Light),Go,11025.25,10.59,5134.39,19.72,3273.10,32.62,3601.68,29.38,0
-get_with_index,Docker,Minimum (Light),Java,8825.93,12.83,4473.91,22.94,3076.09,34.24,3650.21,28.65,0
-get_with_index,Docker,Minimum (Light),Node.js,2070.42,48.43,2454.18,40.80,1850.64,53.98,1688.02,58.95,0
-get_with_index,Docker,Minimum (Light),PHP,17290.74,6.46,5319.85,21.79,3713.40,31.52,3863.85,30.34,0
-get_with_index,Docker,Minimum (Light),Python,2521.69,39.48,2794.40,35.87,2035.89,50.24,1890.68,53.74,0
+get_with_index,Bare Metal,Minimum (Light),Go,11824.33,9.34,4953.74,20.77,3121.11,34.07,3699.54,28.37,0
+get_with_index,Bare Metal,Minimum (Light),Java,11760.51,8.51,4753.98,21.53,3130.51,33.73,3645.88,28.32,0
+get_with_index,Bare Metal,Minimum (Light),Node.js,11071.53,9.10,4770.45,21.28,3184.87,33.57,3820.54,27.94,0
+get_with_index,Bare Metal,Minimum (Light),PHP,16817.10,6.27,4919.76,22.03,3628.55,31.70,3989.65,30.44,0
+get_with_index,Bare Metal,Minimum (Light),Python,1908.37,52.19,1699.80,58.48,1643.14,60.49,1483.07,66.98,0
+get_with_index,Bare Metal,Medium (Standard),Go,14257.13,145.59,5006.93,212.30,3189.53,293.65,3640.45,261.21,5770
+get_with_index,Bare Metal,Medium (Standard),Java,13242.54,79.50,4629.21,211.30,3140.37,312.71,3581.65,274.60,0
+get_with_index,Bare Metal,Medium (Standard),Node.js,10523.78,107.29,4535.35,218.76,2844.69,349.15,3627.31,273.55,15
+get_with_index,Bare Metal,Medium (Standard),PHP,16843.73,59.84,5134.64,195.87,3669.09,276.30,3824.53,263.64,0
+get_with_index,Bare Metal,Medium (Standard),Python,2162.65,458.01,2389.25,414.34,1790.97,551.42,1656.44,595.70,0
+get_with_index,Bare Metal,Maximum (Stress),Go,15638.62,379.17,4963.23,621.98,3216.99,725.26,3672.74,694.67,129296
+get_with_index,Bare Metal,Maximum (Stress),Java,13057.09,509.86,4456.10,1682.57,3091.44,872.77,3534.02,1055.31,173222
+get_with_index,Bare Metal,Maximum (Stress),Node.js,8820.23,394.28,4394.46,1382.01,2806.88,1172.78,3690.50,1049.41,264970
+get_with_index,Bare Metal,Maximum (Stress),PHP,16556.08,595.37,5106.07,1401.42,3600.80,1438.82,3845.49,1519.97,227479
+get_with_index,Bare Metal,Maximum (Stress),Python,1946.10,0.00,2099.32,1728.75,1651.45,606.11,1473.14,637.98,160821
+get_with_index,Docker,Minimum (Light),Go,10958.75,10.71,5030.60,20.13,3581.67,29.81,3982.66,26.58,0
+get_with_index,Docker,Minimum (Light),Java,10133.17,10.80,4494.07,22.94,3354.98,31.46,3845.52,27.23,0
+get_with_index,Docker,Minimum (Light),Node.js,2046.80,49.07,2450.58,40.78,1893.46,52.69,1684.62,59.05,0
+get_with_index,Docker,Minimum (Light),PHP,17011.24,7.51,5276.09,22.92,4014.67,28.04,4470.94,25.42,0
+get_with_index,Docker,Minimum (Light),Python,2557.69,41.69,2805.20,35.72,2122.19,47.60,1947.60,51.11,0
+get_with_index,Docker,Medium (Standard),Go,13277.43,142.49,4977.04,220.49,3482.90,274.97,3989.93,256.33,5701
+get_with_index,Docker,Medium (Standard),Java,11613.94,89.36,4604.26,216.07,3329.01,298.23,3734.20,267.83,16
+get_with_index,Docker,Medium (Standard),Node.js,2036.96,422.71,2432.73,367.50,1820.82,473.24,1553.25,528.73,2333
+get_with_index,Docker,Medium (Standard),PHP,16403.98,63.96,5235.89,200.20,3971.57,275.66,4112.19,271.17,0
+get_with_index,Docker,Medium (Standard),Python,2329.39,425.51,2598.55,381.28,1959.19,504.62,1717.99,574.49,0
+get_with_index,Docker,Maximum (Stress),Go,14179.98,396.84,4598.37,645.04,2530.12,953.93,3696.52,1025.28,148965
+get_with_index,Docker,Maximum (Stress),Java,11588.66,675.54,4232.42,1762.05,2536.31,1000.01,3465.73,1507.68,176610
+get_with_index,Docker,Maximum (Stress),Node.js,2007.38,558.10,2223.00,509.82,1255.75,1287.50,1092.88,1430.24,29242
+get_with_index,Docker,Maximum (Stress),PHP,15837.98,613.35,4935.11,1320.59,2878.36,1347.10,3888.71,1373.98,170248
+get_with_index,Docker,Maximum (Stress),Python,1977.48,1119.75,2120.06,1301.90,1172.58,1155.14,1249.78,1120.18,181430
 post,Docker,Minimum (Light),Go,7123.85,14.05,4962.62,20.38,4008.93,25.09,2818.92,35.83,0
 post,Docker,Minimum (Light),Java,5708.88,17.63,4539.56,22.01,3896.54,25.85,3256.14,30.69,0
 post,Docker,Minimum (Light),Node.js,7297.44,13.94,4327.39,23.20,3830.39,26.06,2907.82,34.41,0

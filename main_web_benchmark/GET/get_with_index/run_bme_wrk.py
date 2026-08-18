@@ -100,6 +100,10 @@ def main():
     print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Warmup: {not args.no_warmup}")
     print("=================================================================")
 
+    print("\n---> Starting MySQL container for Bare Metal benchmark...")
+    subprocess.run(["docker", "compose", "up", "-d", "mysql"], check=True)
+    time.sleep(3)
+
     ALL_RESULTS = {}
 
     for lang in LANGUAGES:
@@ -147,6 +151,8 @@ def main():
             proc.kill()
         subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
         time.sleep(2)
+
+    subprocess.run(["docker", "compose", "down"], check=True)
 
     with open("bme_benchmark_results.json", "w") as f:
         json.dump(ALL_RESULTS, f, indent=2)
