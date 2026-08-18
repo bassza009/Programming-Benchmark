@@ -15,20 +15,20 @@ def generate_markdown(json_files):
     output = []
     output.append("# Web Framework Benchmark: Comprehensive Summary\n")
     output.append("Multi-language performance evaluation across **Docker Containerized** and **Bare Metal (Host)** environments.\n")
+    output.append(r"Statistical metrics include Arithmetic Mean ($\bar{X}$), Standard Deviation ($\sigma$), 95% Confidence Interval (95% CI), and Latency Percentiles ($p_{50}, p_{90}, p_{95}, p_{99}$)." + "\n")
 
     # Load all datasets into memory
     loaded_data = {}
     for fpath in json_files:
         fname = os.path.basename(fpath)
-        with open(fpath, "r") as f:
+        with open(fpath, "r", encoding="utf-8") as f:
             loaded_data[fname] = json.load(f)
 
     # 1. Unified Side-by-Side Comparison Section (Dkr vs BME)
     output.append("## Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Tier)\n")
-    output.append("| Suite | Language | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | Overhead / Gain |")
+    output.append("| Suite | Language | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | Overhead / Gain |")
     output.append("| :--- | :--- | :--- | :--- | :--- | :--- | :--- |")
 
-    # Check for matched suites (e.g. get_no_index)
     suites = set([k.replace("_dkr.json", "").replace("_bme.json", "").replace(".json", "") for k in loaded_data.keys()])
     for s in sorted(suites):
         dkr_key = f"{s}_dkr.json"
@@ -43,12 +43,13 @@ def generate_markdown(json_files):
             langs.update(bme_data.keys())
 
         for lang in sorted(langs):
-            # Extract 1table min tier
-            dkr_rps = "-"
-            dkr_lat = "-"
-            bme_rps = "-"
-            bme_lat = "-"
+            dkr_str = "-"
+            bme_str = "-"
+            dkr_pct = "-"
+            bme_pct = "-"
             gain = "N/A"
+            d_r_num = 0.0
+            b_r_num = 0.0
 
             if dkr_data and lang in dkr_data:
                 tiers_dict = dkr_data[lang].get("tiers", {})
@@ -66,10 +67,13 @@ def generate_markdown(json_files):
                 )
                 if d_val:
                     r = d_val.get("requests_per_sec", 0.0)
-                    l = d_val.get("latency_mean_ms", 0.0)
-                    dkr_rps = f"{r:,.2f}"
-                    dkr_lat = f"{l:.2f}ms"
+                    r_sd = d_val.get("rps_stdev", 0.0)
+                    l_mean = d_val.get("latency_mean_ms", 0.0)
+                    p50 = d_val.get("latency_p50_ms", l_mean)
+                    p95 = d_val.get("latency_p95_ms", l_mean)
                     d_r_num = r
+                    dkr_str = f"{r:,.2f}" if r_sd == 0 else f"{r:,.2f} ± {r_sd:.2f}"
+                    dkr_pct = f"{p50:.2f}ms / {p95:.2f}ms"
 
             if bme_data and lang in bme_data:
                 tiers_dict = bme_data[lang].get("tiers", {})
@@ -87,18 +91,21 @@ def generate_markdown(json_files):
                 )
                 if b_val:
                     r = b_val.get("requests_per_sec", 0.0)
-                    l = b_val.get("latency_mean_ms", 0.0)
-                    bme_rps = f"{r:,.2f}"
-                    bme_lat = f"{l:.2f}ms"
+                    r_sd = b_val.get("rps_stdev", 0.0)
+                    l_mean = b_val.get("latency_mean_ms", 0.0)
+                    p50 = b_val.get("latency_p50_ms", l_mean)
+                    p95 = b_val.get("latency_p95_ms", l_mean)
                     b_r_num = r
+                    bme_str = f"{r:,.2f}" if r_sd == 0 else f"{r:,.2f} ± {r_sd:.2f}"
+                    bme_pct = f"{p50:.2f}ms / {p95:.2f}ms"
 
-            if dkr_rps != "-" and bme_rps != "-":
+            if dkr_str != "-" and bme_str != "-":
                 if d_r_num > 0:
                     diff = ((b_r_num - d_r_num) / d_r_num) * 100
                     gain = f"{'+' if diff > 0 else ''}{diff:.1f}% BME"
 
-            output.append(f"| **{s}** | **{lang}** | {dkr_rps} | {bme_rps} | {dkr_lat} | {bme_lat} | {gain} |")
-    output.append("\n---\n")
+            output.append(f"| **{s}** | **{lang}** | {dkr_str} | {bme_str} | {dkr_pct} | {bme_pct} | {gain} |")
+        output.append("\n---\n")
 
     # 2. Detailed Breakdown by Suite
     for fpath in json_files:
@@ -130,14 +137,20 @@ def generate_csv(json_files):
         "Environment",
         "Tier",
         "Language",
-        "1table (Req/s)",
-        "1table Latency (ms)",
-        "2table/2join (Req/s)",
-        "2table/2join Latency (ms)",
-        "3table/3join (Req/s)",
-        "3table/3join Latency (ms)",
-        "4table/4join (Req/s)",
-        "4table/4join Latency (ms)",
+        "Endpoint",
+        "Requests/sec (Mean)",
+        "Requests/sec (SD)",
+        "Requests/sec (95% CI Low)",
+        "Requests/sec (95% CI High)",
+        "Latency Mean (ms)",
+        "Latency SD (ms)",
+        "Latency (95% CI Low)",
+        "Latency (95% CI High)",
+        "Latency p50 (ms)",
+        "Latency p90 (ms)",
+        "Latency p95 (ms)",
+        "Latency p99 (ms)",
+        "Latency Max (ms)",
         "Total Errors"
     ]
 
@@ -167,75 +180,95 @@ def generate_csv(json_files):
                     lang_data = data[lang_name]
                     endpoints = lang_data["tiers"][tier]["endpoints"]
                     
-                    ep_map = {}
-                    total_errors = 0
                     for ep_key, ep_res in endpoints.items():
                         if isinstance(ep_res, dict) and "average" in ep_res:
                             ep_res = ep_res["average"]
-                        cleaned = clean_ep_name(ep_key)
+
                         rps = ep_res.get("requests_per_sec", 0.0)
-                        lat = ep_res.get("latency_mean_ms", 0.0)
+                        rps_sd = ep_res.get("rps_stdev", 0.0)
+                        rps_ci_low = ep_res.get("rps_ci95_low", rps)
+                        rps_ci_high = ep_res.get("rps_ci95_high", rps)
+
+                        lat_mean = ep_res.get("latency_mean_ms", 0.0)
+                        lat_sd = ep_res.get("latency_stdev_ms", 0.0)
+                        lat_ci_low = ep_res.get("latency_ci95_low", lat_mean)
+                        lat_ci_high = ep_res.get("latency_ci95_high", lat_mean)
+
+                        lat_p50 = ep_res.get("latency_p50_ms", lat_mean)
+                        lat_p90 = ep_res.get("latency_p90_ms", lat_mean)
+                        lat_p95 = ep_res.get("latency_p95_ms", lat_mean)
+                        lat_p99 = ep_res.get("latency_p99_ms", lat_mean)
+                        lat_max = ep_res.get("latency_max_ms", 0.0)
                         errs = ep_res.get("errors", 0)
-                        total_errors += errs
-                        ep_map[cleaned] = (rps, lat)
 
-                    val_1 = ep_map.get("1table", (0.0, 0.0))
-                    val_2 = ep_map.get("2join", ep_map.get("2table", (0.0, 0.0)))
-                    val_3 = ep_map.get("3join", ep_map.get("3table", (0.0, 0.0)))
-                    val_4 = ep_map.get("4join", ep_map.get("4table", (0.0, 0.0)))
-
-                    rows.append([
-                        suite,
-                        env,
-                        tier_name,
-                        lang_name,
-                        f"{val_1[0]:.2f}",
-                        f"{val_1[1]:.2f}",
-                        f"{val_2[0]:.2f}",
-                        f"{val_2[1]:.2f}",
-                        f"{val_3[0]:.2f}",
-                        f"{val_3[1]:.2f}",
-                        f"{val_4[0]:.2f}",
-                        f"{val_4[1]:.2f}",
-                        total_errors
-                    ])
+                        rows.append([
+                            suite,
+                            env,
+                            tier_name,
+                            lang_name,
+                            ep_key,
+                            f"{rps:.2f}",
+                            f"{rps_sd:.2f}",
+                            f"{rps_ci_low:.2f}",
+                            f"{rps_ci_high:.2f}",
+                            f"{lat_mean:.2f}",
+                            f"{lat_sd:.2f}",
+                            f"{lat_ci_low:.2f}",
+                            f"{lat_ci_high:.2f}",
+                            f"{lat_p50:.2f}",
+                            f"{lat_p90:.2f}",
+                            f"{lat_p95:.2f}",
+                            f"{lat_p99:.2f}",
+                            f"{lat_max:.2f}",
+                            errs
+                        ])
         else:
             for lang_name in sorted(data.keys()):
                 lang_data = data[lang_name]
                 endpoints = lang_data.get("endpoints", {})
                 
-                ep_map = {}
-                total_errors = 0
                 for ep_key, ep_res in endpoints.items():
                     if isinstance(ep_res, dict) and "average" in ep_res:
                         ep_res = ep_res["average"]
-                    cleaned = clean_ep_name(ep_key)
+
                     rps = ep_res.get("requests_per_sec", 0.0)
-                    lat = ep_res.get("latency_mean_ms", 0.0)
+                    rps_sd = ep_res.get("rps_stdev", 0.0)
+                    rps_ci_low = ep_res.get("rps_ci95_low", rps)
+                    rps_ci_high = ep_res.get("rps_ci95_high", rps)
+
+                    lat_mean = ep_res.get("latency_mean_ms", 0.0)
+                    lat_sd = ep_res.get("latency_stdev_ms", 0.0)
+                    lat_ci_low = ep_res.get("latency_ci95_low", lat_mean)
+                    lat_ci_high = ep_res.get("latency_ci95_high", lat_mean)
+
+                    lat_p50 = ep_res.get("latency_p50_ms", lat_mean)
+                    lat_p90 = ep_res.get("latency_p90_ms", lat_mean)
+                    lat_p95 = ep_res.get("latency_p95_ms", lat_mean)
+                    lat_p99 = ep_res.get("latency_p99_ms", lat_mean)
+                    lat_max = ep_res.get("latency_max_ms", 0.0)
                     errs = ep_res.get("errors", 0)
-                    total_errors += errs
-                    ep_map[cleaned] = (rps, lat)
 
-                val_1 = ep_map.get("1table", (0.0, 0.0))
-                val_2 = ep_map.get("2join", ep_map.get("2table", (0.0, 0.0)))
-                val_3 = ep_map.get("3join", ep_map.get("3table", (0.0, 0.0)))
-                val_4 = ep_map.get("4join", ep_map.get("4table", (0.0, 0.0)))
-
-                rows.append([
-                    suite,
-                    env,
-                    "Default",
-                    lang_name,
-                    f"{val_1[0]:.2f}",
-                    f"{val_1[1]:.2f}",
-                    f"{val_2[0]:.2f}",
-                    f"{val_2[1]:.2f}",
-                    f"{val_3[0]:.2f}",
-                    f"{val_3[1]:.2f}",
-                    f"{val_4[0]:.2f}",
-                    f"{val_4[1]:.2f}",
-                    total_errors
-                ])
+                    rows.append([
+                        suite,
+                        env,
+                        "Default",
+                        lang_name,
+                        ep_key,
+                        f"{rps:.2f}",
+                        f"{rps_sd:.2f}",
+                        f"{rps_ci_low:.2f}",
+                        f"{rps_ci_high:.2f}",
+                        f"{lat_mean:.2f}",
+                        f"{lat_sd:.2f}",
+                        f"{lat_ci_low:.2f}",
+                        f"{lat_ci_high:.2f}",
+                        f"{lat_p50:.2f}",
+                        f"{lat_p90:.2f}",
+                        f"{lat_p95:.2f}",
+                        f"{lat_p99:.2f}",
+                        f"{lat_max:.2f}",
+                        errs
+                    ])
 
     with open(SUMMARY_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)

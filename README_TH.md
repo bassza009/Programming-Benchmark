@@ -87,12 +87,16 @@ flowchart TD
 ### ขั้นตอนการดำเนินการ 6 ขั้นตอน:
 1. **สภาพแวดล้อมที่ใช้ในการทดลอง**: ปรับแต่ง Host OS (`ulimit -n 65535`), ใช้งาน MySQL 8.0 เฉพาะกิจ และกำหนดทรัพยากรมาตรฐาน
 2. **การออกแบบซอฟต์แวร์และระบบ**: ออกแบบ Database Schema, API Endpoints, Query และ JSON Structure ให้ตรงกันทุกประการทั้ง 5 ภาษา
-3. **การกำหนดตัวแปรต้นและตัวแปรตาม**:
+3. **การกำหนดตัวแปรต้น ตัวแปรตาม และตัวชี้วัดทางสถิติ**:
    - *ตัวแปรต้น*: ภาษา/เฟรมเวิร์ก, สภาพแวดล้อม (Bare Metal vs Docker), สถานะ Index, ความซับซ้อนของคำสั่ง SQL, ระดับ Concurrency
-   - *ตัวแปรตาม*: Throughput (Requests/sec), เวลาตอบสนองเฉลี่ย (Avg Latency ms), ความหน่วงสูงสุด (Max Latency ms), อัตราข้อผิดพลาด (Errors)
+   - *ตัวแปรตามและตัวชี้วัดทางสถิติ (Statistical Metrics)*:
+     - **Throughput**: ค่าเฉลี่ยเลขคณิต ($\bar{T}$ Requests/sec), ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_T$ / SD), ช่วงความเชื่อมั่น 95% (95% CI)
+     - **Latency & Dispersion**: เวลาตอบสนองเฉลี่ย ($\bar{L}$ ms), ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_L$ / SD), ช่วงความเชื่อมั่น 95% (95% CI)
+     - **Percentiles**: $p_{50}$ (ค่ามัธยฐาน), $p_{90}$, $p_{95}$, $p_{99}$ (Tail Latency), และเวลาตอบสนองสูงสุด ($L_{\max}$)
+     - **ความเชื่อถือได้ (Reliability)**: อัตราข้อผิดพลาด Socket connect, อ่าน/เขียนเกินเวลา (Timeouts), และความผิดพลาดของ HTTP Status
 4. **ประเภทของภาระงานที่ทดสอบ**: หมวดการอ่าน (`GET` ตารางเดี่ยว และ `JOIN` 2–4 ตาราง) และหมวดการเขียน (`POST` Transactions เชื่อมโยง 1–4 ตาราง)
 5. **ขั้นตอนการดำเนินการทดลอง**: รันทดสอบอัตโนมัติด้วย `wrk`, มีขั้นตอน Warmup, รีเซ็ตสถานะฐานข้อมูลระหว่างรอบ และรองรับการรันซ้ำหาค่าเฉลี่ย (`--runs N`)
-6. **การวิเคราะห์ข้อมูล**: สรุปผลทางสถิติ, บันทึก Log ข้อมูลดิบรายรอบในรูปแบบ JSON และส่งออกรายงานสรุป Markdown/CSV
+6. **การวิเคราะห์ข้อมูล**: คำนวณการกระจายตัวทางสถิติ (SD, 95% CI, Percentiles), บันทึก Log ข้อมูลดิบรายรอบในรูปแบบ JSON และส่งออกรายงานสรุป Markdown/CSV
 
 ---
 
@@ -157,22 +161,22 @@ flowchart TD
 
 ## 7. ผลการค้นพบและข้อสรุปสำคัญเชิงประจักษ์ (Key Empirical Results)
 
-### สรุปเปรียบเทียบ Docker vs Bare Metal (`/raw/1table` - Light Tier)
+### สรุปเปรียบเทียบ Docker vs Bare Metal (`/raw/1table` - โหลดระดับเริ่มต้น)
 
-| ชุดทดสอบ | ภาษา | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | ผลต่าง Overhead / Gain |
+| ชุดทดสอบ | ภาษา | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | ผลต่าง Overhead / Gain |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **get_no_index** | **Go** | 10,988.10 | 11,928.00 | 10.67ms | 9.30ms | +8.6% BME เร็วกว่า |
-| **get_no_index** | **Java** | 9,231.73 | 11,958.11 | 12.24ms | 8.37ms | +29.5% BME เร็วกว่า |
-| **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms | 16.30ms | +243.6% BME เร็วกว่า |
-| **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms | 7.27ms | -1.5% BME ใกล้เคียงกัน |
-| **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms | 61.24ms | -35.4% Docker สูงกว่า |
-| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms | 9.34ms | +7.9% BME เร็วกว่า |
-| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms | 8.51ms | +16.1% BME เร็วกว่า |
-| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms | 9.10ms | +440.9% BME เร็วกว่า |
-| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms | 6.27ms | -1.1% BME ใกล้เคียงกัน |
-| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms | 52.19ms | -25.4% Docker สูงกว่า |
+| **get_no_index** | **Go** | 10,988.10 | 11,928.00 | 10.67ms / 10.67ms | 9.30ms / 9.30ms | +8.6% BME เร็วกว่า |
+| **get_no_index** | **Java** | 9,231.73 | 11,958.11 | 12.24ms / 12.24ms | 8.37ms / 8.37ms | +29.5% BME เร็วกว่า |
+| **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms / 49.18ms | 16.30ms / 16.30ms | +243.6% BME เร็วกว่า |
+| **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms / 6.94ms | 7.27ms / 7.27ms | -1.5% BME ใกล้เคียงกัน |
+| **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms / 40.03ms | 61.24ms / 61.24ms | -35.4% Docker สูงกว่า |
+| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms / 10.71ms | 9.34ms / 9.34ms | +7.9% BME เร็วกว่า |
+| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms / 10.80ms | 8.51ms / 8.51ms | +16.1% BME เร็วกว่า |
+| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms / 49.07ms | 9.10ms / 9.10ms | +440.9% BME เร็วกว่า |
+| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms / 7.51ms | 6.27ms / 6.27ms | -1.1% BME ใกล้เคียงกัน |
+| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms / 41.69ms | 52.19ms / 52.19ms | -25.4% Docker สูงกว่า |
 
-> ตรวจสอบผลลัพธ์ฉบับสมบูรณ์ทุกตาราง, ทุก Endpoint, และทุกระดับโหลดได้ที่ [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md)
+> ตรวจสอบผลลัพธ์ฉบับสมบูรณ์พร้อมค่า Mean ± SD, ช่วงความเชื่อมั่น 95% (95% CI) และ Percentiles (p50, p90, p95, p99) ของทุก Endpoint และระดับโหลดได้ที่ [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) และ [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv)
 
 ---
 

@@ -39,16 +39,19 @@ Run tests with multi-run averaging (`--runs 3` or `--runs 5`) to capture:
 
 Raw metrics are saved to `raw_results.json` and centralized in `main_web_benchmark/results/raw_results/<suite>_raw.json`.
 
-### Step 2: Statistical Aggregation
+### Step 2: Statistical Aggregation & Distribution Analysis
 Execute the centralized summary script:
 ```bash
-cd main_web_benchmark/results
-python3 generate_summary.py
+python main_web_benchmark/results/generate_summary.py
 ```
-This parses all `<suite>_<env>.json` files and computes:
-- Mean Requests/sec across runs: $\bar{T} = \frac{1}{N}\sum_{i=1}^{N} T_i$
-- Mean Latency across runs: $\bar{L} = \frac{1}{N}\sum_{i=1}^{N} L_i$
-- Aggregated error counts: $E_{\text{total}} = \sum_{i=1}^{N} E_i$
+This parses all `<suite>_<env>.json` files and calculates comprehensive distributions across runs:
+- **Arithmetic Mean ($\bar{X}$)**:
+  - Throughput: $\bar{T} = \frac{1}{N}\sum_{i=1}^{N} T_i$
+  - Latency: $\bar{L} = \frac{1}{N}\sum_{i=1}^{N} L_i$
+- **Standard Deviation ($\sigma$ / SD)**: Sample dispersion $s = \sqrt{\frac{1}{N-1}\sum_{i=1}^{N} (x_i - \bar{x})^2}$
+- **95% Confidence Interval (95% CI)**: $[\bar{X} - t_{crit}\frac{s}{\sqrt{N}}, \bar{X} + t_{crit}\frac{s}{\sqrt{N}}]$
+- **Latency Percentiles**: $p_{50}$ (median), $p_{90}$, $p_{95}$, and $p_{99}$ tail latency metrics.
+- **Reliability & Max Bounds**: Max Latency $L_{\max}$ and Total Socket/Timeout Error Counts $E_{\text{total}} = \sum_{i=1}^{N} E_i$.
 
 ### Step 3: Comparative Factorial Synthesis
 Calculate key cross-layer metrics:

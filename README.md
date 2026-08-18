@@ -88,10 +88,14 @@ flowchart TD
 2. **Software & System Architecture**: Implementation of identical database schemas, endpoints, query structures, and JSON response formats across all 5 frameworks.
 3. **Independent & Dependent Variables Definition**:
    - *Independent Variables*: Language/Framework, Execution Environment (Bare Metal vs. Docker), Indexing State, Query Complexity, Concurrency Level.
-   - *Dependent Variables*: Throughput (Req/sec), Average Latency (ms), Max Latency (ms), Socket/Timeout Errors.
+   - *Dependent Variables & Metrics*:
+     - **Throughput**: Arithmetic Mean ($\bar{T}$ Req/sec), Sample Standard Deviation ($\sigma_T$), 95% Confidence Interval (95% CI).
+     - **Latency & Dispersion**: Mean Latency ($\bar{L}$ ms), Sample Standard Deviation ($\sigma_L$), 95% Confidence Interval (95% CI).
+     - **Percentiles**: $p_{50}$ (Median), $p_{90}$, $p_{95}$, $p_{99}$ tail latencies, and Maximum Latency ($L_{\max}$).
+     - **Reliability**: Socket connection errors, read/write timeouts, and HTTP status anomalies.
 4. **Workload Definition**: Read suites (Single-table and 2–4 table `JOIN`s) and Write suites (1–4 table relational transactions).
 5. **Execution Protocol**: Automated test harness via `wrk` with warmup phases, database state resets between runs, and multi-iteration averaging (`--runs N`).
-6. **Data Analysis**: Statistical aggregation, raw JSON logging, and markdown/CSV summary generation.
+6. **Data Analysis**: Distribution calculation, 95% CI estimation, raw JSON logging, and markdown/CSV summary generation.
 
 ---
 
@@ -158,20 +162,20 @@ Tested under two database states:
 
 ### Executive Comparison: Docker vs Bare Metal (`/raw/1table` - Light Load)
 
-| Suite | Language | Docker (Req/s) | Bare Metal (Req/s) | Docker Latency | BME Latency | Overhead / Gain |
+| Suite | Language | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | Overhead / Gain |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **get_no_index** | **Go** | 10,988.10 | 11,928.00 | 10.67ms | 9.30ms | +8.6% BME |
-| **get_no_index** | **Java** | 9,231.73 | 11,958.11 | 12.24ms | 8.37ms | +29.5% BME |
-| **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms | 16.30ms | +243.6% BME |
-| **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms | 7.27ms | -1.5% BME |
-| **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms | 61.24ms | -35.4% BME |
-| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms | 9.34ms | +7.9% BME |
-| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms | 8.51ms | +16.1% BME |
-| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms | 9.10ms | +440.9% BME |
-| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms | 6.27ms | -1.1% BME |
-| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms | 52.19ms | -25.4% BME |
+| **get_no_index** | **Go** | 10,988.10 | 11,928.00 | 10.67ms / 10.67ms | 9.30ms / 9.30ms | +8.6% BME |
+| **get_no_index** | **Java** | 9,231.73 | 11,958.11 | 12.24ms / 12.24ms | 8.37ms / 8.37ms | +29.5% BME |
+| **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms / 49.18ms | 16.30ms / 16.30ms | +243.6% BME |
+| **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms / 6.94ms | 7.27ms / 7.27ms | -1.5% BME |
+| **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms / 40.03ms | 61.24ms / 61.24ms | -35.4% BME |
+| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms / 10.71ms | 9.34ms / 9.34ms | +7.9% BME |
+| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms / 10.80ms | 8.51ms / 8.51ms | +16.1% BME |
+| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms / 49.07ms | 9.10ms / 9.10ms | +440.9% BME |
+| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms / 7.51ms | 6.27ms / 6.27ms | -1.1% BME |
+| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms / 41.69ms | 52.19ms / 52.19ms | -25.4% BME |
 
-> For complete tabular results across all endpoints, tiers, and raw metrics, see [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md).
+> For complete tabular results with Mean ± SD, 95% Confidence Intervals, and p50/p90/p95/p99 percentiles across all endpoints and tiers, see [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) and [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv).
 
 ---
 
