@@ -11,17 +11,21 @@ This skill provides step-by-step procedures for running, monitoring, and analyzi
 
 ## 1. Remote Server Prerequisites Check
 
-When running on a fresh remote SSH Linux server, verify the system setup:
+When running on a remote or local environment, verify the system setup:
 
 ```bash
-# 1. Check Docker daemon & Compose
+# 1. Start / verify local MySQL 8.0 instance on port 3306
+# User: admin, Password: secret, Database: benchmark_db
+mysql -uadmin -psecret -h127.0.0.1 -e "SELECT 1;"
+
+# 2. Check Docker daemon & Compose (if running Docker mode)
 docker info
 docker compose version
 
-# 2. Verify / elevate File Descriptor limits (nofile >= 65535)
+# 3. Verify / elevate File Descriptor limits (nofile >= 65535)
 ulimit -n 65535
 
-# 3. Verify wrk load generator
+# 4. Verify wrk load generator
 which wrk || sudo apt-get install -y wrk
 ```
 
@@ -29,8 +33,8 @@ which wrk || sudo apt-get install -y wrk
 
 ## 2. Benchmark Execution Workflows
 
-### A. Docker Containerized Mode (Recommended for Remote Servers)
-Docker handles dependencies, isolation, and MySQL tuning automatically.
+### A. Docker Containerized Mode
+Docker runs framework containers connecting to the local host MySQL database.
 
 ```bash
 # GET (No Index) Suite

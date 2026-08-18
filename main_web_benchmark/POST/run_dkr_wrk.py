@@ -49,12 +49,15 @@ def wait_for_server(port, max_wait=30):
             time.sleep(0.5)
     return False
 
-def reset_db_docker():
+def reset_db():
     try:
         cmd = [
-            "docker", "compose", "exec", "-T", "mysql",
-            "mysql", "-uadmin", "-psecret", "-e",
-            "SET FOREIGN_KEY_CHECKS=0; TRUNCATE TABLE order_items; TRUNCATE TABLE orders; TRUNCATE TABLE profiles; TRUNCATE TABLE users; SET FOREIGN_KEY_CHECKS=1;",
+            "mysql",
+            "-h", "127.0.0.1",
+            "-P", "3306",
+            "-u", "admin",
+            "-psecret",
+            "-e", "SET FOREIGN_KEY_CHECKS=0; TRUNCATE TABLE order_items; TRUNCATE TABLE orders; TRUNCATE TABLE profiles; TRUNCATE TABLE users; SET FOREIGN_KEY_CHECKS=1;",
             "benchmark_db"
         ]
         subprocess.run(cmd, capture_output=True, timeout=10)
@@ -112,15 +115,11 @@ def main():
     print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Warmup: {not args.no_warmup}")
     print("=================================================================")
 
-    print("\n---> Starting MySQL container...")
-    subprocess.run(["docker", "compose", "up", "-d", "mysql"], check=True)
-    time.sleep(5)
-
     ALL_RESULTS = {}
 
     for s in SERVICES:
-        print(f"\n---> Resetting Database for Docker service {s['name']}...")
-        reset_db_docker()
+        print(f"\n---> Resetting Database for {s['name']}...")
+        reset_db()
 
         print(f"---> Spinning up Docker container: {s['service']} on Port {s['port']}")
         subprocess.run(["docker", "compose", "up", "-d", "--build", s['service']], check=True)

@@ -100,10 +100,6 @@ def main():
     print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Warmup: {not args.no_warmup}")
     print("=================================================================")
 
-    print("\n---> Starting MySQL container...")
-    subprocess.run(["docker", "compose", "up", "-d", "mysql"], check=True)
-    time.sleep(5)
-
     ALL_RESULTS = {}
 
     for s in SERVICES:

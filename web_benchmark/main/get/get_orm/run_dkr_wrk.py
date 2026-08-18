@@ -54,7 +54,7 @@ def run_wrk(port: int, endpoint: str) -> dict:
 def start_container(image: str, port: int) -> None:
     print(f" Starting Docker container from image {image} on port {port}")
     subprocess.run(
-        ["docker", "run", "-d", " --network","host","--name", CONTAINER_NAME, image],
+        ["docker", "run", "-d", "--network", "host", "--name", CONTAINER_NAME, image],
         capture_output=True,
         text=True,
     )

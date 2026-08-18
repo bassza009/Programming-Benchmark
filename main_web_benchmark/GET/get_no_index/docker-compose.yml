@@ -1,28 +1,6 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: benchmark-get-no-index-mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: benchmark_db
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: secret
-    ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password --max_connections=10000 --max_allowed_packet=64M --innodb_buffer_pool_size=1G --table_open_cache=4000
-    ulimits:
-      nofile:
-        soft: 65535
-        hard: 65535
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psecret"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   server-python:
     build:
       context: .
@@ -30,8 +8,10 @@ services:
     container_name: server-python-get-no-index
     ports:
       - "8001:8001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: admin
       DB_PASS: secret
@@ -40,9 +20,6 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    depends_on:
-      mysql:
-        condition: service_healthy
 
   server-node:
     build:
@@ -51,8 +28,10 @@ services:
     container_name: server-node-get-no-index
     ports:
       - "8002:8002"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: admin
       DB_PASS: secret
@@ -61,9 +40,6 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    depends_on:
-      mysql:
-        condition: service_healthy
 
   server-php:
     build:
@@ -72,8 +48,10 @@ services:
     container_name: server-php-get-no-index
     ports:
       - "8003:8003"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: admin
       DB_PASS: secret
@@ -82,9 +60,6 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    depends_on:
-      mysql:
-        condition: service_healthy
 
   server-go:
     build:
@@ -93,8 +68,10 @@ services:
     container_name: server-go-get-no-index
     ports:
       - "8004:8004"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: admin
       DB_PASS: secret
@@ -103,9 +80,6 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    depends_on:
-      mysql:
-        condition: service_healthy
 
   server-java:
     build:
@@ -114,8 +88,10 @@ services:
     container_name: server-java-get-no-index
     ports:
       - "8005:8005"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: mysql
+      DB_HOST: host.docker.internal
       DB_PORT: 3306
       DB_USER: admin
       DB_PASS: secret
@@ -124,6 +100,3 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    depends_on:
-      mysql:
-        condition: service_healthy
