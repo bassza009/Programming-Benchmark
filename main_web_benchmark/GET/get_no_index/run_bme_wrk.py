@@ -151,8 +151,13 @@ def main():
     with open("bme_benchmark_results.json", "w") as f:
         json.dump(ALL_RESULTS, f, indent=2)
 
+    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "results"))
+    os.makedirs(res_dir, exist_ok=True)
+    with open(os.path.join(res_dir, "get_no_index_bme.json"), "w") as f:
+        json.dump(ALL_RESULTS, f, indent=2)
+
     print("\n=================================================================")
-    print(" GET No-Index BME Benchmark Finished! Results in bme_benchmark_results.json")
+    print(" GET No-Index Bare-Metal Benchmark Finished! Results in bme_benchmark_results.json and results/get_no_index_bme.json")
     print("=================================================================")
 
 if __name__ == "__main__":

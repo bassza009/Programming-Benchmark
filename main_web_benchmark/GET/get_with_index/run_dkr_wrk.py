@@ -151,8 +151,13 @@ def main():
     with open("dkr_benchmark_results.json", "w") as f:
         json.dump(ALL_RESULTS, f, indent=2)
 
+    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "results"))
+    os.makedirs(res_dir, exist_ok=True)
+    with open(os.path.join(res_dir, "get_with_index_dkr.json"), "w") as f:
+        json.dump(ALL_RESULTS, f, indent=2)
+
     print("\n=================================================================")
-    print(" GET With-Index Docker Benchmark Finished! Results in dkr_benchmark_results.json")
+    print(" GET With-Index Docker Benchmark Finished! Results in dkr_benchmark_results.json and results/get_with_index_dkr.json")
     print("=================================================================")
 
 if __name__ == "__main__":
