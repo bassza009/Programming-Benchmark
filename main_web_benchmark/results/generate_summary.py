@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import sys
 import glob
 import json
 import csv
@@ -109,13 +110,13 @@ def generate_markdown(json_files):
         output.append(f"## Suite: `{suite_name}` — {env_label}\n")
         
         try:
-            res = subprocess.run(["python3", COMPARE_SCRIPT, fpath], capture_output=True, text=True, check=True)
+            res = subprocess.run([sys.executable, COMPARE_SCRIPT, fpath], capture_output=True, text=True, check=True)
             output.append(res.stdout.strip())
             output.append("\n---\n")
         except Exception as e:
             output.append(f"Error reading {fname}: {e}\n")
 
-    with open(SUMMARY_MD, "w") as f:
+    with open(SUMMARY_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(output))
     print(f"Markdown summary written to {SUMMARY_MD}")
 
@@ -152,7 +153,7 @@ def generate_csv(json_files):
             env = "Unknown"
             suite = fname.replace(".json", "")
 
-        with open(fpath, "r") as f:
+        with open(fpath, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         first_lang = next(iter(data.values()))
@@ -236,7 +237,7 @@ def generate_csv(json_files):
                     total_errors
                 ])
 
-    with open(SUMMARY_CSV, "w", newline="") as f:
+    with open(SUMMARY_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(headers)
         writer.writerows(rows)
