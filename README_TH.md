@@ -1,77 +1,76 @@
-# โครงการ Project Antigravity: รายงานการทดสอบเปรียบเทียบประสิทธิภาพ Web Framework หลายภาษาและหลายสภาพแวดล้อม
+# โครงการ Project Antigravity: ชุดทดสอบเปรียบเทียบประสิทธิภาพ Web Framework หลายภาษาและหลายสภาพแวดล้อม
 
-> 🌐 **Language / ภาษา**: [English](README.md) | **ภาษาไทย (Thai)**
-
----
-
-## 1. บทสรุปสำหรับผู้บริหาร: โครงการนี้คืออะไร? (Executive Summary)
-
-ในวงการพัฒนาซอฟต์แวร์ Backend ยุคปัจจุบัน มีการถกเถียงกันอย่างต่อเนื่องว่าภาษาและ Framework ใดเร็วและรองรับผู้ใช้ได้มากที่สุด:
-* *"Go เร็วกว่า Node.js จริงหรือไม่?"*
-* *"Java มีขนาดใหญ่และกินทรัพยากรเกินไป หรือ JIT Compiler ช่วยให้เร็วระดับท็อป?"*
-* *"PHP ยังมีประสิทธิภาพดีพอสำหรับงาน Backend สมัยใหม่หรือไม่?"*
-* *"Python FastAPI ช้ากว่าภาษาที่ Compile แล้วมากน้อยเพียงใด?"*
-* *"การรันแอปพลิเคชันบน Docker Container ทำให้เซิร์ฟเวอร์ช้าลงกี่เปอร์เซ็นต์?"*
-
-การทดสอบประสิทธิภาพ (Benchmark) ส่วนใหญ่บนอินเทอร์เน็ตมักทดสอบเฉพาะโปรแกรมอย่างง่าย เช่น **"Hello World"** ซึ่งส่งค่าข้อความสั้นๆ อย่าง `{"status": "ok"}` กลับมา ซึ่ง**ไม่สะท้อนความเป็นจริงในระบบ Production** เพราะในการทำงานจริงเซิร์ฟเวอร์ต้อง:
-1. เชื่อมต่อฐานข้อมูลจริง (Relational Database - MySQL)
-2. ประมวลผลคำสั่ง SQL และ `JOIN` ข้อมูลหลายตาราง
-3. จัดการ Database Connection Pool
-4. ทำธุรกรรมการเขียนข้อมูล (Transactions พร้อม Foreign Keys)
-5. รับมือกับผู้ใช้งานพร้อมกันนับร้อยนับพันคน
-
-**Project Antigravity** คือ ชุดทดสอบประสิทธิภาพมาตรฐาน (Benchmark Suite) ที่มีความเป็นกลาง เป็นไปตามหลักการทางวิทยาศาสตร์ และสามารถทำซ้ำได้ (Deterministic & Reproducible) โดยทำการประเมิน **5 ภาษาและ Web Framework ชั้นนำ** ภายใต้ **ภาระงานฐานข้อมูลจริง** เปรียบเทียบระหว่าง **Bare Metal (รันตรงบน OS)** กับ **Docker Container** ครอบคลุม **5 ระดับโหลดตามสถานการณ์จริง** (ตั้งแต่ 20 ถึง 10,000 Concurrent Connections) พร้อมระบบคำนวณค่าเฉลี่ยและการเก็บ Log ข้อมูลดิบรายรอบ
+> ภาษา / Language: [English](README.md) | **ภาษาไทย (Thai)**
 
 ---
 
-## 2. ทำไมจึงต้องสร้างโครงการนี้? (เป้าหมายและปัญหาที่ได้รับการแก้ไข)
+## 1. บทสรุปสำหรับผู้บริหาร (Executive Summary)
 
-### 🎯 1. ก้าวข้ามกับดัก "Hello World"
-ในการทำงานจริง เซิร์ฟเวอร์ใช้เวลากว่า 80-90% ไปกับการรอ Database I/O, แปลงข้อมูล JSON, และจัดการ Connection Pool ไม่ใช่การคำนวณลูปตัวเลขในแรม โครงการนี้จึงทดสอบการเชื่อมต่อ MySQL จริงที่มีข้อมูลหลักหมื่นแถว
+ในวงการพัฒนาซอฟต์แวร์ Backend ยุคปัจจุบัน มีการประเมินและเปรียบเทียบภาษาและ Web Framework เพื่อค้นหาเทคโนโลยีที่เหมาะสมกับระบบที่ต้องการ Throughput สูง และมี Latency ต่ำ:
+* Go เร็วกว่า Node.js อย่างมีนัยสำคัญหรือไม่?
+* Java Spring Boot ทำงานได้มีประสิทธิภาพเพียงใดภายใต้ Concurrency สูง?
+* รันไทม์ Asynchronous ของ PHP (เช่น Swoole) สามารถแข่งขันกับภาษา Compiled ได้หรือไม่?
+* Python FastAPI มีพฤติกรรมอย่างไรเมื่องานส่วนใหญ่เป็น Database I/O?
+* การ Deploy งานบน Docker Container ส่งผลกระทบต่อประสิทธิภาพมากน้อยเพียงใด?
 
-### 🎯 2. วัดต้นทุนความหน่วงของ Docker (Virtualization Tax)
-การ Deploy ระบบบน Docker Container ทำให้สูญเสีย Throughput และเพิ่ม Latency มากน้อยเพียงใด? ชุดทดสอบนี้รันโค้ดชุดเดียวกันบนเครื่องเดียวกัน เพื่อวัดผลกระทบของการทำ Virtualization และ Bridge Network อย่างแม่นยำ
+การทดสอบประสิทธิภาพส่วนใหญ่บนอินเทอร์เน็ตมักทดสอบเฉพาะโปรแกรมอย่างง่าย เช่น "Hello World" ซึ่งส่งค่าข้อความสั้นๆ กลับมา ซึ่งไม่สะท้อนความเป็นจริงของระบบ Production ที่ต้องเชื่อมต่อฐานข้อมูล MySQL จริง, จัดการ Connection Pool, ประมวลผลคำสั่ง SQL JOIN หลายตาราง และรับมือกับคำขอพร้อมกันในปริมาณมาก
 
-### 🎯 3. ผลกระทบของ Database Index ในสภาวะ Concurrency สูง
-เกิดอะไรขึ้นหากนักพัฒนาลืมสร้าง Index บน Foreign Key เมื่อมีทราฟฟิกเข้ามาพร้อมกันนับพัน? เราเปรียบเทียบคำสั่ง SQL เดียวกันระหว่างแบบมี Index และไม่มี Index เพื่อให้เห็นตัวเลขความต่างอย่างชัดเจน
-
-### 🎯 4. หาขีดจำกัดความเสถียร (Breakdown & Saturation Limits)
-Framework ใดสามารถทนทานต่อการเชื่อมต่อพร้อมกัน 10,000 Connections ได้อย่างราบรื่น และ Framework ใดเริ่มมี Connection หลุด (Errors/Drops) หรือเกิด Latency พุ่งสูง
-
-### 🎯 5. มาตรฐานความยุติธรรมแบบเท่าเทียมกันทุกภาษา
-การเปรียบเทียบส่วนใหญ่มักมีความลำเอียง เช่น ตั้ง Connection Pool ไม่เท่ากัน หรือไม่รอ Warmup โครงการนี้กำหนดขนาด Connection Pool เท่ากัน มีช่วง Warmup 3 วินาที รีเซ็ตฐานข้อมูลระหว่างรอบ และปรับ `ulimit` ป้องกันคอขวดของ OS
+**Project Antigravity** คือ ชุดทดสอบประสิทธิภาพมาตรฐานที่ออกแบบมาเพื่อประเมิน **5 ภาษาและ Web Framework** ภายใต้ **ภาระงานฐานข้อมูลจริง** เปรียบเทียบระหว่าง **Bare Metal** กับ **Docker Container** ครอบคลุม **5 ระดับโหลดตามสถานการณ์จริง** (ตั้งแต่ 20 ถึง 10,000 Concurrent Connections)
 
 ---
 
-## 3. เทคโนโลยีและสถาปัตยกรรมระบบที่นำมาประเมิน
+## 2. วัตถุประสงค์ของโครงการ
+
+### 1. การทดสอบกับภาระงานฐานข้อมูลจริง
+ทดสอบการทำงานกับฐานข้อมูล MySQL จริงที่มีข้อมูลหลักหมื่นแถว ครอบคลุมการสืบค้นตารางเดี่ยว, การ JOIN ข้อมูล 2 ถึง 4 ตาราง, และธุรกรรมการเขียนข้อมูล (Transactions)
+
+### 2. การวัดต้นทุนความหน่วงของ Containerization
+วัดความแตกต่างของ Throughput และ Latency ระหว่างการรันบนระบบปฏิบัติการโดยตรง (Bare Metal) กับการรันภายใน Docker Container ที่มีระบบ Network เสมือน
+
+### 3. การวิเคราะห์ผลกระทบของ Database Index ภายใต้โหลดสูง
+ประเมินความเร็วและเสถียรภาพของการสืบค้นข้อมูลระหว่างแบบมี Secondary Index และไม่มี Index เมื่อปริมาณการเชื่อมต่อเพิ่มสูงขึ้น
+
+### 4. การหาจุดอิ่มตัวและขีดจำกัดความเสถียร (Saturation Limits)
+ศึกษาว่าแต่ละ Framework จัดการ Connection Pool และทรัพยากร Socket อย่างไรเมื่อต้องรับโหลดสูงถึง 10,000 Concurrent Connections
+
+### 5. มาตรฐานการทดสอบที่เท่าเทียมและโปร่งใส
+- กำหนดขนาด Database Connection Pool เท่ากันในทุกภาษา
+- มีช่วง Warmup เพื่อเตรียมความพร้อมของ Process ก่อนบันทึกผล
+- รีเซ็ตสถานะฐานข้อมูลระหว่างรอบการทดสอบ
+- กำหนดค่า File Descriptor ของระบบปฏิบัติการ (`ulimit -n 65535`)
+- รองรับการรันซ้ำหลายรอบ (`--runs N`) เพื่อคำนวณค่าเฉลี่ยทางสถิติ และบันทึก Log การรันดิบทุกรอบใน `raw_results.json`
+
+---
+
+## 3. ภาษาและ Framework ที่นำมาประเมิน
 
 | ภาษา (Language) | Web Framework | Database Driver / Client | โมเดลการประมวลผล (Concurrency) | Port มาตรฐาน |
 | :--- | :--- | :--- | :--- | :--- |
 | **Python** | **FastAPI** (Uvicorn) | `aiomysql` (Async Pool) | Multi-process Async Event Loop | `8001` |
 | **Node.js** | **Fastify** | `mysql2/promise` (Pool) | Multi-core Cluster + Event Loop | `8002` |
-| **PHP** | **Swoole** | `PDO_MySQL` (`PDOPool`) | C-based Coroutine Event Loop | `8003` |
-| **Go** | **Fiber** (v2) | `database/sql` (`go-sql-driver`) | Lightweight Goroutines | `8004` |
+| **PHP** | **Swoole** | `PDO_MySQL` (`PDOPool`) | Coroutine Event Loop | `8003` |
+| **Go** | **Fiber** (v2) | `database/sql` (`go-sql-driver`) | Goroutines | `8004` |
 | **Java** | **Spring Boot** (v3) | `JdbcTemplate` + `HikariCP` | Multi-threaded JVM Pool | `8005` |
 
 ---
 
-## 4. รูปแบบการทดสอบและระดับโหลด (Scenarios & Load Tiers)
+## 4. รูปแบบการทดสอบและระดับโหลด (Scenarios & Tiers)
 
-### A. หมวดการอ่านข้อมูล / GET Benchmark Suites (Raw SQL)
+### A. หมวดการอ่านข้อมูล / GET Suites (Raw SQL)
 * `/raw/1table`: สืบค้นตารางเดี่ยว (`SELECT * FROM users LIMIT 100`)
 * `/raw/2join`: สืบค้นแบบเชื่อม 2 ตาราง (`users` + `profiles`)
 * `/raw/3join`: สืบค้นแบบเชื่อม 3 ตาราง (`users` + `profiles` + `orders`)
 * `/raw/4join`: สืบค้นแบบเชื่อม 4 ตาราง (`users` + `profiles` + `orders` + `order_items`)
 
-*ทดสอบใน 2 สภาวะ:*
-1. **`GET/get_no_index`**: ทดสอบแบบไม่มี Secondary Index (จำลองสภาวะ Table Scan)
-2. **`GET/get_with_index`**: ทดสอบแบบมี Secondary Index บน Foreign Keys
+ทดสอบใน 2 สภาวะ:
+1. **`GET/get_no_index`**: สืบค้นแบบไม่มี Secondary Index (Table Scans)
+2. **`GET/get_with_index`**: สืบค้นแบบมี Secondary Index บน Foreign Key
 
-### B. หมวดการเขียนข้อมูล / POST Benchmark Suite (Database Transactions)
+### B. หมวดการเขียนข้อมูล / POST Suite (Database Transactions)
 * `/raw/post/1table`: บันทึกข้อมูลลงตาราง `users` 1 รายการ
-* `/raw/post/2table`: บันทึกข้อมูลแบบ Transaction เชื่อมโยง `users` + `profiles`
-* `/raw/post/3table`: บันทึกข้อมูลแบบ Transaction เชื่อมโยง `users` + `profiles` + `orders`
-* `/raw/post/4table`: บันทึกข้อมูลแบบ Transaction ครบวงจร `users` + `profiles` + `orders` + `order_items` หลายรายการ
+* `/raw/post/2table`: บันทึกข้อมูลแบบ Transaction เชื่อมโยง `users` และ `profiles`
+* `/raw/post/3table`: บันทึกข้อมูลแบบ Transaction เชื่อมโยง `users`, `profiles`, และ `orders`
+* `/raw/post/4table`: บันทึกข้อมูลแบบ Transaction ครบวงจร `users`, `profiles`, `orders`, และ `order_items` หลายรายการ
 
 ### C. 5 ระดับโหลดตามสถานการณ์จริง (ทดสอบด้วย `wrk`)
 
@@ -86,45 +85,7 @@ Framework ใดสามารถทนทานต่อการเชื่�
 
 ---
 
-## 5. ผลการค้นพบและข้อสรุปสำคัญเชิงลึก
-
-```mermaid
-graph TD
-    A[ข้อค้นพบสำคัญของโครงการ] --> B[Throughput & Latency]
-    A --> C[ผลกระทบของ Docker]
-    A --> D[พลังของ Database Index]
-    
-    B --> B1["PHP Swoole: ~16,000 req/s (อ่านข้อมูลเร็วที่สุด)"]
-    B --> B2["Go & Java: 11,000+ req/s (เสถียรที่สุด ไม่พบ Error)"]
-    B --> B3["Node.js & Python: ~7,000 req/s (เขียนข้อมูล Transaction ยอดเยี่ยม)"]
-    
-    C --> C1["Bare Metal เร็วกว่า Docker 8% - 30% ในภาษา Compiled"]
-    C --> C2["Bridge Network มี Overhead สูงใน Concurrency ระดับสูง"]
-    
-    D --> D1["ไม่มี Index: ความเร็วตกเหลือ 300 req/s Latency พุ่ง 1,000ms+"]
-    D --> D2["มี Index: ความเร็วพุ่ง 3,800 req/s (เร็วขึ้น 12 เท่า)"]
-```
-
-### 🏆 1. PHP Swoole คือผู้นำด้านความเร็วที่น่าทึ่ง
-PHP เมื่อทำงานร่วมกับ Swoole Coroutines และ `PDOPool` สามารถทำ Throughput สูงสุดในการอ่านตารางเดี่ยวได้มากกว่า **16,000 requests/sec** ด้วย Latency เพียง **~7ms** ลบล้างความเชื่อเดิมที่ว่า PHP ทำงานช้า
-
-### 🛡️ 2. Go (Fiber) และ Java (Spring Boot) มีความเสถียรสูงสุด
-ทั้ง Go และ Java ให้ประสิทธิภาพระดับท็อปอย่างสม่ำเสมอ (**11,000+ req/s** สำหรับการอ่าน และ **7,000+ req/s** สำหรับการเขียน) โดยมี Latency Jitter ต่ำมาก และแทบไม่พบ Error แม้โหลดจะเพิ่มถึง 10,000 Connections
-
-### ⚡ 3. ต้นทุนความหน่วงของ Docker (Virtualization Tax)
-Node.js (Fastify) ทำได้กว่า 7,000 req/s บน Bare Metal แต่เมื่อรันบน Docker ภายใต้โหลดสูง ประสิทธิภาพลดลงอย่างเห็นได้ชัด เนื่องจาก Overhead ในการแปลงเน็ตเวิร์กของ Linux Bridge Driver
-
-### 🔍 4. พลังทวีคูณ 12 เท่าของ Database Index
-ในการ JOIN 4 ตาราง:
-- **แบบไม่มี Index**: ความเร็วตกลงเหลือเพียง ~300 req/s และ Latency พุ่งเกิน 1,000ms
-- **แบบมี Index**: ความเร็วพุ่งขึ้นถึง ~3,800 req/s (เร็วขึ้น 12 เท่า) และ Latency ลดลงเหลือเพียง 28ms
-
-### ✍️ 5. Python FastAPI โดดเด่นในงานเขียนข้อมูล (POST Transactions)
-แม้ว่า Python จะเสียเปรียบในงานอ่านตารางขนาดใหญ่ที่ใช้ CPU มาก แต่เมื่อเป็นงานเขียนข้อมูลแบบ Async Transaction (`aiomysql`) FastAPI กลับทำได้ถึง **7,045 req/s** เทียบเท่ากับ Go และ Node.js
-
----
-
-## 6. วิธีการรันทดสอบและระบบจัดเก็บผลลัพธ์
+## 5. วิธีการรันทดสอบ
 
 ### ข้อกำหนดเบื้องต้น
 * เปิดใช้งาน MySQL 8.0 ในเครื่อง Local บนพอร์ต `3306` (`user=admin`, `password=secret`, `database=benchmark_db`)
@@ -144,20 +105,54 @@ python3 run_dkr_wrk.py --tier all --runs 3
 # 3. รันการทดสอบ POST ธุรกรรมการเขียน
 cd main_web_benchmark/POST
 python3 run_bme_wrk.py --tier all --runs 3
+```
 
-# 4. การดูผลลัพธ์:
-# - ผลลัพธ์ค่าเฉลี่ย: bme_benchmark_results.json & results/<suite>.json
-# - ข้อมูลการรันดิบทุกรอบ: raw_results.json & results/raw_results/<suite>_raw.json
+### ตัวเลือกคำสั่ง (CLI Arguments)
+* `--tier {poc,small,general,high,stress,all}` (ค่าเริ่มต้น: `all`): เลือกระดับโหลดสถานการณ์ที่ต้องการทดสอบ
+* `--runs N` (ค่าเริ่มต้น: `1`): จำนวนรอบที่ต้องการรันซ้ำเพื่อคำนวณค่าเฉลี่ยทางสถิติ
+* `--no-warmup` (ค่าเริ่มต้น: False): ปิดช่วง Warmup 3 วินาที
 
-# 5. ดูตารางสรุปเปรียบเทียบอัตโนมัติ
+---
+
+## 6. การจัดเก็บผลลัพธ์และประมวลผลข้อมูล
+
+### ไฟล์ผลลัพธ์ที่สร้างขึ้น
+* **ผลลัพธ์ค่าเฉลี่ย**: บันทึกใน `<bme/dkr>_benchmark_results.json` และรวบรวมไว้ที่ `main_web_benchmark/results/<suite>.json`
+* **Log ข้อมูลดิบรายรอบ**: บันทึกใน `raw_results.json` และรวบรวมไว้ที่ `main_web_benchmark/results/raw_results/<suite>_raw.json`
+
+### การดูและเปรียบเทียบผลลัพธ์
+```bash
+# ดูตารางสรุปเปรียบเทียบผลลัพธ์จากไฟล์ JSON
 cd main_web_benchmark
 python3 compare_results.py GET/get_no_index/dkr_benchmark_results.json
+
+# สร้างเอกสารสรุป Markdown และไฟล์ CSV รวมทุกชุดทดสอบ
+cd main_web_benchmark/results
+python3 generate_summary.py
 ```
 
 ---
 
-## 7. ข้อมูลสรุปและเอกสารอ้างอิง
+## 7. โครงสร้างโฟลเดอร์โครงการ
 
-* 📊 **[`main_web_benchmark/results/SUMMARY.md`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.md)**: ตารางสรุปคะแนนและตัวเลขสถิติอย่างละเอียดทุกภาษาและทุกระดับโหลด
-* 📊 **[`main_web_benchmark/results/SUMMARY.csv`](file:///D:/github/Programming-Benchmark/main_web_benchmark/results/SUMMARY.csv)**: ข้อมูลผลลัพธ์ในรูปแบบตาราง CSV สำหรับนำไปวิเคราะห์ต่อ
-* 📜 **[`main_web_benchmark/issue.md`](file:///D:/github/Programming-Benchmark/main_web_benchmark/issue.md)**: รายงานการตรวจสอบทางเทคนิคและแนวทางการแก้ปัญหาคอขวด
+```text
+main_web_benchmark/
+├── GET/
+│   ├── get_no_index/          # ชุดทดสอบ GET แบบไม่มี Secondary Index
+│   │   ├── run_bme_wrk.py
+│   │   └── run_dkr_wrk.py
+│   └── get_with_index/        # ชุดทดสอบ GET แบบมี Secondary Index
+│       ├── run_bme_wrk.py
+│       └── run_dkr_wrk.py
+├── POST/                      # ชุดทดสอบ POST ธุรกรรมการเขียนข้อมูล
+│   ├── run_bme_wrk.py
+│   └── run_dkr_wrk.py
+├── results/                   # โฟลเดอร์รวมผลลัพธ์และสรุปรายงาน
+│   ├── raw_results/           # Log ข้อมูลดิบรายรอบ
+│   ├── generate_summary.py    # สคริปต์สร้าง SUMMARY.md และ SUMMARY.csv
+│   ├── SUMMARY.md             # รายงานสรุปผลในรูปแบบ Markdown
+│   └── SUMMARY.csv            # รายงานสรุปผลในรูปแบบ CSV
+├── compare_results.py         # เครื่องมือแสดงตารางเปรียบเทียบผ่าน CLI
+├── issue.md                   # รายงานการวิเคราะห์ปัญหาทางเทคนิค
+└── README.md                  # เอกสารกำกับชุดทดสอบ
+```
