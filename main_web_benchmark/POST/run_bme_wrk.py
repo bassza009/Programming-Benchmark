@@ -31,9 +31,11 @@ ENDPOINTS = [
 ]
 
 TIERS = {
-    "min": {"name": "Minimum (Light)", "threads": 2, "connections": 100, "duration": "10s"},
-    "med": {"name": "Medium (Standard)", "threads": 10, "connections": 1000, "duration": "30s"},
-    "max": {"name": "Maximum (Stress)", "threads": 20, "connections": 10000, "duration": "30s"}
+    "poc": {"name": "POC / Small internal system", "scenario": "Thesis project, department website prototype", "threads": 2, "connections": 20, "duration": "30s"},
+    "small": {"name": "Small production website", "scenario": "Small company local business", "threads": 4, "connections": 100, "duration": "60s"},
+    "general": {"name": "General web application", "scenario": "University system e-commerce CMS", "threads": 8, "connections": 500, "duration": "60s"},
+    "high": {"name": "High-density website", "scenario": "Popular portals SaaS platforms", "threads": 8, "connections": 2000, "duration": "120s"},
+    "stress": {"name": "Stress testing", "scenario": "Find saturation point", "threads": 16, "connections": 10000, "duration": "300s"}
 }
 
 def wait_for_server(port, max_wait=30):
@@ -104,7 +106,7 @@ def run_wrk(port, endpoint, tier_cfg):
 
 def main():
     parser = argparse.ArgumentParser(description="POST Bare Metal Benchmark Runner")
-    parser.add_argument("--tier", choices=["min", "med", "max", "all"], default="all", help="Tier to execute (default: all)")
+    parser.add_argument("--tier", choices=list(TIERS.keys()) + ["all"], default="all", help="Tier to execute (default: all)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
     args = parser.parse_args()
 

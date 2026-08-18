@@ -75,9 +75,11 @@ In unfair benchmarks, one language might use 500 connections while another uses 
 * `/raw/post/4table`: Transactional INSERT into `users` + `profiles` + `orders` + multiple `order_items`.
 
 ### C. Concurrency Load Tiers (via `wrk`)
-* **Minimum (Light)**: 100 concurrent connections, 2 threads, 10 seconds. (Baseline verification)
-* **Medium (Standard)**: 1,000 concurrent connections, 10 threads, 30 seconds. (Production peak traffic)
-* **Maximum (Stress)**: 10,000 concurrent connections, 20 threads, 30 seconds. (Extreme stress & connection limit test)
+1. **POC / Small internal system (`poc`)**: 20 concurrent connections, 2 threads, 30s. *(Thesis project, department website prototype)*
+2. **Small production website (`small`)**: 100 concurrent connections, 4 threads, 60s. *(Small company, local business)*
+3. **General web application (`general`)**: 500 concurrent connections, 8 threads, 60s. *(University system, e-commerce, CMS)*
+4. **High-density website (`high`)**: 2,000 concurrent connections, 8 threads, 120s. *(Popular portals, SaaS platforms)*
+5. **Stress testing (`stress`)**: 10,000 concurrent connections, 16 threads, 300s. *(Finding saturation point / connection limits)*
 
 ---
 

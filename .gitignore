@@ -9,4 +9,5 @@ target/
 *.jar.original
 *.log
 *.tmp
+~$*
 myenv/

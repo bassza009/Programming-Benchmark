@@ -253,16 +253,18 @@ def build_document(file_path):
         "4. /raw/post/4table: Transactional insert creating user + profile + order + multiple order items."
     )
 
-    p = doc.add_paragraph("All suites are evaluated across 3 standardized load tiers using the wrk load generator:")
+    p = doc.add_paragraph("All suites are evaluated across 5 standardized production load scenarios using the wrk load generator:")
     p.paragraph_format.space_after = Pt(6)
 
-    tier_headers = ["Load Tier", "Concurrency (-c)", "Threads (-t)", "Duration (-d)", "Purpose & Target Environment"]
+    tier_headers = ["Scenario", "Typical Website", "Threads (-t)", "Connections (-c)", "Duration (-d)"]
     tier_data = [
-        ["Minimum (Light)", "100 connections", "2 threads", "10 seconds", "Baseline latency & throughput verification"],
-        ["Medium (Standard)", "1,000 connections", "10 threads", "30 seconds", "Realistic production peak-traffic load"],
-        ["Maximum (Stress)", "10,000 connections", "20 threads", "30 seconds", "Extreme concurrency limits & socket stress test"]
+        ["POC / Small internal system", "Thesis project, department website prototype", "2", "20", "30s"],
+        ["Small production website", "Small company local business", "4", "100", "60s"],
+        ["General web application", "University system e-commerce CMS", "8", "500", "60s"],
+        ["High-density website", "Popular portals SaaS platforms", "8", "2,000", "120s"],
+        ["Stress testing", "Find saturation point", "16", "10,000", "300s"]
     ]
-    add_styled_table(doc, tier_headers, tier_data, [1.3, 1.2, 1.0, 1.0, 2.3])
+    add_styled_table(doc, tier_headers, tier_data, [1.6, 2.0, 0.9, 1.1, 0.9])
 
     # SECTION 5: KEY BENCHMARK RESULTS & DISCOVERIES
     h1 = doc.add_heading("5. Key Benchmark Results & Discoveries in Plain English", level=1)
@@ -347,8 +349,13 @@ def build_document(file_path):
         p.add_run(a_desc)
 
     # Save document
-    doc.save(file_path)
-    print(f"Document successfully created at: {file_path}")
+    try:
+        doc.save(file_path)
+        print(f"Document successfully created at: {file_path}")
+    except PermissionError:
+        alt_path = file_path.replace('.docx', '_new.docx')
+        doc.save(alt_path)
+        print(f"Notice: {file_path} is currently open in Word. Generated updated document at: {alt_path}")
 
 if __name__ == '__main__':
     build_document('Project_Benchmark_Overview.docx')

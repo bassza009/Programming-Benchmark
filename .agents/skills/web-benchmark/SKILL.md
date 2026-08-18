@@ -51,10 +51,12 @@ python3 run_dkr_wrk.py --tier all
 ```
 
 *Tier Options:*
-* `--tier min` : 100 connections, 2 threads, 10s (Baseline)
-* `--tier med` : 1,000 connections, 10 threads, 30s (High-Load)
-* `--tier max` : 10,000 connections, 20 threads, 30s (Stress)
-* `--tier all` : Runs min, med, and max tiers sequentially
+* `--tier poc`     : 20 connections, 2 threads, 30s (POC / Small internal system)
+* `--tier small`   : 100 connections, 4 threads, 60s (Small production website)
+* `--tier general` : 500 connections, 8 threads, 60s (General web application)
+* `--tier high`    : 2,000 connections, 8 threads, 120s (High-density website)
+* `--tier stress`  : 10,000 connections, 16 threads, 300s (Stress testing / saturation)
+* `--tier all`     : Runs all 5 tiers sequentially
 
 ---
 

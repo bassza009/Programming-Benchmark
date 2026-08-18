@@ -50,9 +50,15 @@ def generate_markdown(json_files):
             gain = "N/A"
 
             if dkr_data and lang in dkr_data:
+                tiers_dict = dkr_data[lang].get("tiers", {})
+                first_tier = next(iter(tiers_dict.values()), {}) if tiers_dict else {}
                 d_val = (
-                    dkr_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/1table")
-                    or dkr_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    tiers_dict.get("poc", {}).get("endpoints", {}).get("/raw/1table")
+                    or tiers_dict.get("poc", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or tiers_dict.get("min", {}).get("endpoints", {}).get("/raw/1table")
+                    or tiers_dict.get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or first_tier.get("endpoints", {}).get("/raw/1table")
+                    or first_tier.get("endpoints", {}).get("/raw/post/1table")
                     or dkr_data[lang].get("endpoints", {}).get("/raw/1table")
                     or dkr_data[lang].get("endpoints", {}).get("/raw/post/1table")
                     or {}
@@ -65,9 +71,15 @@ def generate_markdown(json_files):
                     d_r_num = r
 
             if bme_data and lang in bme_data:
+                tiers_dict = bme_data[lang].get("tiers", {})
+                first_tier = next(iter(tiers_dict.values()), {}) if tiers_dict else {}
                 b_val = (
-                    bme_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/1table")
-                    or bme_data[lang].get("tiers", {}).get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    tiers_dict.get("poc", {}).get("endpoints", {}).get("/raw/1table")
+                    or tiers_dict.get("poc", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or tiers_dict.get("min", {}).get("endpoints", {}).get("/raw/1table")
+                    or tiers_dict.get("min", {}).get("endpoints", {}).get("/raw/post/1table")
+                    or first_tier.get("endpoints", {}).get("/raw/1table")
+                    or first_tier.get("endpoints", {}).get("/raw/post/1table")
                     or bme_data[lang].get("endpoints", {}).get("/raw/1table")
                     or bme_data[lang].get("endpoints", {}).get("/raw/post/1table")
                     or {}

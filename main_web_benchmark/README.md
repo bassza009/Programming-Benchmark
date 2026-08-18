@@ -27,14 +27,16 @@ The suite measures **Raw SQL Query Performance** comparing **GET (read)** operat
 
 ## Load Testing Tiers
 
-All runner scripts support multi-tier benchmarking to evaluate baseline throughput up to extreme concurrency:
+All runner scripts support multi-tier benchmarking across 5 realistic production scenarios:
 
-| Tier | Concurrency (`-c`) | Threads (`-t`) | Duration (`-d`) | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| **`min`** | `100` | `2` | `10s` | Baseline latency & throughput verification |
-| **`med`** | `1,000` | `10` | `30s` | Standard production high-load concurrency |
-| **`max`** | `10,000` | `20` | `30s` | Extreme connection stress test |
-| **`all`** | All tiers | Sequential | Cumulative | Full benchmark matrix across all 3 tiers |
+| Tier Option | Scenario | Typical Website | Threads (`-t`) | Connections (`-c`) | Duration (`-d`) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`poc`** | POC / Small internal system | Thesis project, department website prototype | `2` | `20` | `30s` |
+| **`small`** | Small production website | Small company local business | `4` | `100` | `60s` |
+| **`general`** | General web application | University system e-commerce CMS | `8` | `500` | `60s` |
+| **`high`** | High-density website | Popular portals SaaS platforms | `8` | `2,000` | `120s` |
+| **`stress`** | Stress testing | Find saturation point | `16` | `10,000` | `300s` |
+| **`all`** | All Tiers | Full evaluation across all 5 scenarios | Sequential | Sequential | Cumulative |
 
 ---
 
@@ -87,7 +89,7 @@ main_web_benchmark/
 
 ### CLI Options
 All `run_*.py` scripts support the following arguments:
-* `--tier {min,med,max,all}` (Default: `all`) - Choose load intensity tier.
+* `--tier {poc,small,general,high,stress,all}` (Default: `all`) - Choose load intensity tier scenario.
 * `--no-warmup` (Default: False) - Disable the 3-second runtime warmup.
 
 ### 1. Running GET (No Index) Benchmarks
