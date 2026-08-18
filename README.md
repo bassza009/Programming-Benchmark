@@ -95,15 +95,31 @@ flowchart TD
 
 ---
 
-## 5. Evaluated Technologies & System Architecture
+## 5. Evaluated Technologies & Future Extensibility
 
-| Language | Web Framework | Database Driver / Client | Concurrency Model | Port |
+The benchmark suite is architected with a **modular Language-first and Framework-subfolder layout** (`frameworks/<language>/<framework>/`), allowing effortless integration and benchmarking of new languages and web frameworks.
+
+### A. Primary Baseline Frameworks
+| Language | Web Framework | Database Driver / Client | Concurrency Model | Standard Port |
 | :--- | :--- | :--- | :--- | :---: |
 | **Python** | **FastAPI** (Uvicorn) | `aiomysql` (Async Connection Pool) | Multi-process Async Event Loop | `8001` |
 | **Node.js** | **Fastify** | `mysql2/promise` (Connection Pool) | Multi-core Cluster + Event Loop | `8002` |
 | **PHP** | **Swoole** | `PDO_MySQL` (`PDOPool`) | Coroutine Event Loop Engine | `8003` |
 | **Go** | **Fiber** (v2) | `database/sql` (`go-sql-driver/mysql`) | Lightweight Goroutines | `8004` |
 | **Java** | **Spring Boot** (v3) | `JdbcTemplate` + `HikariCP` | Multi-threaded JVM Thread Pool | `8005` |
+
+### B. Future-Ready Extensible Framework Support
+The architecture is pre-configured and ready to scale to additional languages and frameworks:
+* **Go**: Gin, Echo, Chi
+* **Python**: Flask, Django, BlackSheep, Litestar
+* **Node.js / TypeScript**: Express, NestJS, Hono
+* **Rust**: Actix-Web, Axum, Rocket
+* **C# / .NET**: ASP.NET Core Minimal APIs
+* **Ruby**: Ruby on Rails, Sinatra, Hanami
+* **Elixir**: Phoenix Framework
+
+### C. Standard Framework Endpoint Contract
+Any new framework only needs to implement the standard routes (`GET /`, `GET /raw/1table` to `4join`, `POST /raw/post/1table` to `4table`) to immediately integrate into all automated Bare Metal and Docker benchmark suites.
 
 ---
 

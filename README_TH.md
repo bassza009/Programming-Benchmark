@@ -96,8 +96,11 @@ flowchart TD
 
 ---
 
-## 5. เทคโนโลยีและสถาปัตยกรรมระบบที่นำมาประเมิน
+## 5. เทคโนโลยีที่นำมาประเมินและการรองรับภาษา/Framework ในอนาคต (Extensibility)
 
+ชุดทดสอบนี้ถูกออกแบบสถาปัตยกรรมโฟลเดอร์ในรูปแบบ **โมดูลาร์แยกตามภาษาและเฟรมเวิร์กย่อย** (`frameworks/<ภาษา>/<เฟรมเวิร์ก>/`) เพื่อให้สามารถเพิ่มภาษาโปรแกรมและเว็บเฟรมเวิร์กใหม่ ๆ ได้อย่างสะดวกรวดเร็วและเป็นมาตรฐานเดียวกัน
+
+### A. ชุดภาษาและ Web Framework หลักในการทดลอง
 | ภาษา (Language) | Web Framework | Database Driver / Client | รูปแบบการทำงาน (Concurrency Model) | พอร์ตมาตรฐาน |
 | :--- | :--- | :--- | :--- | :---: |
 | **Python** | **FastAPI** (Uvicorn) | `aiomysql` (Async Pool) | Multi-process Async Event Loop | `8001` |
@@ -105,6 +108,19 @@ flowchart TD
 | **PHP** | **Swoole** | `PDO_MySQL` (`PDOPool`) | Coroutine Event Loop Engine | `8003` |
 | **Go** | **Fiber** (v2) | `database/sql` (`go-sql-driver/mysql`) | Lightweight Goroutines | `8004` |
 | **Java** | **Spring Boot** (v3) | `JdbcTemplate` + `HikariCP` | Multi-threaded JVM Thread Pool | `8005` |
+
+### B. การรองรับภาษาและ Framework อื่น ๆ เพิ่มเติมในอนาคต
+โครงสร้างระบบพร้อมรองรับการต่อขยายเพื่อทดสอบภาษาและเฟรมเวิร์กยอดนิยมอื่น ๆ ได้ทันที:
+* **Go**: Gin, Echo, Chi
+* **Python**: Flask, Django, BlackSheep, Litestar
+* **Node.js / TypeScript**: Express, NestJS, Hono
+* **Rust**: Actix-Web, Axum, Rocket
+* **C# / .NET**: ASP.NET Core Minimal APIs
+* **Ruby**: Ruby on Rails, Sinatra, Hanami
+* **Elixir**: Phoenix Framework
+
+### C. สัญญาเชื่อมต่อมาตรฐาน (Standard Endpoint Contract)
+ทุก Framework ใหม่ที่ต้องการนำมาทดสอบ เพียงเขียน Endpoint ตามสัญญามาตรฐาน (`GET /`, `GET /raw/1table` ถึง `4join`, `POST /raw/post/1table` ถึง `4table`) ก็จะสามารถรันร่วมกับชุดทดสอบอัตโนมัติทั้ง Bare Metal และ Docker ได้ทันที
 
 ---
 
