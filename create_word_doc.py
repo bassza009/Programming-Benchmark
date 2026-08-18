@@ -313,9 +313,10 @@ def build_document(file_path):
 
     steps = [
         ("Step 1: Ensure Local MySQL is Running", "Start a local MySQL 8.0 instance on port 3306 with credentials: user=admin, password=secret, database=benchmark_db."),
-        ("Step 2: Run Bare Metal Benchmarks", "cd main_web_benchmark/GET/get_no_index && python3 run_bme_wrk.py --tier all"),
-        ("Step 3: Run Docker Benchmarks", "cd main_web_benchmark/GET/get_no_index && python3 run_dkr_wrk.py --tier all"),
-        ("Step 4: Generate Side-by-Side Comparison Tables", "cd main_web_benchmark && python3 compare_results.py GET/get_no_index/dkr_benchmark_results.json")
+        ("Step 2: Run Bare Metal Benchmarks", "cd main_web_benchmark/GET/get_no_index && python3 run_bme_wrk.py --tier all --runs 3"),
+        ("Step 3: Run Docker Benchmarks", "cd main_web_benchmark/GET/get_no_index && python3 run_dkr_wrk.py --tier all --runs 3"),
+        ("Step 4: View Averaged & Raw Results", "Averaged metrics are in bme_benchmark_results.json; full raw iteration data is saved in raw_results.json (and results/raw_results/)."),
+        ("Step 5: Generate Comparison Tables", "cd main_web_benchmark && python3 compare_results.py GET/get_no_index/dkr_benchmark_results.json")
     ]
 
     for s_title, s_desc in steps:

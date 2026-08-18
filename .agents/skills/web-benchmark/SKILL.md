@@ -55,8 +55,9 @@ python3 run_dkr_wrk.py --tier all
 * `--tier small`   : 100 connections, 4 threads, 60s (Small production website)
 * `--tier general` : 500 connections, 8 threads, 60s (General web application)
 * `--tier high`    : 2,000 connections, 8 threads, 120s (High-density website)
-* `--tier stress`  : 10,000 connections, 16 threads, 300s (Stress testing / saturation)
 * `--tier all`     : Runs all 5 tiers sequentially
+* `--runs N`       : Repeat each benchmark N times and calculate the statistical average (e.g. `--runs 3`)
+* **Outputs**: Averaged results in `bme/dkr_benchmark_results.json` and raw per-iteration logs in `raw_results.json` (and `results/raw_results/`).
 
 ---
 

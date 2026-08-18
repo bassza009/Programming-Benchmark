@@ -90,7 +90,12 @@ main_web_benchmark/
 ### CLI Options
 All `run_*.py` scripts support the following arguments:
 * `--tier {poc,small,general,high,stress,all}` (Default: `all`) - Choose load intensity tier scenario.
+* `--runs N` (Default: `1`) - Number of benchmark iterations per endpoint to run and average.
 * `--no-warmup` (Default: False) - Disable the 3-second runtime warmup.
+
+### Output Files
+* `<bme/dkr>_benchmark_results.json` & `results/<suite>.json`: Contain the statistically **averaged** metrics across all runs.
+* `raw_results.json` & `results/raw_results/<suite>_raw.json`: Contain the detailed **raw per-run** metrics for every individual iteration.
 
 ### 1. Running GET (No Index) Benchmarks
 ```bash

@@ -127,19 +127,23 @@ In 3-table and 4-table joins:
 
 ### Step-by-Step Execution
 ```bash
-# 1. Run GET (No Index) Bare Metal Benchmark
+# 1. Run GET (No Index) Bare Metal Benchmark (e.g. 3 runs to calculate average)
 cd main_web_benchmark/GET/get_no_index
-python3 run_bme_wrk.py --tier all
+python3 run_bme_wrk.py --tier all --runs 3
 
 # 2. Run GET (With Index) Docker Benchmark
 cd main_web_benchmark/GET/get_with_index
-python3 run_dkr_wrk.py --tier all
+python3 run_dkr_wrk.py --tier all --runs 3
 
 # 3. Run POST Write Benchmark
 cd main_web_benchmark/POST
-python3 run_bme_wrk.py --tier all
+python3 run_bme_wrk.py --tier all --runs 3
 
-# 4. View Automated Comparison Matrix
+# 4. View Averaged & Raw Iteration Results
+# - Averaged results: bme_benchmark_results.json & results/<suite>.json
+# - Raw individual runs: raw_results.json & results/raw_results/<suite>_raw.json
+
+# 5. View Automated Comparison Matrix
 cd main_web_benchmark
 python3 compare_results.py GET/get_no_index/dkr_benchmark_results.json
 ```

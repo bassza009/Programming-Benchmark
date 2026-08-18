@@ -89,9 +89,26 @@ def run_wrk(port, endpoint, tier_cfg):
             "errors": 1
         }
 
+def compute_average_metrics(runs_list):
+    if not runs_list:
+        return {"requests_per_sec": 0.0, "latency_mean_ms": 0.0, "latency_max_ms": 0.0, "errors": 0, "runs_count": 0}
+    n = len(runs_list)
+    avg_rps = sum(r.get("requests_per_sec", 0.0) for r in runs_list) / n
+    avg_lat = sum(r.get("latency_mean_ms", 0.0) for r in runs_list) / n
+    max_lat = max((r.get("latency_max_ms", 0.0) for r in runs_list), default=0.0)
+    total_errors = sum(r.get("errors", 0) for r in runs_list)
+    return {
+        "requests_per_sec": round(avg_rps, 2),
+        "latency_mean_ms": round(avg_lat, 2),
+        "latency_max_ms": round(max_lat, 2),
+        "errors": total_errors,
+        "runs_count": n
+    }
+
 def main():
     parser = argparse.ArgumentParser(description="GET No-Index Bare Metal Benchmark Runner")
     parser.add_argument("--tier", choices=list(TIERS.keys()) + ["all"], default="all", help="Tier to execute (default: all)")
+    parser.add_argument("--runs", type=int, default=1, help="Number of iterations per endpoint to average (default: 1)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
     args = parser.parse_args()
 
@@ -99,10 +116,11 @@ def main():
 
     print("=================================================================")
     print(" Project Antigravity: GET (No Index) Bare Metal (BME) Benchmark")
-    print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Warmup: {not args.no_warmup}")
+    print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
     print("=================================================================")
 
     ALL_RESULTS = {}
+    RAW_RESULTS = {}
 
     for lang in LANGUAGES:
         print(f"\n---> Starting Server: {lang['name']} on Port {lang['port']}")
@@ -119,28 +137,55 @@ def main():
             "Environment": "BME",
             "tiers": {}
         }
+        raw_lang_results = {
+            "Environment": "BME",
+            "tiers": {}
+        }
 
         for tier_key in selected_tiers:
             t_cfg = TIERS[tier_key]
             print(f"\n  >> Running Tier: {t_cfg['name']} (-t{t_cfg['threads']} -c{t_cfg['connections']} -d{t_cfg['duration']})")
             tier_endpoints = {}
+            raw_tier_endpoints = {}
 
             for ep in ENDPOINTS:
                 if not args.no_warmup:
                     warmup(lang['port'], ep)
                     time.sleep(1)
 
-                print(f"     Benchmarking {lang['name']} GET {ep}...")
-                ep_res = run_wrk(lang['port'], ep, t_cfg)
-                tier_endpoints[ep] = ep_res
-                print(f"     -> Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Avg Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)}")
+                runs_data = []
+                for run_idx in range(1, args.runs + 1):
+                    run_label = f" (Run {run_idx}/{args.runs})" if args.runs > 1 else ""
+                    print(f"     Benchmarking {lang['name']} GET {ep}{run_label}...")
+                    ep_res = run_wrk(lang['port'], ep, t_cfg)
+                    ep_res_with_meta = dict(ep_res)
+                    ep_res_with_meta["run_index"] = run_idx
+                    runs_data.append(ep_res_with_meta)
+                    print(f"     -> Run {run_idx}: Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)}")
+                    if run_idx < args.runs:
+                        time.sleep(1)
+
+                avg_res = compute_average_metrics(runs_data)
+                tier_endpoints[ep] = avg_res
+                raw_tier_endpoints[ep] = {
+                    "average": avg_res,
+                    "raw_runs": runs_data
+                }
+
+                if args.runs > 1:
+                    print(f"     ==> Average ({args.runs} runs): Req/sec: {avg_res['requests_per_sec']:.2f} | Avg Latency: {avg_res['latency_mean_ms']:.2f}ms | Total Errors: {avg_res['errors']}")
 
             lang_results["tiers"][tier_key] = {
                 "config": t_cfg,
                 "endpoints": tier_endpoints
             }
+            raw_lang_results["tiers"][tier_key] = {
+                "config": t_cfg,
+                "endpoints": raw_tier_endpoints
+            }
 
         ALL_RESULTS[lang["name"]] = lang_results
+        RAW_RESULTS[lang["name"]] = raw_lang_results
 
         proc.terminate()
         try:
@@ -150,16 +195,29 @@ def main():
         subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
         time.sleep(2)
 
+    # Save local results
     with open("bme_benchmark_results.json", "w") as f:
         json.dump(ALL_RESULTS, f, indent=2)
 
+    with open("raw_results.json", "w") as f:
+        json.dump(RAW_RESULTS, f, indent=2)
+
+    # Save centralized results
     res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "results"))
     os.makedirs(res_dir, exist_ok=True)
+    raw_res_dir = os.path.join(res_dir, "raw_results")
+    os.makedirs(raw_res_dir, exist_ok=True)
+
     with open(os.path.join(res_dir, "get_no_index_bme.json"), "w") as f:
         json.dump(ALL_RESULTS, f, indent=2)
 
+    with open(os.path.join(raw_res_dir, "get_no_index_bme_raw.json"), "w") as f:
+        json.dump(RAW_RESULTS, f, indent=2)
+
     print("\n=================================================================")
-    print(" GET No-Index Bare-Metal Benchmark Finished! Results in bme_benchmark_results.json and results/get_no_index_bme.json")
+    print(" GET No-Index Bare-Metal Benchmark Finished!")
+    print(" Averaged Results in: bme_benchmark_results.json & results/get_no_index_bme.json")
+    print(" Raw Iteration Results in: raw_results.json & results/raw_results/get_no_index_bme_raw.json")
     print("=================================================================")
 
 if __name__ == "__main__":

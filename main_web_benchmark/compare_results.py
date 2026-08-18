@@ -34,6 +34,8 @@ def format_table(results_file):
                 rows = []
                 for lang_name, lang_data in data.items():
                     res = lang_data["tiers"][tier]["endpoints"].get(ep, {})
+                    if isinstance(res, dict) and "average" in res:
+                        res = res["average"]
                     rps = res.get("requests_per_sec", 0.0)
                     lat_avg = res.get("latency_mean_ms", 0.0)
                     lat_max = res.get("latency_max_ms", 0.0)
@@ -55,6 +57,8 @@ def format_table(results_file):
             rows = []
             for lang_name, lang_data in data.items():
                 res = lang_data["endpoints"].get(ep, {})
+                if isinstance(res, dict) and "average" in res:
+                    res = res["average"]
                 rps = res.get("requests_per_sec", 0.0)
                 lat_avg = res.get("latency_mean_ms", 0.0)
                 lat_max = res.get("latency_max_ms", 0.0)

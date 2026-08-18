@@ -169,6 +169,8 @@ def generate_csv(json_files):
                     ep_map = {}
                     total_errors = 0
                     for ep_key, ep_res in endpoints.items():
+                        if isinstance(ep_res, dict) and "average" in ep_res:
+                            ep_res = ep_res["average"]
                         cleaned = clean_ep_name(ep_key)
                         rps = ep_res.get("requests_per_sec", 0.0)
                         lat = ep_res.get("latency_mean_ms", 0.0)
@@ -204,6 +206,8 @@ def generate_csv(json_files):
                 ep_map = {}
                 total_errors = 0
                 for ep_key, ep_res in endpoints.items():
+                    if isinstance(ep_res, dict) and "average" in ep_res:
+                        ep_res = ep_res["average"]
                     cleaned = clean_ep_name(ep_key)
                     rps = ep_res.get("requests_per_sec", 0.0)
                     lat = ep_res.get("latency_mean_ms", 0.0)
