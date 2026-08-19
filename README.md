@@ -186,7 +186,18 @@ Tested under two database states:
 * Python 3.10+ and HTTP load generator `wrk` installed.
 * Docker & Docker Compose (for containerized benchmark runs).
 
-### Execution Commands
+### Automated End-to-End Benchmark Execution
+To execute all 6 benchmark suites sequentially (GET No-Index DKR/BME, GET With-Index DKR/BME, and POST DKR/BME) with automatic secondary index management, port cleanup, and summary generation:
+
+```bash
+# Run full automated benchmark pipeline (20 runs per endpoint across all suites)
+python3 main_web_benchmark/auto_runner.py
+
+# Run a specific tier (e.g. poc, small, general, high, stress) with custom iterations
+python3 main_web_benchmark/auto_runner.py --tier poc --runs 3
+```
+
+### Manual Execution by Suite
 ```bash
 # 1. Run GET (No Index) Bare Metal Benchmark across all load tiers (3 runs averaged)
 cd main_web_benchmark/GET/get_no_index
@@ -209,7 +220,7 @@ python3 run_dkr_wrk.py --framework fiber --tier all --runs 3   # Runs only Go Fi
 * `--tier {poc,small,general,high,stress,all}` (Default: `all`): Select target concurrency tier.
 * `--lang {python,py,node,nodejs,js,php,go,golang,java,all}` (Default: None): Filter and run all frameworks under a specific language.
 * `--framework, --fw {fastapi,fastify,swoole,fiber,springboot,spring-boot,spring,all}` (Default: None): Filter and run a specific framework.
-* `--runs N` (Default: `1`): Number of test iterations per endpoint to compute statistical averages.
+* `--runs N` (Default: `1` in individual runners, `20` in `auto_runner.py`): Number of test iterations per endpoint to compute statistical averages.
 * `--no-warmup` (Default: False): Skip the 3-second warmup phase before recording.
 
 ### Aggregating & Visualizing Results

@@ -187,7 +187,18 @@ flowchart TD
 * ติดตั้ง Python 3.10+ และเครื่องมือ `wrk`
 * ติดตั้ง Docker & Docker Compose (สำหรับการทดสอบในโหมดคอนเทนเนอร์)
 
-### คำสั่งการรันทดสอบ
+### การรันชุด Benchmark แบบอัตโนมัติเต็มรูปแบบ (Automated Pipeline)
+หากต้องการรันการทดสอบครบทุก 6 ชุดแบบเรียงลำดับต่อเนื่อง (GET No-Index DKR/BME, GET With-Index DKR/BME และ POST DKR/BME) พร้อมจัดการ Secondary Database Index, เคลียร์พอร์ต และสรุปผลรวมอัตโนมัติ:
+
+```bash
+# รัน Benchmark ครบทุกชุดและทุกระดับโหลดแบบอัตโนมัติ (เฉลี่ย 20 รอบต่อ Endpoint)
+python3 main_web_benchmark/auto_runner.py
+
+# รันเฉพาะระดับโหลดที่กำหนด (เช่น poc, small, general, high, stress) พร้อมระบุจำนวนรอบ
+python3 main_web_benchmark/auto_runner.py --tier poc --runs 3
+```
+
+### คำสั่งการรันทดสอบแยกตามชุด (Manual Execution)
 ```bash
 # 1. รันการทดสอบ GET (No Index) บน Bare Metal พร้อมหาค่าเฉลี่ย 3 รอบ
 cd main_web_benchmark/GET/get_no_index
@@ -210,7 +221,7 @@ python3 run_dkr_wrk.py --framework fiber --tier all --runs 3   # รันเฉ
 * `--tier {poc,small,general,high,stress,all}` (ค่าเริ่มต้น: `all`): เลือกระดับโหลดสถานการณ์ที่ต้องการทดสอบ
 * `--lang {python,py,node,nodejs,js,php,go,golang,java,all}` (ค่าเริ่มต้น: None): กรองและรันทุก Framework ภายใต้ภาษาที่กำหนด
 * `--framework, --fw {fastapi,fastify,swoole,fiber,springboot,spring-boot,spring,all}` (ค่าเริ่มต้น: None): กรองและรันเฉพาะ Framework ที่กำหนด
-* `--runs N` (ค่าเริ่มต้น: `1`): จำนวนรอบที่ต้องการรันซ้ำเพื่อคำนวณค่าเฉลี่ยทางสถิติ
+* `--runs N` (ค่าเริ่มต้น: `1` สำหรับตัวรันแยกชุด, `20` สำหรับ `auto_runner.py`): จำนวนรอบที่ต้องการรันซ้ำเพื่อคำนวณค่าเฉลี่ยทางสถิติ
 * `--no-warmup` (ค่าเริ่มต้น: False): ปิดช่วง Warmup 3 วินาที
 
 ### การประมวลผลและสร้างรายงานสรุป

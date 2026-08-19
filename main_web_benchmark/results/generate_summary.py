@@ -178,7 +178,10 @@ def generate_csv(json_files):
 
                 for lang_name in sorted(data.keys()):
                     lang_data = data[lang_name]
-                    endpoints = lang_data["tiers"][tier]["endpoints"]
+                    tier_info = lang_data.get("tiers", {}).get(tier)
+                    if not tier_info:
+                        continue
+                    endpoints = tier_info.get("endpoints", {})
                     
                     for ep_key, ep_res in endpoints.items():
                         if isinstance(ep_res, dict) and "average" in ep_res:

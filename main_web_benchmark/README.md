@@ -97,7 +97,32 @@ All `run_*.py` scripts support the following arguments:
 * `<bme/dkr>_benchmark_results.json` & `results/<suite>.json`: Contain the statistically **averaged** metrics across all runs.
 * `raw_results.json` & `results/raw_results/<suite>_raw.json`: Contain the detailed **raw per-run** metrics for every individual iteration.
 
-### 1. Running GET (No Index) Benchmarks
+### Automated Master Benchmark Runner (`auto_runner.py`)
+To run the full end-to-end benchmark suite sequentially with automatic index management, port cleanup, and reporting:
+
+```bash
+# Run complete test pipeline (All 6 suites, 20 runs per endpoint)
+python3 auto_runner.py
+
+# Run specific tier with custom iteration count
+python3 auto_runner.py --tier poc --runs 3
+
+# Filter by language or framework
+python3 auto_runner.py --lang python --tier small --runs 5
+python3 auto_runner.py --framework fiber --tier general
+```
+
+**Pipeline Execution Sequence:**
+1. **GET (No Index)**: Removes secondary indexes, runs Docker (`run_dkr_wrk.py`) and Bare Metal (`run_bme_wrk.py`).
+2. **GET (With Index)**: Applies secondary indexes on foreign keys, runs Docker and Bare Metal.
+3. **POST (Write / Transactions)**: Runs transactional insert benchmarks for Docker and Bare Metal.
+4. **Summary & Export**: Automatically executes `results/generate_summary.py` and `results/export_csv.py`.
+
+---
+
+### Manual Execution by Suite
+
+#### 1. Running GET (No Index) Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/GET/get_no_index
@@ -108,7 +133,7 @@ cd main_web_benchmark/GET/get_no_index
 python3 run_dkr_wrk.py --tier all
 ```
 
-### 2. Running GET (With Index) Benchmarks
+#### 2. Running GET (With Index) Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/GET/get_with_index
@@ -119,7 +144,7 @@ cd main_web_benchmark/GET/get_with_index
 python3 run_dkr_wrk.py --tier all
 ```
 
-### 3. Running POST Benchmarks
+#### 3. Running POST Benchmarks
 ```bash
 # Bare Metal (BME)
 cd main_web_benchmark/POST

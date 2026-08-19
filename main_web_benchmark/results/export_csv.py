@@ -61,7 +61,10 @@ def export_to_csv():
 
                 for lang_name in sorted(data.keys()):
                     lang_data = data[lang_name]
-                    endpoints = lang_data["tiers"][tier]["endpoints"]
+                    tier_info = lang_data.get("tiers", {}).get(tier)
+                    if not tier_info:
+                        continue
+                    endpoints = tier_info.get("endpoints", {})
                     
                     # Map endpoints: 1table, 2join/2table, 3join/3table, 4join/4table
                     ep_map = {}
