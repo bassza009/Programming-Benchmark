@@ -233,7 +233,7 @@ def main():
         return
 
     print("=================================================================")
-    print(" Project Antigravity: GET (With Index) Bare Metal (BME) Benchmark")
+    print(" Programming Benchmark: GET (With Index) Bare Metal (BME) Benchmark")
     print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
     print(f" Target Frameworks: {', '.join([l['name'] + ' (' + l['framework'] + ')' for l in target_langs])}")
     print("=================================================================")

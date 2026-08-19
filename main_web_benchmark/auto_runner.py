@@ -93,7 +93,7 @@ def build_runner_args(args):
     return runner_args
 
 def main():
-    parser = argparse.ArgumentParser(description="Automated Master Benchmark Runner for Project Antigravity")
+    parser = argparse.ArgumentParser(description="Automated Master Benchmark Runner for Programming Benchmark")
     parser.add_argument("--tier", choices=["poc", "small", "general", "high", "stress", "all"], default="all", help="Tier scenario to execute (default: all)")
     parser.add_argument("--runs", type=int, default=20, help="Number of benchmark iterations per endpoint (default: 20)")
     parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
@@ -112,7 +112,7 @@ def main():
     common_args = build_runner_args(args)
 
     print("=================================================================")
-    print(" PROJECT ANTIGRAVITY: AUTOMATED FULL BENCHMARK SUITE RUNNER")
+    print(" PROGRAMMING BENCHMARK: AUTOMATED FULL BENCHMARK SUITE RUNNER")
     print(" Execution Plan:")
     print("   1. GET get_no_index   -> Docker (DKR) & Bare-Metal (BME)")
     print("   2. GET get_with_index -> Docker (DKR) & Bare-Metal (BME)")

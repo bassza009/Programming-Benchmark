@@ -5,7 +5,7 @@ use Swoole\Http\Response;
 use Swoole\Database\PDOConfig;
 use Swoole\Database\PDOPool;
 
-class AntigravityPostServer {
+class BenchmarkPostServer {
     private $db_config;
     private $pool = null;
 
@@ -207,8 +207,8 @@ class AntigravityPostServer {
 }
 
 $server = new Server("0.0.0.0", 8003);
-$antigravity = new AntigravityPostServer();
-$antigravity->initDatabase();
+$benchmark = new BenchmarkPostServer();
+$benchmark->initDatabase();
 
 $server->set([
     'worker_num' => swoole_cpu_num() * 2,
@@ -216,12 +216,12 @@ $server->set([
     'log_level' => SWOOLE_LOG_ERROR
 ]);
 
-$server->on("WorkerStart", function (Server $serv, int $workerId) use ($antigravity) {
-    $antigravity->initPool(64);
+$server->on("WorkerStart", function (Server $serv, int $workerId) use ($benchmark) {
+    $benchmark->initPool(64);
 });
 
-$server->on("request", function (Request $request, Response $response) use ($antigravity) {
-    $antigravity->handleRequest($request, $response);
+$server->on("request", function (Request $request, Response $response) use ($benchmark) {
+    $benchmark->handleRequest($request, $response);
 });
 
 $server->start();

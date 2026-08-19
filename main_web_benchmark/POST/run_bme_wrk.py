@@ -248,7 +248,7 @@ def main():
         return
 
     print("=================================================================")
-    print(" Project Antigravity: POST Write/Transaction Bare Metal Benchmark")
+    print(" Programming Benchmark: POST Write/Transaction Bare Metal Benchmark")
     print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
     print(f" Target Frameworks: {', '.join([l['name'] + ' (' + l['framework'] + ')' for l in target_langs])}")
     print("=================================================================")

@@ -1,4 +1,4 @@
-# Project Antigravity Agent Guidelines & Rules
+# Programming Benchmark Agent Guidelines & Rules
 
 ## Mandatory Rules for Benchmark Data & Reporting
 

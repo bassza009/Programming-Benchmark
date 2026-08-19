@@ -1,6 +1,6 @@
 # Multi-Language Benchmark Suite: Audit & Issues Report
 
-This document outlines all the critical bugs, performance bottlenecks, and unfair configurations found across the **Project Antigravity** benchmark suite, explained in plain English with actionable fixes.
+This document outlines all the critical bugs, performance bottlenecks, and unfair configurations found across the **Programming Benchmark** suite, explained in plain English with actionable fixes.
 
 ---
 

@@ -231,7 +231,7 @@ def main():
         return
 
     print("=================================================================")
-    print(" Project Antigravity: GET (With Index) Docker Benchmark")
+    print(" Programming Benchmark: GET (With Index) Docker Benchmark")
     print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
     print(f" Target Services: {', '.join([s['name'] + ' (' + s['framework'] + ')' for s in target_services])}")
     print("=================================================================")

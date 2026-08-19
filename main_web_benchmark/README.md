@@ -1,7 +1,7 @@
-# Project Antigravity: Multi-Language Web Framework Benchmark Suite
+# Programming Benchmark: Multi-Language Web Framework Benchmark Suite
 
 ## Overview
-**Project Antigravity** is a deterministic, high-performance web framework benchmark suite designed to evaluate HTTP performance under heavy load across 5 programming language runtimes and frameworks.
+**Programming Benchmark** is a deterministic, high-performance web framework benchmark suite designed to evaluate HTTP performance under heavy load across 5 programming language runtimes and frameworks.
 
 The suite measures **Raw SQL Query Performance** comparing **GET (read)** operations (with and without database indexes) against **POST (write/insert)** transactions in both **Bare Metal (BME)** and **Docker Containerized** environments under strict process isolation.
 
