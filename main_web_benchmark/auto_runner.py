@@ -7,6 +7,12 @@ import time
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+MYSQL_HOST = "127.0.0.1"
+MYSQL_PORT = 3306
+MYSQL_USER = "admin"
+MYSQL_PASS = "secret"
+MYSQL_DB = "benchmark_db"
+
 def run_cmd(cmd, cwd=None):
     cmd_str = " ".join(cmd) if isinstance(cmd, list) else cmd
     print(f"\n=======================================================")
@@ -19,7 +25,7 @@ def run_cmd(cmd, cwd=None):
         return False
     return True
 
-def run_mysql_query(sql, host="127.0.0.1", port=3306, user="admin", password="secret", db="benchmark_db"):
+def run_mysql_query(sql, host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER, password=MYSQL_PASS, db=MYSQL_DB):
     cmd = [
         "mysql",
         f"-h{host}",
@@ -50,7 +56,7 @@ def cleanup_environment():
     
     time.sleep(2)
 
-def drop_secondary_indexes(host="127.0.0.1", port=3306, user="admin", password="secret", db="benchmark_db"):
+def drop_secondary_indexes():
     """Drop secondary indexes for get_no_index benchmarks."""
     print("[AUTO-RUNNER] Checking and dropping secondary indexes on benchmark tables...", flush=True)
     idx_drops = [
@@ -59,14 +65,14 @@ def drop_secondary_indexes(host="127.0.0.1", port=3306, user="admin", password="
         ("order_items", "idx_order_items_order_id")
     ]
     for table, index_name in idx_drops:
-        res = run_mysql_query(f"SHOW INDEX FROM {table} WHERE Key_name = '{index_name}';", host, port, user, password, db)
+        res = run_mysql_query(f"SHOW INDEX FROM {table} WHERE Key_name = '{index_name}';")
         if index_name in res.stdout:
             print(f"[AUTO-RUNNER] Dropping index `{index_name}` on table `{table}`...")
-            run_mysql_query(f"ALTER TABLE {table} DROP INDEX {index_name};", host, port, user, password, db)
+            run_mysql_query(f"ALTER TABLE {table} DROP INDEX {index_name};")
         else:
             print(f"[AUTO-RUNNER] Index `{index_name}` on `{table}` already dropped.")
 
-def add_secondary_indexes(host="127.0.0.1", port=3306, user="admin", password="secret", db="benchmark_db"):
+def add_secondary_indexes():
     """Apply secondary indexes for get_with_index benchmarks."""
     print("[AUTO-RUNNER] Applying secondary database indexes for get_with_index...", flush=True)
     idx_creates = [
@@ -75,41 +81,27 @@ def add_secondary_indexes(host="127.0.0.1", port=3306, user="admin", password="s
         ("order_items", "idx_order_items_order_id", "order_id")
     ]
     for table, index_name, column in idx_creates:
-        res = run_mysql_query(f"SHOW INDEX FROM {table} WHERE Key_name = '{index_name}';", host, port, user, password, db)
+        res = run_mysql_query(f"SHOW INDEX FROM {table} WHERE Key_name = '{index_name}';")
         if index_name not in res.stdout:
             print(f"[AUTO-RUNNER] Adding index `{index_name}` on `{table}({column})`...")
-            run_mysql_query(f"ALTER TABLE {table} ADD INDEX {index_name} ({column});", host, port, user, password, db)
+            run_mysql_query(f"ALTER TABLE {table} ADD INDEX {index_name} ({column});")
         else:
             print(f"[AUTO-RUNNER] Index `{index_name}` on `{table}` already exists.")
 
-def build_runner_args(args):
-    runner_args = ["--tier", args.tier, "--runs", str(args.runs)]
-    if args.lang:
-        runner_args.extend(["--lang", args.lang])
-    if args.framework:
-        runner_args.extend(["--framework", args.framework])
-    if args.no_warmup:
-        runner_args.append("--no-warmup")
-    return runner_args
-
 def main():
-    parser = argparse.ArgumentParser(description="Automated Master Benchmark Runner for Programming Benchmark")
-    parser.add_argument("--tier", choices=["poc", "small", "general", "high", "stress", "all"], default="all", help="Tier scenario to execute (default: all)")
-    parser.add_argument("--runs", type=int, default=20, help="Number of benchmark iterations per endpoint (default: 20)")
-    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
-    parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Filter by framework")
-    parser.add_argument("--no-warmup", action="store_true", help="Disable warmup runs")
-    parser.add_argument("--skip-get-no-index", action="store_true", help="Skip GET No-Index suite")
-    parser.add_argument("--skip-get-with-index", action="store_true", help="Skip GET With-Index suite")
-    parser.add_argument("--skip-post", action="store_true", help="Skip POST suite")
-    parser.add_argument("--mysql-host", default="127.0.0.1", help="MySQL host (default: 127.0.0.1)")
-    parser.add_argument("--mysql-port", type=int, default=3306, help="MySQL port (default: 3306)")
-    parser.add_argument("--mysql-user", default="admin", help="MySQL username (default: admin)")
-    parser.add_argument("--mysql-pass", default="secret", help="MySQL password (default: secret)")
-    parser.add_argument("--mysql-db", default="benchmark_db", help="MySQL database (default: benchmark_db)")
+    parser = argparse.ArgumentParser(
+        description="Automated Master Benchmark Runner for Programming Benchmark",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument("runs_pos", type=int, nargs="?", default=None, help="Number of benchmark iterations per endpoint (optional positional, e.g. 20)")
+    parser.add_argument("-r", "--runs", type=int, default=None, help="Number of benchmark iterations per endpoint (default: 20)")
+    parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase before recording metrics")
     args = parser.parse_args()
 
-    common_args = build_runner_args(args)
+    runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 20)
+    common_args = ["--tier", "all", "--runs", str(runs_count)]
+    if args.no_warmup:
+        common_args.append("--no-warmup")
 
     print("=================================================================")
     print(" PROGRAMMING BENCHMARK: AUTOMATED FULL BENCHMARK SUITE RUNNER")
@@ -118,74 +110,65 @@ def main():
     print("   2. GET get_with_index -> Docker (DKR) & Bare-Metal (BME)")
     print("   3. POST               -> Docker (DKR) & Bare-Metal (BME)")
     print("   4. Aggregated Statistical Summary & CSV Export")
-    print(f" Parameters: Tier: {args.tier.upper()} | Runs: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: ALL (poc, small, general, high, stress)")
     print("=================================================================\n", flush=True)
 
     # -------------------------------------------------------------
     # 1. GET (get_no_index) - DKR & BME
     # -------------------------------------------------------------
-    if not args.skip_get_no_index:
-        get_no_idx_dir = os.path.join(BASE_DIR, "GET", "get_no_index")
-        
-        # Ensure secondary indexes are removed for unindexed read benchmarks
-        drop_secondary_indexes(args.mysql_host, args.mysql_port, args.mysql_user, args.mysql_pass, args.mysql_db)
+    get_no_idx_dir = os.path.join(BASE_DIR, "GET", "get_no_index")
+    
+    # Ensure secondary indexes are removed for unindexed read benchmarks
+    drop_secondary_indexes()
 
-        # 1.1 GET get_no_index Docker (DKR)
-        print("\n\n>>> STEP 1/6: Running GET get_no_index Docker (DKR)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
-            print("[!] Warning: GET No-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
+    # 1.1 GET get_no_index Docker (DKR)
+    print("\n\n>>> STEP 1/6: Running GET get_no_index Docker (DKR)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
+        print("[!] Warning: GET No-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-        # 1.2 GET get_no_index Bare-Metal (BME)
-        print("\n\n>>> STEP 2/6: Running GET get_no_index Bare-Metal (BME)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
-            print("[!] Warning: GET No-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
-    else:
-        print("[AUTO-RUNNER] Skipping GET get_no_index suite as requested.")
+    # 1.2 GET get_no_index Bare-Metal (BME)
+    print("\n\n>>> STEP 2/6: Running GET get_no_index Bare-Metal (BME)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
+        print("[!] Warning: GET No-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
     # 2. GET (get_with_index) - DKR & BME
     # -------------------------------------------------------------
-    if not args.skip_get_with_index:
-        get_with_idx_dir = os.path.join(BASE_DIR, "GET", "get_with_index")
+    get_with_idx_dir = os.path.join(BASE_DIR, "GET", "get_with_index")
 
-        # Apply secondary indexes before indexed benchmarks
-        add_secondary_indexes(args.mysql_host, args.mysql_port, args.mysql_user, args.mysql_pass, args.mysql_db)
+    # Apply secondary indexes before indexed benchmarks
+    add_secondary_indexes()
 
-        # 2.1 GET get_with_index Docker (DKR)
-        print("\n\n>>> STEP 3/6: Running GET get_with_index Docker (DKR)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
-            print("[!] Warning: GET With-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
+    # 2.1 GET get_with_index Docker (DKR)
+    print("\n\n>>> STEP 3/6: Running GET get_with_index Docker (DKR)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
+        print("[!] Warning: GET With-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-        # 2.2 GET get_with_index Bare-Metal (BME)
-        print("\n\n>>> STEP 4/6: Running GET get_with_index Bare-Metal (BME)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
-            print("[!] Warning: GET With-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
-    else:
-        print("[AUTO-RUNNER] Skipping GET get_with_index suite as requested.")
+    # 2.2 GET get_with_index Bare-Metal (BME)
+    print("\n\n>>> STEP 4/6: Running GET get_with_index Bare-Metal (BME)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
+        print("[!] Warning: GET With-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
     # 3. POST - DKR & BME
     # -------------------------------------------------------------
-    if not args.skip_post:
-        post_dir = os.path.join(BASE_DIR, "POST")
+    post_dir = os.path.join(BASE_DIR, "POST")
 
-        # 3.1 POST Docker (DKR)
-        print("\n\n>>> STEP 5/6: Running POST Docker (DKR)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
-            print("[!] Warning: POST Docker benchmark encountered errors, continuing...", file=sys.stderr)
+    # 3.1 POST Docker (DKR)
+    print("\n\n>>> STEP 5/6: Running POST Docker (DKR)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
+        print("[!] Warning: POST Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-        # 3.2 POST Bare-Metal (BME)
-        print("\n\n>>> STEP 6/6: Running POST Bare-Metal (BME)...", flush=True)
-        cleanup_environment()
-        if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir):
-            print("[!] Warning: POST Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
-    else:
-        print("[AUTO-RUNNER] Skipping POST suite as requested.")
+    # 3.2 POST Bare-Metal (BME)
+    print("\n\n>>> STEP 6/6: Running POST Bare-Metal (BME)...", flush=True)
+    cleanup_environment()
+    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir):
+        print("[!] Warning: POST Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
     # 4. Generate Summaries & CSVs

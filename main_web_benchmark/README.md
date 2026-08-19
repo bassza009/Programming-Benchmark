@@ -134,15 +134,16 @@ All `run_*.py` scripts support the following arguments:
 To run the full end-to-end benchmark suite sequentially with automatic index management, port cleanup, and reporting:
 
 ```bash
-# Run complete test pipeline (All 6 suites, 20 runs per endpoint)
+# Run complete test pipeline (All 6 suites, default 20 runs per endpoint)
 python3 auto_runner.py
 
-# Run specific tier with custom iteration count
-python3 auto_runner.py --tier poc --runs 3
+# Custom iteration count (e.g. 20 runs, 5 runs, or 3 runs)
+python3 auto_runner.py 20
+python3 auto_runner.py --runs 20
+python3 auto_runner.py -r 5
 
-# Filter by language or framework
-python3 auto_runner.py --lang python --tier small --runs 5
-python3 auto_runner.py --framework fiber --tier general
+# Disable the 3-second warmup phase
+python3 auto_runner.py 20 --no-warmup
 ```
 
 **Pipeline Execution Sequence:**

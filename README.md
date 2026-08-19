@@ -223,11 +223,16 @@ Tested under two database states:
 To execute all 6 benchmark suites sequentially (GET No-Index DKR/BME, GET With-Index DKR/BME, and POST DKR/BME) with automatic secondary index management, port cleanup, and summary generation:
 
 ```bash
-# Run full automated benchmark pipeline (20 runs per endpoint across all suites)
+# Run full automated benchmark pipeline (default 20 runs per endpoint across all 6 suites)
 python3 main_web_benchmark/auto_runner.py
 
-# Run a specific tier (e.g. poc, small, general, high, stress) with custom iterations
-python3 main_web_benchmark/auto_runner.py --tier poc --runs 3
+# Custom iteration count (e.g. 20 runs, 5 runs, or 3 runs)
+python3 main_web_benchmark/auto_runner.py 20
+python3 main_web_benchmark/auto_runner.py --runs 20
+python3 main_web_benchmark/auto_runner.py -r 5
+
+# Disable 3-second warmup phase
+python3 main_web_benchmark/auto_runner.py 20 --no-warmup
 ```
 
 ### Manual Execution by Suite

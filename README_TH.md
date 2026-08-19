@@ -224,11 +224,16 @@ flowchart TD
 หากต้องการรันการทดสอบครบทุก 6 ชุดแบบเรียงลำดับต่อเนื่อง (GET No-Index DKR/BME, GET With-Index DKR/BME และ POST DKR/BME) พร้อมจัดการ Secondary Database Index, เคลียร์พอร์ต และสรุปผลรวมอัตโนมัติ:
 
 ```bash
-# รัน Benchmark ครบทุกชุดและทุกระดับโหลดแบบอัตโนมัติ (เฉลี่ย 20 รอบต่อ Endpoint)
+# รัน Benchmark ครบทุก 6 ชุดแบบอัตโนมัติ (ค่าเริ่มต้น 20 รอบต่อ Endpoint)
 python3 main_web_benchmark/auto_runner.py
 
-# รันเฉพาะระดับโหลดที่กำหนด (เช่น poc, small, general, high, stress) พร้อมระบุจำนวนรอบ
-python3 main_web_benchmark/auto_runner.py --tier poc --runs 3
+# กำหนดจำนวนรอบที่ต้องการทดสอบ (เช่น 20 รอบ, 5 รอบ หรือ 3 รอบ)
+python3 main_web_benchmark/auto_runner.py 20
+python3 main_web_benchmark/auto_runner.py --runs 20
+python3 main_web_benchmark/auto_runner.py -r 5
+
+# ปิดช่วงเวลา Warmup 3 วินาที
+python3 main_web_benchmark/auto_runner.py 20 --no-warmup
 ```
 
 ### คำสั่งการรันทดสอบแยกตามชุด (Manual Execution)
