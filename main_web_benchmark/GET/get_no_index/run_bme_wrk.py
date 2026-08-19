@@ -17,12 +17,28 @@ except Exception:
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+LANG_ALIASES = {
+    "python": "python", "py": "python",
+    "nodejs": "nodejs", "node": "nodejs", "js": "nodejs",
+    "php": "php",
+    "go": "go", "golang": "go",
+    "java": "java"
+}
+
+FW_ALIASES = {
+    "fastapi": "fastapi",
+    "fastify": "fastify",
+    "swoole": "swoole",
+    "fiber": "fiber",
+    "springboot": "springboot", "spring": "springboot", "spring-boot": "springboot"
+}
+
 LANGUAGES = [
-    {"name": "Python", "port": 8001, "cmd": ["python3", "server.py"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "python", "fastapi")},
-    {"name": "Node.js", "port": 8002, "cmd": ["node", "server.js"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "nodejs", "fastify")},
-    {"name": "PHP", "port": 8003, "cmd": ["php", "server.php"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "php", "swoole")},
-    {"name": "Go", "port": 8004, "cmd": ["./server"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "go", "fiber")},
-    {"name": "Java", "port": 8005, "cmd": ["java", "-jar", "app.jar"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "java", "springboot")}
+    {"name": "Python", "lang": "python", "framework": "FastAPI", "framework_key": "fastapi", "port": 8001, "cmd": ["python3", "server.py"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "python", "fastapi")},
+    {"name": "Node.js", "lang": "nodejs", "framework": "Fastify", "framework_key": "fastify", "port": 8002, "cmd": ["node", "server.js"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "nodejs", "fastify")},
+    {"name": "PHP", "lang": "php", "framework": "Swoole", "framework_key": "swoole", "port": 8003, "cmd": ["php", "server.php"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "php", "swoole")},
+    {"name": "Go", "lang": "go", "framework": "Fiber", "framework_key": "fiber", "port": 8004, "cmd": ["./server"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "go", "fiber")},
+    {"name": "Java", "lang": "java", "framework": "Spring Boot", "framework_key": "springboot", "port": 8005, "cmd": ["java", "-jar", "app.jar"], "cwd": os.path.join(SCRIPT_DIR, "frameworks", "java", "springboot")}
 ]
 
 ENDPOINTS = [
@@ -181,24 +197,63 @@ def compute_average_metrics(runs_list):
         "runs_count": n
     }
 
+def is_target(item, filter_lang=None, filter_fw=None):
+    if filter_lang and filter_lang.lower() != "all":
+        norm_lang = LANG_ALIASES.get(filter_lang.lower(), filter_lang.lower())
+        if item.get("lang") != norm_lang:
+            return False
+    if filter_fw and filter_fw.lower() != "all":
+        norm_fw = FW_ALIASES.get(filter_fw.lower(), filter_fw.lower())
+        item_fw = item.get("framework_key", item.get("framework", "").lower().replace("-", "").replace("_", "").replace(" ", ""))
+        if item_fw != norm_fw:
+            return False
+    return True
+
 def main():
     parser = argparse.ArgumentParser(description="GET No-Index Bare Metal Benchmark Runner")
     parser.add_argument("--tier", choices=list(TIERS.keys()) + ["all"], default="all", help="Tier to execute (default: all)")
+    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Language to benchmark (runs all frameworks in language if --framework is not set)")
+    parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Framework to benchmark")
     parser.add_argument("--runs", type=int, default=1, help="Number of iterations per endpoint to average (default: 1)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
     args = parser.parse_args()
 
+    filter_desc = []
+    if args.lang and args.lang.lower() != "all":
+        filter_desc.append(f"Lang: {args.lang.upper()}")
+    if args.framework and args.framework.lower() != "all":
+        filter_desc.append(f"Framework: {args.framework.upper()}")
+    filter_label = " | ".join(filter_desc) if filter_desc else "ALL"
+
     selected_tiers = list(TIERS.keys()) if args.tier == "all" else [args.tier]
+    target_langs = [l for l in LANGUAGES if is_target(l, args.lang, args.framework)]
+
+    if not target_langs:
+        print(f"[!] No languages/frameworks matched filter (Lang: {args.lang}, Framework: {args.framework})")
+        return
 
     print("=================================================================")
     print(" Project Antigravity: GET (No Index) Bare Metal (BME) Benchmark")
-    print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Target Frameworks: {', '.join([l['name'] + ' (' + l['framework'] + ')' for l in target_langs])}")
     print("=================================================================")
 
     ALL_RESULTS = {}
     RAW_RESULTS = {}
+    if os.path.exists("bme_benchmark_results.json"):
+        try:
+            with open("bme_benchmark_results.json", "r") as f:
+                ALL_RESULTS = json.load(f)
+        except Exception:
+            pass
+    if os.path.exists("raw_results.json"):
+        try:
+            with open("raw_results.json", "r") as f:
+                RAW_RESULTS = json.load(f)
+        except Exception:
+            pass
 
-    for lang in LANGUAGES:
+    for lang in target_langs:
         print(f"\n---> Starting Server: {lang['name']} on Port {lang['port']}")
         subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
         time.sleep(1)

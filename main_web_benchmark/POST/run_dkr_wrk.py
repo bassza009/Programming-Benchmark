@@ -15,12 +15,28 @@ try:
 except Exception:
     pass
 
+LANG_ALIASES = {
+    "python": "python", "py": "python",
+    "nodejs": "nodejs", "node": "nodejs", "js": "nodejs",
+    "php": "php",
+    "go": "go", "golang": "go",
+    "java": "java"
+}
+
+FW_ALIASES = {
+    "fastapi": "fastapi",
+    "fastify": "fastify",
+    "swoole": "swoole",
+    "fiber": "fiber",
+    "springboot": "springboot", "spring": "springboot", "spring-boot": "springboot"
+}
+
 SERVICES = [
-    {"name": "Python", "service": "server-python", "port": 8001},
-    {"name": "Node.js", "service": "server-node", "port": 8002},
-    {"name": "PHP", "service": "server-php", "port": 8003},
-    {"name": "Go", "service": "server-go", "port": 8004},
-    {"name": "Java", "service": "server-java", "port": 8005}
+    {"name": "Python", "lang": "python", "framework": "FastAPI", "framework_key": "fastapi", "service": "server-python", "port": 8001},
+    {"name": "Node.js", "lang": "nodejs", "framework": "Fastify", "framework_key": "fastify", "service": "server-node", "port": 8002},
+    {"name": "PHP", "lang": "php", "framework": "Swoole", "framework_key": "swoole", "service": "server-php", "port": 8003},
+    {"name": "Go", "lang": "go", "framework": "Fiber", "framework_key": "fiber", "service": "server-go", "port": 8004},
+    {"name": "Java", "lang": "java", "framework": "Spring Boot", "framework_key": "springboot", "service": "server-java", "port": 8005}
 ]
 
 ENDPOINTS = [
@@ -194,24 +210,51 @@ def compute_average_metrics(runs_list):
         "runs_count": n
     }
 
+def is_target(item, filter_lang=None, filter_fw=None):
+    if filter_lang and filter_lang.lower() != "all":
+        norm_lang = LANG_ALIASES.get(filter_lang.lower(), filter_lang.lower())
+        if item.get("lang") != norm_lang:
+            return False
+    if filter_fw and filter_fw.lower() != "all":
+        norm_fw = FW_ALIASES.get(filter_fw.lower(), filter_fw.lower())
+        item_fw = item.get("framework_key", item.get("framework", "").lower().replace("-", "").replace("_", "").replace(" ", ""))
+        if item_fw != norm_fw:
+            return False
+    return True
+
 def main():
     parser = argparse.ArgumentParser(description="POST Docker Benchmark Runner")
     parser.add_argument("--tier", choices=list(TIERS.keys()) + ["all"], default="all", help="Tier to execute (default: all)")
+    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Language to benchmark (runs all frameworks in language if --framework is not set)")
+    parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Framework to benchmark")
     parser.add_argument("--runs", type=int, default=1, help="Number of iterations per endpoint to average (default: 1)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
     args = parser.parse_args()
 
+    filter_desc = []
+    if args.lang and args.lang.lower() != "all":
+        filter_desc.append(f"Lang: {args.lang.upper()}")
+    if args.framework and args.framework.lower() != "all":
+        filter_desc.append(f"Framework: {args.framework.upper()}")
+    filter_label = " | ".join(filter_desc) if filter_desc else "ALL"
+
     selected_tiers = list(TIERS.keys()) if args.tier == "all" else [args.tier]
+    target_services = [s for s in SERVICES if is_target(s, args.lang, args.framework)]
+
+    if not target_services:
+        print(f"[!] No services matched filter (Lang: {args.lang}, Framework: {args.framework})")
+        return
 
     print("=================================================================")
     print(" Project Antigravity: POST Write/Transaction Docker Benchmark")
-    print(f" Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Target Services: {', '.join([s['name'] + ' (' + s['framework'] + ')' for s in target_services])}")
     print("=================================================================")
 
     ALL_RESULTS = {}
     RAW_RESULTS = {}
 
-    for s in SERVICES:
+    for s in target_services:
         print(f"\n---> Resetting Database for {s['name']}...")
         reset_db()
 

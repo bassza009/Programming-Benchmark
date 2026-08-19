@@ -199,10 +199,16 @@ python3 run_dkr_wrk.py --tier all --runs 3
 # 3. Run POST Write / Transaction Benchmark
 cd main_web_benchmark/POST
 python3 run_bme_wrk.py --tier all --runs 3
+
+# 4. Filter by Language or Framework
+python3 run_dkr_wrk.py --lang python --tier all --runs 3       # Runs all frameworks in Python
+python3 run_dkr_wrk.py --framework fiber --tier all --runs 3   # Runs only Go Fiber
 ```
 
 ### CLI Arguments
 * `--tier {poc,small,general,high,stress,all}` (Default: `all`): Select target concurrency tier.
+* `--lang {python,py,node,nodejs,js,php,go,golang,java,all}` (Default: None): Filter and run all frameworks under a specific language.
+* `--framework, --fw {fastapi,fastify,swoole,fiber,springboot,spring-boot,spring,all}` (Default: None): Filter and run a specific framework.
 * `--runs N` (Default: `1`): Number of test iterations per endpoint to compute statistical averages.
 * `--no-warmup` (Default: False): Skip the 3-second warmup phase before recording.
 

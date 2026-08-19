@@ -50,13 +50,16 @@ cd main_web_benchmark/POST
 python3 run_dkr_wrk.py --tier all
 ```
 
-*Tier Options:*
+*Tier & Filter Options:*
 * `--tier poc`     : 20 connections, 2 threads, 30s (POC / Small internal system)
 * `--tier small`   : 100 connections, 4 threads, 60s (Small production website)
 * `--tier general` : 500 connections, 8 threads, 60s (General web application)
 * `--tier high`    : 2,000 connections, 8 threads, 120s (High-density website)
 * `--tier all`     : Runs all 5 tiers sequentially
+* `--lang <name>`  : Run all frameworks under a specific language (e.g. `python`, `go`, `nodejs`, `php`, `java`)
+* `--framework <name>` / `--fw <name>`: Run a specific framework (e.g. `fastapi`, `fiber`, `fastify`, `swoole`, `springboot`)
 * `--runs N`       : Repeat each benchmark N times and calculate the statistical average (e.g. `--runs 3`)
+* `--no-warmup`    : Disable the 3-second warmup phase
 * **Outputs**: Averaged results in `bme/dkr_benchmark_results.json` and raw per-iteration logs in `raw_results.json` (and `results/raw_results/`).
 
 ---

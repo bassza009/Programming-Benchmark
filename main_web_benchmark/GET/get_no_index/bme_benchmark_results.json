@@ -109,105 +109,90 @@
   "Node.js": {
     "Environment": "BME",
     "tiers": {
-      "min": {
+      "poc": {
         "config": {
-          "name": "Minimum (Light)",
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
           "threads": 2,
-          "connections": 100,
-          "duration": "10s"
-        },
-        "endpoints": {
-          "/raw/1table": {
-            "requests_per_sec": 7016.52,
-            "latency_mean_ms": 16.3,
-            "latency_max_ms": 312.95,
-            "errors": 0
-          },
-          "/raw/2join": {
-            "requests_per_sec": 4687.83,
-            "latency_mean_ms": 21.73,
-            "latency_max_ms": 119.1,
-            "errors": 0
-          },
-          "/raw/3join": {
-            "requests_per_sec": 305.11,
-            "latency_mean_ms": 321.28,
-            "latency_max_ms": 620.05,
-            "errors": 0
-          },
-          "/raw/4join": {
-            "requests_per_sec": 736.6,
-            "latency_mean_ms": 134.39,
-            "latency_max_ms": 289.33,
-            "errors": 0
-          }
-        }
-      },
-      "med": {
-        "config": {
-          "name": "Medium (Standard)",
-          "threads": 10,
-          "connections": 1000,
+          "connections": 20,
           "duration": "30s"
         },
         "endpoints": {
           "/raw/1table": {
-            "requests_per_sec": 10410.97,
-            "latency_mean_ms": 109.5,
-            "latency_max_ms": 1999.59,
-            "errors": 38
+            "requests_per_sec": 11190.2,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 11190.2,
+            "rps_ci95_high": 11190.2,
+            "latency_mean_ms": 1.8,
+            "latency_stdev_ms": 0.67,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.8,
+            "latency_ci95_high": 1.8,
+            "latency_p50_ms": 1.75,
+            "latency_p90_ms": 2.3,
+            "latency_p95_ms": 2.85,
+            "latency_p99_ms": 4.62,
+            "latency_max_ms": 25.02,
+            "errors": 0,
+            "runs_count": 1
           },
           "/raw/2join": {
-            "requests_per_sec": 4486.93,
-            "latency_mean_ms": 221.34,
-            "latency_max_ms": 1101.88,
-            "errors": 0
+            "requests_per_sec": 7316.43,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 7316.43,
+            "rps_ci95_high": 7316.43,
+            "latency_mean_ms": 2.73,
+            "latency_stdev_ms": 0.97,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 2.73,
+            "latency_ci95_high": 2.73,
+            "latency_p50_ms": 2.52,
+            "latency_p90_ms": 3.88,
+            "latency_p95_ms": 4.51,
+            "latency_p99_ms": 6.16,
+            "latency_max_ms": 20.43,
+            "errors": 0,
+            "runs_count": 1
           },
           "/raw/3join": {
-            "requests_per_sec": 300.1,
-            "latency_mean_ms": 1479.41,
-            "latency_max_ms": 1999.92,
-            "errors": 8467
+            "requests_per_sec": 319.06,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 319.06,
+            "rps_ci95_high": 319.06,
+            "latency_mean_ms": 62.63,
+            "latency_stdev_ms": 21.26,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 62.63,
+            "latency_ci95_high": 62.63,
+            "latency_p50_ms": 52.03,
+            "latency_p90_ms": 97.73,
+            "latency_p95_ms": 102.79,
+            "latency_p99_ms": 113.9,
+            "latency_max_ms": 160.98,
+            "errors": 0,
+            "runs_count": 1
           },
           "/raw/4join": {
-            "requests_per_sec": 708.49,
-            "latency_mean_ms": 1336.36,
-            "latency_max_ms": 1999.59,
-            "errors": 1011
-          }
-        }
-      },
-      "max": {
-        "config": {
-          "name": "Maximum (Stress)",
-          "threads": 20,
-          "connections": 10000,
-          "duration": "30s"
-        },
-        "endpoints": {
-          "/raw/1table": {
-            "requests_per_sec": 8675.44,
-            "latency_mean_ms": 379.06,
-            "latency_max_ms": 1985.33,
-            "errors": 4745
-          },
-          "/raw/2join": {
-            "requests_per_sec": 4268.16,
-            "latency_mean_ms": 1371.84,
-            "latency_max_ms": 2000.0,
-            "errors": 86220
-          },
-          "/raw/3join": {
-            "requests_per_sec": 298.4,
-            "latency_mean_ms": 1459.4,
-            "latency_max_ms": 1997.01,
-            "errors": 8537
-          },
-          "/raw/4join": {
-            "requests_per_sec": 64.23,
-            "latency_mean_ms": 0.0,
-            "latency_max_ms": 0.0,
-            "errors": 1933
+            "requests_per_sec": 75.57,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 75.57,
+            "rps_ci95_high": 75.57,
+            "latency_mean_ms": 263.33,
+            "latency_stdev_ms": 83.48,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 263.33,
+            "latency_ci95_high": 263.33,
+            "latency_p50_ms": 218.93,
+            "latency_p90_ms": 405.4,
+            "latency_p95_ms": 418.94,
+            "latency_p99_ms": 457.29,
+            "latency_max_ms": 513.32,
+            "errors": 0,
+            "runs_count": 1
           }
         }
       }

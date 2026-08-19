@@ -200,10 +200,16 @@ python3 run_dkr_wrk.py --tier all --runs 3
 # 3. รันการทดสอบ POST ธุรกรรมการเขียน
 cd main_web_benchmark/POST
 python3 run_bme_wrk.py --tier all --runs 3
+
+# 4. กรองการทดสอบตามภาษา หรือ Framework
+python3 run_dkr_wrk.py --lang python --tier all --runs 3       # รันทุก Framework ของ Python
+python3 run_dkr_wrk.py --framework fiber --tier all --runs 3   # รันเฉพาะ Go Fiber
 ```
 
 ### ตัวเลือกคำสั่ง (CLI Arguments)
 * `--tier {poc,small,general,high,stress,all}` (ค่าเริ่มต้น: `all`): เลือกระดับโหลดสถานการณ์ที่ต้องการทดสอบ
+* `--lang {python,py,node,nodejs,js,php,go,golang,java,all}` (ค่าเริ่มต้น: None): กรองและรันทุก Framework ภายใต้ภาษาที่กำหนด
+* `--framework, --fw {fastapi,fastify,swoole,fiber,springboot,spring-boot,spring,all}` (ค่าเริ่มต้น: None): กรองและรันเฉพาะ Framework ที่กำหนด
 * `--runs N` (ค่าเริ่มต้น: `1`): จำนวนรอบที่ต้องการรันซ้ำเพื่อคำนวณค่าเฉลี่ยทางสถิติ
 * `--no-warmup` (ค่าเริ่มต้น: False): ปิดช่วง Warmup 3 วินาที
 
