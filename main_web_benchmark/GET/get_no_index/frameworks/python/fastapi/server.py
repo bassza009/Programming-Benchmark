@@ -76,9 +76,9 @@ async def init_db(retries=15):
                 )
             """)
 
-            await cursor.execute("SELECT COUNT(*) FROM users")
-            count = await cursor.fetchone()
-            if count[0] == 0:
+            await cursor.execute("SELECT 1 FROM users LIMIT 1")
+            has_data = await cursor.fetchone()
+            if not has_data:
                 await insert_mock_data(conn, cursor)
 
 async def insert_mock_data(conn, cursor):

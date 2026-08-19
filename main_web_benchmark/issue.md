@@ -140,14 +140,91 @@ To test systems fairly across different load intensities:
 
 ---
 
+## 8. Host MySQL Listening Interface & Docker Container Connectivity
+
+### What is happening?
+MySQL server on the host machine was configured with `bind-address = 127.0.0.1`. When framework containers attempt to communicate with MySQL via `host.docker.internal` (e.g. `172.17.0.1:3306`), MySQL immediately rejects the TCP connections with `Connection refused` (Error 111).
+
+### The Impact
+All containerized application servers fail to connect to the database on boot, triggering startup timeouts and causing benchmarks to record 0 req/sec and 100% errors.
+
+### How to fix it
+1. Update `/etc/mysql/mariadb.conf.d/50-server.cnf` and `/etc/mysql/mysql.conf.d/mysqld.cnf` to bind to all interfaces:
+   ```ini
+   bind-address = 0.0.0.0
+   ```
+2. Ensure user permissions allow connections from Docker container subnets (`'admin'@'%'`):
+   ```sql
+   GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
+   FLUSH PRIVILEGES;
+   ```
+
+---
+
+## 9. MySQL 8.0 Default Auth Plugin Incompatibility (`caching_sha2_password`)
+
+### What is happening?
+MySQL 8.0 defaults new user accounts to `caching_sha2_password`. Several client libraries (such as `aiomysql` in Python without the heavy `cryptography` C-extension) fail during authentication with:
+`RuntimeError: 'cryptography' package is required for sha256_password or caching_sha2_password auth methods`.
+
+### The Impact
+Python and other asynchronous workers crash immediately upon pool initialization when negotiating the handshake with MySQL.
+
+### How to fix it
+Configure the benchmark user account with `mysql_native_password` authentication:
+```sql
+ALTER USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'secret';
+ALTER USER 'admin'@'localhost' IDENTIFIED WITH mysql_native_password BY 'secret';
+FLUSH PRIVILEGES;
+```
+
+---
+
+## 10. Startup Bottleneck: Full Table Scan `SELECT COUNT(*)` on 17+ Million Rows
+
+### What is happening?
+On application startup, each server process/worker executed `SELECT COUNT(*) FROM users` to check if mock data needed to be seeded. With 17.2 million records in `users` and no secondary indexes, this query executes a complete primary key index traversal.
+
+### The Impact
+In multi-worker frameworks (e.g., 8 FastAPI workers or clustered Node/PHP processes), all workers simultaneously executed full table scans on startup. This locked MySQL CPU/IO for 20-30 seconds, causing the test runner's HTTP health check to time out (`Timeout waiting for server on port 800X`) and drop initial requests.
+
+### How to fix it
+Replace `SELECT COUNT(*) FROM users` with an $O(1)$ existence check:
+```sql
+SELECT 1 FROM users LIMIT 1;
+```
+This returns in under 1 millisecond and allows all workers to boot instantly.
+
+---
+
+## 11. Schema Column Discrepancy in `profiles` Table (`p.age` Column Missing)
+
+### What is happening?
+The multi-table JOIN endpoints (`/raw/2join`, `/raw/3join`, `/raw/4join`) across all frameworks query `SELECT u.name, p.age FROM users u JOIN profiles p ...`. However, the existing pre-seeded database schema for `profiles` only possessed `id`, `user_id`, `bio`, `phone` (missing `age` and `address`).
+
+### The Impact
+Every multi-table JOIN request immediately triggered MySQL Error 1054 (`Unknown column 'p.age' in 'field list'`), causing all 5 web servers to return `500 Internal Server Error` on `/raw/2join`, `/raw/3join`, and `/raw/4join`, generating 100% error rates in benchmark reports.
+
+### How to fix it
+Execute an `ALTER TABLE` to align the schema with the benchmark specification:
+```sql
+ALTER TABLE profiles ADD COLUMN age INT DEFAULT 25, ADD COLUMN address VARCHAR(255) DEFAULT 'Sample Address';
+```
+
+---
+
 ## Summary Checklist of Required Fixes
 
 - [x] **Fix `POST/wrk_json_reporter.lua`** to properly issue HTTP POST requests with headers and payload.
 - [x] **Implement Swoole PDO Pool** in all `server.php` files to eliminate per-request connection churn.
 - [x] **Standardize pool sizes** across FastAPI, Fastify, Swoole, Fiber, and Spring Boot.
 - [x] **Configure `application.properties`** for Spring Boot to boost HikariCP pool size from 10.
-- [x] **Increase MySQL `max_connections`** to 10,000 in `docker-compose.yml`.
+- [x] **Increase MySQL `max_connections`** to 10,000 in `docker-compose.yml` and `/etc/mysql/`.
 - [x] **Configure `ulimits` (65,535)** in Docker and test runner scripts to prevent socket exhaustion.
 - [x] **Add 3-second warmup** before recording metrics.
 - [x] **Reset database tables** between framework runs in POST benchmarks.
 - [x] **Add CLI tier selector (`--tier min|med|max|all`)** to `run_bme_wrk.py` and `run_dkr_wrk.py`.
+- [x] **Configure MySQL `bind-address = 0.0.0.0`** and `'admin'@'%'` permissions for Docker connectivity.
+- [x] **Enforce `mysql_native_password`** for benchmark accounts to support lightweight drivers.
+- [x] **Optimize startup existence checks** from `COUNT(*)` to `SELECT 1 LIMIT 1`.
+- [x] **Align `profiles` schema** by adding missing `age` and `address` columns.

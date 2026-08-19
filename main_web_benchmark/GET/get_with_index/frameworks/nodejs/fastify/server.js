@@ -61,8 +61,8 @@ async function initDB() {
       )
     `);
 
-    const [rows] = await conn.execute('SELECT COUNT(*) as count FROM users');
-    if (rows[0].count === 0) {
+    const [rows] = await conn.execute('SELECT 1 FROM users LIMIT 1');
+    if (rows.length === 0) {
       await insertMockData(conn);
     }
   } finally {

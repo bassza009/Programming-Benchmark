@@ -81,8 +81,8 @@ class AntigravityGetWithIndexServer {
                 INDEX idx_order_items_order_id (order_id)
             )");
 
-            $stmt = $pdo->query("SELECT COUNT(*) FROM users");
-            if ($stmt->fetchColumn() == 0) {
+            $stmt = $pdo->query("SELECT 1 FROM users LIMIT 1");
+            if ($stmt->fetchColumn() === false) {
                 $this->insertMockData($pdo);
             }
         } catch (\Exception $e) {

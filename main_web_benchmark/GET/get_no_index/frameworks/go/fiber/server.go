@@ -86,12 +86,12 @@ func initSchema() error {
 		}
 	}
 
-	var count int
-	if err := db.QueryRow("SELECT COUNT(*) FROM users").Scan(&count); err != nil {
-		return err
-	}
-	if count == 0 {
+	var dummy int
+	err := db.QueryRow("SELECT 1 FROM users LIMIT 1").Scan(&dummy)
+	if err == sql.ErrNoRows {
 		return seedMockData()
+	} else if err != nil {
+		return err
 	}
 	return nil
 }

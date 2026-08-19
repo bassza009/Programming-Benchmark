@@ -77,8 +77,8 @@ class AntigravityGetNoIndexServer {
                 price DECIMAL(10, 2)
             )");
 
-            $stmt = $pdo->query("SELECT COUNT(*) FROM users");
-            if ($stmt->fetchColumn() == 0) {
+            $stmt = $pdo->query("SELECT 1 FROM users LIMIT 1");
+            if ($stmt->fetchColumn() === false) {
                 $this->insertMockData($pdo);
             }
         } catch (\Exception $e) {

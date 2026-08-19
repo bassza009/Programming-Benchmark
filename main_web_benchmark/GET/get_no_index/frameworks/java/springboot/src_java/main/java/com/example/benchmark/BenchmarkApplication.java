@@ -47,8 +47,8 @@ public class BenchmarkApplication {
                 "product_name VARCHAR(100), " +
                 "price DECIMAL(10, 2))");
 
-        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class);
-        if (count != null && count == 0) {
+        List<Integer> list = jdbcTemplate.query("SELECT 1 FROM users LIMIT 1", (rs, rowNum) -> rs.getInt(1));
+        if (list.isEmpty()) {
             seedData();
         }
     }

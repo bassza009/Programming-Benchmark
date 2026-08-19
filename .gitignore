@@ -13,3 +13,7 @@ target/
 *.docx
 create_word_doc*.py
 myenv/
+instructionforbass/
+hyperfine/
+readjson.py
+web_benchmark/
