@@ -84,18 +84,51 @@ flowchart TD
 ```
 
 ### Experimental Phases:
-1. **Experimental Environment Setup**: Host OS tuning (`ulimit -n 65535`), dedicated MySQL 8.0 instance, standardized resource allocations.
+1. **Experimental Environment Setup**: Host OS tuning (`ulimit -n 65535`), dedicated MySQL 8.0 instance (`max_connections=10000`), standardized resource allocations.
 2. **Software & System Architecture**: Implementation of identical database schemas, endpoints, query structures, and JSON response formats across all 5 frameworks.
-3. **Independent & Dependent Variables Definition**:
-   - *Independent Variables*: Language/Framework, Execution Environment (Bare Metal vs. Docker), Indexing State, Query Complexity, Concurrency Level.
-   - *Dependent Variables & Metrics*:
-     - **Throughput**: Arithmetic Mean ($\bar{T}$ Req/sec), Sample Standard Deviation ($\sigma_T$), 95% Confidence Interval (95% CI).
-     - **Latency & Dispersion**: Mean Latency ($\bar{L}$ ms), Sample Standard Deviation ($\sigma_L$), 95% Confidence Interval (95% CI).
-     - **Percentiles**: $p_{50}$ (Median), $p_{90}$, $p_{95}$, $p_{99}$ tail latencies, and Maximum Latency ($L_{\max}$).
-     - **Reliability**: Socket connection errors, read/write timeouts, and HTTP status anomalies.
-4. **Workload Definition**: Read suites (Single-table and 2–4 table `JOIN`s) and Write suites (1–4 table relational transactions).
-5. **Execution Protocol**: Automated test harness via `wrk` with warmup phases, database state resets between runs, and multi-iteration averaging (`--runs N`).
-6. **Data Analysis**: Distribution calculation, 95% CI estimation, raw JSON logging, and markdown/CSV summary generation.
+3. **Execution Protocol**: Automated test harness via `wrk` with warmup phases, database state resets between runs, and multi-iteration averaging (`--runs N`).
+4. **Data Analysis**: Distribution calculation, 95% CI estimation, raw JSON logging, and markdown/CSV summary generation.
+
+### Research Variables Specification
+
+#### A. Independent Variables (ตัวแปรต้น)
+| Category | Variable | Experimental Levels & Specifications |
+| :--- | :--- | :--- |
+| **Language & Framework** | Programming Runtime | • **Python 3.12** (FastAPI / Uvicorn)<br>• **Node.js 20 LTS** (Fastify / Cluster)<br>• **PHP 8.3** (Swoole Coroutine)<br>• **Go 1.22** (Fiber v2)<br>• **Java 21 LTS** (Spring Boot 3.2) |
+| **Execution Environment** | Virtualization Layer | • **Bare Metal (Host OS)**: Native Linux kernel execution<br>• **Docker (Containerized)**: Container process isolation via Docker Engine |
+| **Database Indexing** | Secondary Index State | • **Unindexed (`get_no_index`)**: Primary Key (`id`) only; join foreign keys unindexed<br>• **Indexed (`get_with_index`)**: Secondary B-Tree indexes on `profiles.user_id`, `orders.user_id`, `order_items.order_id` |
+| **Workload Complexity** | Query & Transaction Depth | • **Read (GET)**: 1-Table Query, 2-Table JOIN, 3-Table JOIN, 4-Table JOIN<br>• **Write (POST)**: 1-Table INSERT, 2-Table Tx, 3-Table Tx, 4-Table Tx (with 2 items) |
+| **Concurrency Tiers** | Load Intensity Profile | • **POC**: 2 threads, 20 connections, 30s<br>• **Small**: 4 threads, 100 connections, 60s<br>• **General**: 8 threads, 500 connections, 60s<br>• **High**: 8 threads, 2,000 connections, 120s<br>• **Stress**: 16 threads, 10,000 connections, 300s |
+
+#### B. Controlled & Fixed System Variables (ตัวแปรควบคุม)
+| System Subsystem | Parameter / Variable | Configured Value | Research Purpose & Rationale |
+| :--- | :--- | :--- | :--- |
+| **Database (MySQL 8.0)** | `max_connections` | **`10,000`** | Prevents MySQL socket connection rejection under extreme concurrency tiers. |
+| **Database (MySQL 8.0)** | `wait_timeout` / `interactive_timeout` | **`28,800`** sec | Prevents connection pool starvation from premature connection recycling. |
+| **Database (MySQL 8.0)** | `character_set_server` / `collation` | `utf8mb4` / `utf8mb4_unicode_ci` | Uniform Unicode encoding standard across all SQL queries. |
+| **Database (MySQL 8.0)** | Baseline Dataset Scale | **10,000 rows / table** | Standardized table volume for read tests (`users`, `profiles`, `orders`, `order_items`). |
+| **Host OS (Linux Kernel)** | `RLIMIT_NOFILE` (`ulimit -n`) | **`65,535`** | Removes OS file descriptor ceiling to avoid "Too many open files" errors. |
+| **Host OS Network Stack** | `net.core.somaxconn` | **`65,535`** | Expands kernel socket listen queue backlog for burst traffic. |
+| **Host OS Network Stack** | `net.ipv4.tcp_max_syn_backlog` | **`65,535`** | Prevents SYN flood dropping under 10,000 concurrent handshakes. |
+| **Host OS Network Stack** | `net.ipv4.tcp_tw_reuse` | **`1` (Enabled)** | Allows fast TIME_WAIT socket reuse, preventing ephemeral port exhaustion. |
+| **Host OS Network Stack** | `ip_local_port_range` | `1024 65535` | Maximizes available outbound ports for client load generation. |
+| **Connection Pooling** | Pool Sizing per Worker | Standardized (50–100) | Prevents pool exhaustion while keeping database resource consumption fair. |
+| **Load Testing Protocol** | Pre-test Warmup Phase | **3.0 seconds** | Pre-heats JIT compilers (JVM/V8) and connection pools before measuring. |
+| **Load Testing Protocol** | Sample Iterations | **20 runs averaged** | Ensures high statistical confidence and narrow confidence intervals. |
+
+#### C. Dependent Variables & Metrics (ตัวแปรตาม)
+| Metric Category | Statistical Variable | Definition & Mathematical Representation |
+| :--- | :--- | :--- |
+| **Throughput** | Mean Throughput ($\bar{T}$) | Arithmetic mean requests served per second: $\bar{T} = \frac{1}{n}\sum_{i=1}^n T_i$ |
+| **Throughput** | Throughput Std Dev ($\sigma_T$) | Dispersion of throughput: $\sigma_T = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (T_i - \bar{T})^2}$ |
+| **Throughput** | 95% Confidence Interval ($95\% \text{ CI}_T$) | Margin of error bounds: $[\bar{T} - t_{crit} \frac{s_T}{\sqrt{n}}, \bar{T} + t_{crit} \frac{s_T}{\sqrt{n}}]$ |
+| **Latency** | Mean Latency ($\bar{L}$) | Arithmetic mean round-trip response time in milliseconds. |
+| **Latency** | Latency Std Dev ($\sigma_L$) | Latency sample dispersion in milliseconds. |
+| **Latency** | 95% Confidence Interval ($95\% \text{ CI}_L$) | Response time confidence bounds at 95% level. |
+| **Tail Latencies** | Percentiles ($p_{50}, p_{90}, p_{95}, p_{99}$) | Ranked response latency boundaries (e.g., 99% of requests completed within $p_{99}$). |
+| **Bounds & Reliability** | Maximum Latency ($L_{\max}$) & Errors | Absolute longest latency observed and total count of socket/timeout/HTTP errors. |
+| **Virtualization Overhead** | BME Performance Gain ($\Delta_{\text{BME}}$) | Relative throughput delta: $\Delta_{\text{BME}} = \frac{\bar{T}_{\text{BME}} - \bar{T}_{\text{DKR}}}{\bar{T}_{\text{DKR}}} \times 100\%$ |
+| **Indexing Factor** | Index Speedup Ratio ($\text{Gain}_{\text{Index}}$) | Read acceleration multiplier: $\text{Gain}_{\text{Index}} = \frac{\bar{T}_{\text{WithIndex}}}{\bar{T}_{\text{NoIndex}}}$ |
 
 ---
 

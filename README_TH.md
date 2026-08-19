@@ -84,19 +84,52 @@ flowchart TD
     F --> F5[Stress: 10,000 connections]
 ```
 
-### ขั้นตอนการดำเนินการ 6 ขั้นตอน:
-1. **สภาพแวดล้อมที่ใช้ในการทดลอง**: ปรับแต่ง Host OS (`ulimit -n 65535`), ใช้งาน MySQL 8.0 เฉพาะกิจ และกำหนดทรัพยากรมาตรฐาน
+### ขั้นตอนการดำเนินการทดลอง:
+1. **สภาพแวดล้อมที่ใช้ในการทดลอง**: ปรับแต่ง Host OS (`ulimit -n 65535`), ใช้งาน MySQL 8.0 เฉพาะกิจ (`max_connections=10000`) และกำหนดทรัพยากรมาตรฐาน
 2. **การออกแบบซอฟต์แวร์และระบบ**: ออกแบบ Database Schema, API Endpoints, Query และ JSON Structure ให้ตรงกันทุกประการทั้ง 5 ภาษา
-3. **การกำหนดตัวแปรต้น ตัวแปรตาม และตัวชี้วัดทางสถิติ**:
-   - *ตัวแปรต้น*: ภาษา/เฟรมเวิร์ก, สภาพแวดล้อม (Bare Metal vs Docker), สถานะ Index, ความซับซ้อนของคำสั่ง SQL, ระดับ Concurrency
-   - *ตัวแปรตามและตัวชี้วัดทางสถิติ (Statistical Metrics)*:
-     - **Throughput**: ค่าเฉลี่ยเลขคณิต ($\bar{T}$ Requests/sec), ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_T$ / SD), ช่วงความเชื่อมั่น 95% (95% CI)
-     - **Latency & Dispersion**: เวลาตอบสนองเฉลี่ย ($\bar{L}$ ms), ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_L$ / SD), ช่วงความเชื่อมั่น 95% (95% CI)
-     - **Percentiles**: $p_{50}$ (ค่ามัธยฐาน), $p_{90}$, $p_{95}$, $p_{99}$ (Tail Latency), และเวลาตอบสนองสูงสุด ($L_{\max}$)
-     - **ความเชื่อถือได้ (Reliability)**: อัตราข้อผิดพลาด Socket connect, อ่าน/เขียนเกินเวลา (Timeouts), และความผิดพลาดของ HTTP Status
-4. **ประเภทของภาระงานที่ทดสอบ**: หมวดการอ่าน (`GET` ตารางเดี่ยว และ `JOIN` 2–4 ตาราง) และหมวดการเขียน (`POST` Transactions เชื่อมโยง 1–4 ตาราง)
-5. **ขั้นตอนการดำเนินการทดลอง**: รันทดสอบอัตโนมัติด้วย `wrk`, มีขั้นตอน Warmup, รีเซ็ตสถานะฐานข้อมูลระหว่างรอบ และรองรับการรันซ้ำหาค่าเฉลี่ย (`--runs N`)
-6. **การวิเคราะห์ข้อมูล**: คำนวณการกระจายตัวทางสถิติ (SD, 95% CI, Percentiles), บันทึก Log ข้อมูลดิบรายรอบในรูปแบบ JSON และส่งออกรายงานสรุป Markdown/CSV
+3. **ขั้นตอนการดำเนินการทดลอง**: รันทดสอบอัตโนมัติด้วย `wrk`, มีขั้นตอน Warmup 3 วินาที, รีเซ็ตสถานะฐานข้อมูลระหว่างรอบ และรันซ้ำหาค่าเฉลี่ยทางสถิติ (`--runs N`)
+4. **การวิเคราะห์ข้อมูล**: คำนวณการกระจายตัวทางสถิติ (Mean, SD, 95% CI, Percentiles), บันทึก Log ข้อมูลดิบรายรอบในรูปแบบ JSON และส่งออกรายงานสรุป Markdown/CSV
+
+### การกำหนดตัวแปรของงานวิจัย (Research Variables Specification)
+
+#### A. ตัวแปรต้น (Independent Variables)
+| มิติการทดลอง | ตัวแปร | ระดับและข้อกำหนดในการทดลอง (Experimental Levels) |
+| :--- | :--- | :--- |
+| **ภาษาและเว็บเฟรมเวิร์ก** | รันไทม์ภาษาโปรแกรม | • **Python 3.12** (FastAPI / Uvicorn)<br>• **Node.js 20 LTS** (Fastify / Cluster)<br>• **PHP 8.3** (Swoole Coroutine)<br>• **Go 1.22** (Fiber v2)<br>• **Java 21 LTS** (Spring Boot 3.2) |
+| **สภาพแวดล้อมการทำงาน** | ชั้นการจำลองระบบ (Virtualization) | • **Bare Metal (Host OS)**: รันตรงบนระบบปฏิบัติการ Linux ของโฮสต์<br>• **Docker (Containerized)**: รันผ่านกระบวนการแยกส่วน (Process Isolation) ภายใน Docker Container |
+| **ดัชนีฐานข้อมูล (Indexing)** | สถานะ Secondary Index | • **ไม่มี Index รอง (`get_no_index`)**: มีเพียง Clustered Primary Key (`id`)<br>• **มี Index รอง (`get_with_index`)**: สร้าง B-Tree Index บน Foreign Keys (`profiles.user_id`, `orders.user_id`, `order_items.order_id`) |
+| **ความซับซ้อนของภาระงาน** | รูปแบบคำสั่ง Query & Transaction | • **การอ่าน (GET)**: 1 ตาราง, 2 ตาราง JOIN, 3 ตาราง JOIN, 4 ตาราง JOIN<br>• **การเขียน (POST)**: 1 ตาราง INSERT, 2 ตาราง Tx, 3 ตาราง Tx, 4 ตาราง Tx (พร้อมรายการย่อย 2 แถว) |
+| **ระดับโหลด (Concurrency)** | ระดับความเข้มข้นของผู้ใช้พร้อมกัน | • **POC**: 2 Threads, 20 Connections, 30 วินาที<br>• **Small**: 4 Threads, 100 Connections, 60 วินาที<br>• **General**: 8 Threads, 500 Connections, 60 วินาที<br>• **High**: 8 Threads, 2,000 Connections, 120 วินาที<br>• **Stress**: 16 Threads, 10,000 Connections, 300 วินาที |
+
+#### B. ตัวแปรควบคุมและการตั้งค่าระบบ (Controlled & Fixed System Variables)
+| ระบบย่อย (Subsystem) | ตัวแปร / พารามิเตอร์ | ค่าที่กำหนดในการทดลอง | วัตถุประสงค์และความสำคัญทางวิชาการ |
+| :--- | :--- | :--- | :--- |
+| **ระบบฐานข้อมูล (MySQL 8.0)** | `max_connections` | **`10,000`** | ป้องกันปัญหา Socket Connection Rejection ของ MySQL เมื่อทดสอบโหลดระดับ Stress Concurrency สูงสุด 10,000 Connections |
+| **ระบบฐานข้อมูล (MySQL 8.0)** | `wait_timeout` / `interactive_timeout` | **`28,800`** วินาที | ป้องกันการตัดการเชื่อมต่อของ Connection Pool ก่อนเวลาอันควร |
+| **ระบบฐานข้อมูล (MySQL 8.0)** | `character_set_server` / `collation` | `utf8mb4` / `utf8mb4_unicode_ci` | กำหนดการเข้ารหัส Unicode ให้เป็นมาตรฐานเดียวกันทุกการ Query |
+| **ระบบฐานข้อมูล (MySQL 8.0)** | ปริมาณข้อมูลตั้งต้น (Baseline Volume) | **10,000 แถว / ตาราง** | ข้อมูลตั้งต้นที่เท่ากันในทุกตารางสำหรับการทดสอบการอ่าน (`users`, `profiles`, `orders`, `order_items`) |
+| **ระบบปฏิบัติการ (Host Linux)** | `RLIMIT_NOFILE` (`ulimit -n`) | **`65,535`** | ปลดล็อกเพดาน File Descriptors เพื่อป้องกันข้อผิดพลาด "Too many open files" |
+| **เครือข่ายระดับเคอร์เนล (Network Stack)** | `net.core.somaxconn` | **`65,535`** | ขยายคิวรอรับการเชื่อมต่อ (Listen Socket Backlog) สำหรับทราฟฟิกหนาแน่น |
+| **เครือข่ายระดับเคอร์เนล (Network Stack)** | `net.ipv4.tcp_max_syn_backlog` | **`65,535`** | ป้องกันการปฏิเสธแพ็กเกจ TCP SYN ในช่วงการเริ่ม 10,000 Handshakes พร้อมกัน |
+| **เครือข่ายระดับเคอร์เนล (Network Stack)** | `net.ipv4.tcp_tw_reuse` | **`1` (เปิดใช้งาน)** | อนุญาตให้นำ Socket ในสถานะ TIME_WAIT กลับมาใช้ซ้ำ ป้องกัน Port Exhaustion |
+| **เครือข่ายระดับเคอร์เนล (Network Stack)** | `ip_local_port_range` | `1024 65535` | ขยายช่วงพอร์ตขาออก (Outbound Ports) ของเครื่อง Client สำหรับสร้างโหลด |
+| **การจัดการ Connection Pool** | ขนาด Pool ต่อ Worker | มาตรฐาน (50–100) | ป้องกันปัญหา Pool ขาดแคลน และรักษาความยุติธรรมในการใช้ทรัพยากรฐานข้อมูล |
+| **โพรโทคอลการทดสอบ** | ระยะเวลาอุ่นเครื่อง (Warmup Phase) | **3.0 วินาที** | เตรียมความพร้อม JIT Compilers (JVM/V8) และ Connection Pool ก่อนเริ่มจับเวลาจริง |
+| **โพรโทคอลการทดสอบ** | จำนวนรอบที่รันซ้ำ (Sample Iterations) | **20 รอบ (หาค่าเฉลี่ย)** | ให้ค่าความเชื่อมั่นทางสถิติสูง และลด Margin of Error ของช่วงความเชื่อมั่น (95% CI) |
+
+#### C. ตัวแปรตามและตัวชี้วัดทางสถิติ (Dependent Variables & Metrics)
+| หมวดหมู่ตัวชี้วัด | ตัวแปรทางสถิติ | นิยามและความหมายทางคณิตศาสตร์ |
+| :--- | :--- | :--- |
+| **ปริมาณงาน (Throughput)** | ปริมาณงานเฉลี่ย ($\bar{T}$) | ค่าเฉลี่ยเลขคณิตของจำนวนคำร้องขอที่สำเร็จต่อวินาที (Requests/sec): $\bar{T} = \frac{1}{n}\sum_{i=1}^n T_i$ |
+| **ปริมาณงาน (Throughput)** | ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_T$) | การกระจายตัวของค่าปริมาณงาน: $\sigma_T = \sqrt{\frac{1}{n-1}\sum_{i=1}^n (T_i - \bar{T})^2}$ |
+| **ปริมาณงาน (Throughput)** | ช่วงความเชื่อมั่น 95% ($95\% \text{ CI}_T$) | ขอบเขตความคลาดเคลื่อนทางสถิติที่ระดับความเชื่อมั่น 95%: $[\bar{T} - t_{crit} \frac{s_T}{\sqrt{n}}, \bar{T} + t_{crit} \frac{s_T}{\sqrt{n}}]$ |
+| **เวลาตอบสนอง (Latency)** | เวลาตอบสนองเฉลี่ย ($\bar{L}$) | ค่าเฉลี่ยเลขคณิตของเวลาตอบสนองทั้งหมดในหน่วยมิลลิวินาที (ms) |
+| **เวลาตอบสนอง (Latency)** | ส่วนเบี่ยงเบนมาตรฐาน ($\sigma_L$) | การกระจายตัวของเวลาตอบสนองในหน่วยมิลลิวินาที |
+| **เวลาตอบสนอง (Latency)** | ช่วงความเชื่อมั่น 95% ($95\% \text{ CI}_L$) | ขอบเขตช่วงความเชื่อมั่นของเวลาตอบสนองที่ระดับ 95% |
+| **หางแถวเวลาตอบสนอง (Tail Latency)** | Percentiles ($p_{50}, p_{90}, p_{95}, p_{99}$) | ลำดับเปอร์เซ็นไทล์ของเวลาตอบสนอง (เช่น 99% ของคำร้องขอสำเร็จภายในเวลา $p_{99}$) |
+| **ความเสถียร (Reliability)** | เวลาตอบสนองสูงสุด ($L_{\max}$) & Errors | ค่าเวลาตอบสนองที่นานที่สุดที่พบ และผลรวมของข้อผิดพลาด Socket / Timeout / HTTP Status |
+| **ภาระงานส่วนเกิน (Overhead)** | อัตราผลได้ของ Bare Metal ($\Delta_{\text{BME}}$) | สัดส่วนความแตกต่างของปริมาณงาน: $\Delta_{\text{BME}} = \frac{\bar{T}_{\text{BME}} - \bar{T}_{\text{DKR}}}{\bar{T}_{\text{DKR}}} \times 100\%$ |
+| **ผลของดัชนี (Indexing Factor)** | อัตราเร่งจากการทำ Index ($\text{Gain}_{\text{Index}}$) | อัตราส่วนความเร็วที่เพิ่มขึ้น: $\text{Gain}_{\text{Index}} = \frac{\bar{T}_{\text{WithIndex}}}{\bar{T}_{\text{NoIndex}}}$ |
 
 ---
 

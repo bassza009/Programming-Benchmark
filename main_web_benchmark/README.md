@@ -15,13 +15,46 @@ The suite measures **Raw SQL Query Performance** comparing **GET (read)** operat
 
 ### Tech Stack & Server Ports
 
-| Language | Framework | Database Driver / Client | Default Port | Connection Pooling |
-| :--- | :--- | :--- | :--- | :--- |
-| **Python** | FastAPI | `aiomysql` | `8001` | Async Pool (50 conns/worker) |
-| **Node.js** | Fastify | `mysql2/promise` | `8002` | Connection Pool (50 conns/worker) |
-| **PHP** | Swoole | `PDO_MySQL` | `8003` | `Swoole\Database\PDOPool` (64 conns) |
-| **Go** | Fiber | `database/sql` (`go-sql-driver/mysql`) | `8004` | Standard Pool (100 max open) |
-| **Java** | Spring Boot | `JdbcTemplate` / `HikariCP` | `8005` | HikariCP Pool (100 max open) |
+| Language | Framework | Database Driver / Client | Default Port | Connection Pooling | Concurrency Model |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Python** | FastAPI | `aiomysql` | `8001` | Async Pool (50 conns/worker) | Async Event Loop (Uvicorn workers) |
+| **Node.js** | Fastify | `mysql2/promise` | `8002` | Connection Pool (50 conns/worker) | Multi-core Cluster + Event Loop |
+| **PHP** | Swoole | `PDO_MySQL` | `8003` | `Swoole\Database\PDOPool` (64 conns) | Coroutine Event Loop Engine |
+| **Go** | Fiber | `database/sql` (`go-sql-driver/mysql`) | `8004` | Standard Pool (100 max open) | Lightweight Goroutines |
+| **Java** | Spring Boot | `JdbcTemplate` / `HikariCP` | `8005` | HikariCP Pool (100 max open) | Multi-threaded JVM Thread Pool |
+
+---
+
+## Research Variables Specification
+
+### 1. Independent Variables (ตัวแปรต้น)
+* **Execution Environment:** Bare Metal (Host OS) vs Docker (Containerized).
+* **Language & Framework:** Python (FastAPI), Node.js (Fastify), PHP (Swoole), Go (Fiber), Java (Spring Boot).
+* **Database Indexing:** Unindexed (`get_no_index`) vs Indexed (`get_with_index` with secondary B-Tree foreign keys).
+* **Workload Complexity:** 
+  - Read (GET): Single table (`users`), 2-Table JOIN, 3-Table JOIN, 4-Table JOIN.
+  - Write (POST): Single-table INSERT, 2-Table Tx, 3-Table Tx, 4-Table Tx (with 2 items).
+* **Load Intensity:** 5 Concurrency Tiers (POC, Small, General, High, Stress).
+
+### 2. Controlled & Fixed System Variables (ตัวแปรควบคุม)
+| Subsystem | Parameter / Variable | Value | Purpose / Notes |
+| :--- | :--- | :--- | :--- |
+| **MySQL 8.0** | `max_connections` | **`10,000`** | Prevents socket rejection under high concurrency stress tiers. |
+| **MySQL 8.0** | `wait_timeout` / `interactive_timeout` | **`28,800`** sec | Avoids connection starvation from premature socket closing. |
+| **MySQL 8.0** | Baseline Data Volume | **10,000 rows / table** | Fixed baseline volume across `users`, `profiles`, `orders`, `order_items`. |
+| **MySQL 8.0** | Character Set & Collation | `utf8mb4` / `utf8mb4_unicode_ci` | Uniform Unicode encoding. |
+| **Linux OS** | `RLIMIT_NOFILE` (`ulimit -n`) | **`65,535`** | Eliminates open file descriptor bottleneck. |
+| **Linux OS** | `net.core.somaxconn` & `tcp_max_syn_backlog` | **`65,535`** | Kernel socket backlog queue expansion. |
+| **Linux OS** | `net.ipv4.tcp_tw_reuse` | **`1`** | Enables fast TIME_WAIT reuse against port exhaustion. |
+| **wrk Load Generator** | Warmup Duration | **3.0 seconds** | Pre-heats JIT and pools prior to metric recording. |
+| **wrk Load Generator** | Test Iterations | **20 runs** | Statistical aggregation sample size. |
+
+### 3. Dependent Variables (ตัวแปรตาม)
+* **Mean Throughput ($\bar{T}$ Req/sec)** & Standard Deviation ($\sigma_T$) with 95% Confidence Interval.
+* **Mean Latency ($\bar{L}$ ms)** & Standard Deviation ($\sigma_L$) with 95% Confidence Interval.
+* **Tail Latencies ($p_{50}, p_{90}, p_{95}, p_{99}$)** & Maximum Latency ($L_{\max}$).
+* **Reliability Metrics:** Socket connection errors, timeout count, and HTTP status anomalies.
+* **Bare Metal Performance Gain ($\Delta_{\text{BME}}$)** & **Index Speedup Factor ($\text{Gain}_{\text{Index}}$)**.
 
 ---
 
