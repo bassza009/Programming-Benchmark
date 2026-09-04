@@ -95,92 +95,114 @@ def main():
     )
     parser.add_argument("runs_pos", type=int, nargs="?", default=None, help="Number of benchmark iterations per endpoint (optional positional, e.g. 20)")
     parser.add_argument("-r", "--runs", type=int, default=None, help="Number of benchmark iterations per endpoint (default: 20)")
+    parser.add_argument("--tier", default="all", help="Tier to execute: poc, small, general, high, stress, all (default: all)")
+    parser.add_argument(
+        "--suite",
+        choices=["post_bme", "all", "get_no_index", "get_with_index", "post", "post_dkr"],
+        default="post_bme",
+        help="Benchmark suite to execute. Defaults to 'post_bme' for focused POST bare-metal runs."
+    )
+    parser.add_argument("--all", action="store_true", help="Execute ALL benchmark suites (equivalent to --suite all)")
+    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
+    parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Filter by framework")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase before recording metrics")
+    parser.add_argument("--skip-get-no-index", action="store_true", help="Skip GET No-Index suite")
+    parser.add_argument("--skip-get-with-index", action="store_true", help="Skip GET With-Index suite")
+    parser.add_argument("--skip-post", action="store_true", help="Skip POST suite")
+    parser.add_argument("--skip-dkr", action="store_true", help="Skip Docker benchmarks")
+    parser.add_argument("--skip-bme", action="store_true", help="Skip Bare-Metal benchmarks")
     args = parser.parse_args()
 
+    suite_mode = "all" if args.all else args.suite
+
     runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 20)
-    common_args = ["--tier", "all", "--runs", str(runs_count)]
+    common_args = ["--tier", args.tier, "--runs", str(runs_count)]
+    if args.lang:
+        common_args.extend(["--lang", args.lang])
+    if args.framework:
+        common_args.extend(["--framework", args.framework])
     if args.no_warmup:
         common_args.append("--no-warmup")
 
     print("=================================================================")
-    print(" PROGRAMMING BENCHMARK: AUTOMATED FULL BENCHMARK SUITE RUNNER")
-    print(" Execution Plan:")
-    print("   1. GET get_no_index   -> Docker (DKR) & Bare-Metal (BME)")
-    print("   2. GET get_with_index -> Docker (DKR) & Bare-Metal (BME)")
-    print("   3. POST               -> Docker (DKR) & Bare-Metal (BME)")
-    print("   4. Aggregated Statistical Summary & CSV Export")
-    print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: ALL (poc, small, general, high, stress)")
+    print(" PROGRAMMING BENCHMARK: AUTOMATED BENCHMARK SUITE RUNNER")
+    print(f" Mode/Suite: {suite_mode.upper()} (Default: POST BME)")
+    print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: {args.tier.upper()}")
     print("=================================================================\n", flush=True)
+
+    # Flags to determine which steps to run
+    run_get_no_idx = (suite_mode in ["all", "get_no_index"]) and not args.skip_get_no_index
+    run_get_with_idx = (suite_mode in ["all", "get_with_index"]) and not args.skip_get_with_index
+    run_post_dkr = (suite_mode in ["all", "post", "post_dkr"]) and not args.skip_post and not args.skip_dkr
+    run_post_bme = (suite_mode in ["all", "post", "post_bme"]) and not args.skip_post and not args.skip_bme
 
     # -------------------------------------------------------------
     # 1. GET (get_no_index) - DKR & BME
     # -------------------------------------------------------------
-    get_no_idx_dir = os.path.join(BASE_DIR, "GET", "get_no_index")
-    
-    # Ensure secondary indexes are removed for unindexed read benchmarks
-    drop_secondary_indexes()
+    if run_get_no_idx:
+        get_no_idx_dir = os.path.join(BASE_DIR, "GET", "get_no_index")
+        drop_secondary_indexes()
 
-    # 1.1 GET get_no_index Docker (DKR)
-    print("\n\n>>> STEP 1/6: Running GET get_no_index Docker (DKR)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
-        print("[!] Warning: GET No-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
+        if not args.skip_dkr:
+            print("\n\n>>> STEP: Running GET get_no_index Docker (DKR)...", flush=True)
+            cleanup_environment()
+            if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
+                print("[!] Warning: GET No-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-    # 1.2 GET get_no_index Bare-Metal (BME)
-    print("\n\n>>> STEP 2/6: Running GET get_no_index Bare-Metal (BME)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
-        print("[!] Warning: GET No-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
+        if not args.skip_bme:
+            print("\n\n>>> STEP: Running GET get_no_index Bare-Metal (BME)...", flush=True)
+            cleanup_environment()
+            if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
+                print("[!] Warning: GET No-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
     # 2. GET (get_with_index) - DKR & BME
     # -------------------------------------------------------------
-    get_with_idx_dir = os.path.join(BASE_DIR, "GET", "get_with_index")
+    if run_get_with_idx:
+        get_with_idx_dir = os.path.join(BASE_DIR, "GET", "get_with_index")
+        add_secondary_indexes()
 
-    # Apply secondary indexes before indexed benchmarks
-    add_secondary_indexes()
+        if not args.skip_dkr:
+            print("\n\n>>> STEP: Running GET get_with_index Docker (DKR)...", flush=True)
+            cleanup_environment()
+            if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
+                print("[!] Warning: GET With-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-    # 2.1 GET get_with_index Docker (DKR)
-    print("\n\n>>> STEP 3/6: Running GET get_with_index Docker (DKR)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
-        print("[!] Warning: GET With-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
-
-    # 2.2 GET get_with_index Bare-Metal (BME)
-    print("\n\n>>> STEP 4/6: Running GET get_with_index Bare-Metal (BME)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
-        print("[!] Warning: GET With-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
+        if not args.skip_bme:
+            print("\n\n>>> STEP: Running GET get_with_index Bare-Metal (BME)...", flush=True)
+            cleanup_environment()
+            if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
+                print("[!] Warning: GET With-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
     # 3. POST - DKR & BME
     # -------------------------------------------------------------
     post_dir = os.path.join(BASE_DIR, "POST")
 
-    # 3.1 POST Docker (DKR)
-    print("\n\n>>> STEP 5/6: Running POST Docker (DKR)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
-        print("[!] Warning: POST Docker benchmark encountered errors, continuing...", file=sys.stderr)
+    if run_post_dkr:
+        print("\n\n>>> STEP: Running POST Docker (DKR)...", flush=True)
+        cleanup_environment()
+        if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
+            print("[!] Warning: POST Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
-    # 3.2 POST Bare-Metal (BME)
-    print("\n\n>>> STEP 6/6: Running POST Bare-Metal (BME)...", flush=True)
-    cleanup_environment()
-    if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir):
-        print("[!] Warning: POST Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
+    if run_post_bme:
+        print("\n\n>>> STEP: Running POST Bare-Metal (BME)...", flush=True)
+        cleanup_environment()
+        if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir):
+            print("[!] Warning: POST Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
-    # 4. Generate Summaries & CSVs
+    # 4. Generate Summaries, CSVs, and Styled Excel Report
     # -------------------------------------------------------------
-    print("\n\n>>> STEP 7: Generating Aggregated Summaries and Matrices...", flush=True)
+    print("\n\n>>> Generating Aggregated Summaries, CSVs, and Excel Report...", flush=True)
     cleanup_environment()
     results_dir = os.path.join(BASE_DIR, "results")
     run_cmd(["python3", "generate_summary.py"], cwd=results_dir)
     run_cmd(["python3", "export_csv.py"], cwd=results_dir)
+    run_cmd(["python3", "export_excel.py"], cwd=results_dir)
 
     print("\n=======================================================")
-    print(" ALL 6 BENCHMARK SUITES & SUMMARIES COMPLETED SUCCESSFULLY!")
+    print(" BENCHMARK EXECUTION & SUMMARIES COMPLETED SUCCESSFULLY!")
     print("=======================================================\n")
 
 if __name__ == "__main__":
