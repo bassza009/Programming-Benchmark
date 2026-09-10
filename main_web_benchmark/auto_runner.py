@@ -38,8 +38,25 @@ def run_mysql_query(sql, host=MYSQL_HOST, port=MYSQL_PORT, user=MYSQL_USER, pass
     ]
     return subprocess.run(cmd, capture_output=True, text=True)
 
+def check_and_fix_memory(threshold_pct=80):
+    """Checks available system memory. If used memory exceeds threshold_pct, drops OS caches and prunes stopped containers."""
+    try:
+        with open('/proc/meminfo') as f:
+            meminfo = dict(line.split(':') for line in f.read().splitlines() if ':' in line)
+        total = int(meminfo['MemTotal'].split()[0])
+        avail = int(meminfo['MemAvailable'].split()[0])
+        used_pct = ((total - avail) / total) * 100
+        if used_pct >= threshold_pct:
+            print(f"[AUTO-RUNNER] Memory pressure detected: {used_pct:.1f}% used. Reclaiming memory...", flush=True)
+            subprocess.run(["sudo", "sh", "-c", "echo 3 > /proc/sys/vm/drop_caches"], capture_output=True)
+            subprocess.run(["docker", "container", "prune", "-f"], capture_output=True)
+            subprocess.run(["docker", "volume", "prune", "-f"], capture_output=True)
+    except Exception:
+        pass
+
 def cleanup_environment():
     """Ensure no leftover benchmark processes or containers occupy ports 8001-8005."""
+    check_and_fix_memory()
     print("[AUTO-RUNNER] Cleaning up background processes and network ports (8001-8005)...", flush=True)
     for port in [8001, 8002, 8003, 8004, 8005]:
         subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True)
@@ -98,9 +115,9 @@ def main():
     parser.add_argument("--tier", default="all", help="Tier to execute: poc, small, general, high, stress, all (default: all)")
     parser.add_argument(
         "--suite",
-        choices=["post_bme", "all", "get_no_index", "get_with_index", "post", "post_dkr"],
-        default="post_bme",
-        help="Benchmark suite to execute. Defaults to 'post_bme' for focused POST bare-metal runs."
+        choices=["post", "post_bme", "post_dkr", "all", "get_no_index", "get_with_index"],
+        default="post",
+        help="Benchmark suite to execute. Defaults to 'post' for running both POST Docker and Bare-Metal."
     )
     parser.add_argument("--all", action="store_true", help="Execute ALL benchmark suites (equivalent to --suite all)")
     parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
@@ -126,7 +143,7 @@ def main():
 
     print("=================================================================")
     print(" PROGRAMMING BENCHMARK: AUTOMATED BENCHMARK SUITE RUNNER")
-    print(f" Mode/Suite: {suite_mode.upper()} (Default: POST BME)")
+    print(f" Mode/Suite: {suite_mode.upper()} (POST DKR & BME)")
     print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: {args.tier.upper()}")
     print("=================================================================\n", flush=True)
 

@@ -67,7 +67,21 @@ def wait_for_server(port, max_wait=30):
             time.sleep(0.5)
     return False
 
+def check_and_fix_memory(threshold_pct=80):
+    try:
+        with open('/proc/meminfo') as f:
+            meminfo = dict(line.split(':') for line in f.read().splitlines() if ':' in line)
+        total = int(meminfo['MemTotal'].split()[0])
+        avail = int(meminfo['MemAvailable'].split()[0])
+        used_pct = ((total - avail) / total) * 100
+        if used_pct >= threshold_pct:
+            print(f"  [!] High memory usage ({used_pct:.1f}%). Reclaiming caches...", flush=True)
+            subprocess.run(["sudo", "sh", "-c", "echo 3 > /proc/sys/vm/drop_caches"], capture_output=True)
+    except Exception:
+        pass
+
 def reset_db():
+    check_and_fix_memory()
     try:
         cmd = [
             "mysql",
@@ -78,9 +92,11 @@ def reset_db():
             "-e", "SET FOREIGN_KEY_CHECKS=0; TRUNCATE TABLE order_items; TRUNCATE TABLE orders; TRUNCATE TABLE profiles; TRUNCATE TABLE users; SET FOREIGN_KEY_CHECKS=1;",
             "benchmark_db"
         ]
-        subprocess.run(cmd, capture_output=True, timeout=10)
-    except Exception:
-        pass
+        res = subprocess.run(cmd, capture_output=True, timeout=30)
+        if res.returncode != 0:
+            print(f"  [!] Warning: reset_db error: {res.stderr.decode() if isinstance(res.stderr, bytes) else res.stderr}")
+    except Exception as e:
+        print(f"  [!] Warning: reset_db failed: {e}")
 
 def warmup(port, endpoint):
     url = f"http://127.0.0.1:{port}{endpoint}"
@@ -253,8 +269,27 @@ def main():
 
     ALL_RESULTS = {}
     RAW_RESULTS = {}
+    if os.path.exists("dkr_benchmark_results.json"):
+        try:
+            with open("dkr_benchmark_results.json") as f:
+                ALL_RESULTS = json.load(f)
+        except Exception:
+            pass
+    if os.path.exists("raw_results.json"):
+        try:
+            with open("raw_results.json") as f:
+                RAW_RESULTS = json.load(f)
+        except Exception:
+            pass
 
     for s in target_services:
+        # Skip service if already fully benchmarked in existing results
+        if s["name"] in ALL_RESULTS and s["name"] in RAW_RESULTS:
+            tiers_done = ALL_RESULTS[s["name"]].get("tiers", {})
+            if all(tk in tiers_done and all(ep in tiers_done[tk].get("endpoints", {}) for ep in ENDPOINTS) for tk in selected_tiers):
+                print(f"\n---> Skipping {s['name']} (already fully benchmarked across all selected tiers)")
+                continue
+
         print(f"\n---> Resetting Database for {s['name']}...")
         reset_db()
 
@@ -277,6 +312,8 @@ def main():
         for tier_key in selected_tiers:
             t_cfg = TIERS[tier_key]
             print(f"\n  >> Running Tier: {t_cfg['name']} (-t{t_cfg['threads']} -c{t_cfg['connections']} -d{t_cfg['duration']})")
+            print(f"     Resetting Database before tier: {t_cfg['name']}...")
+            reset_db()
             tier_endpoints = {}
             raw_tier_endpoints = {}
 
@@ -324,26 +361,25 @@ def main():
         subprocess.run(["docker", "compose", "rm", "-f", s['service']], check=True)
         time.sleep(2)
 
+        # Incrementally persist results after each service finishes
+        with open("dkr_benchmark_results.json", "w") as f:
+            json.dump(ALL_RESULTS, f, indent=2)
+
+        with open("raw_results.json", "w") as f:
+            json.dump(RAW_RESULTS, f, indent=2)
+
+        res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
+        os.makedirs(res_dir, exist_ok=True)
+        raw_res_dir = os.path.join(res_dir, "raw_results")
+        os.makedirs(raw_res_dir, exist_ok=True)
+
+        with open(os.path.join(res_dir, "post_dkr.json"), "w") as f:
+            json.dump(ALL_RESULTS, f, indent=2)
+
+        with open(os.path.join(raw_res_dir, "post_dkr_raw.json"), "w") as f:
+            json.dump(RAW_RESULTS, f, indent=2)
+
     subprocess.run(["docker", "compose", "down"], check=True)
-
-    # Save local results
-    with open("dkr_benchmark_results.json", "w") as f:
-        json.dump(ALL_RESULTS, f, indent=2)
-
-    with open("raw_results.json", "w") as f:
-        json.dump(RAW_RESULTS, f, indent=2)
-
-    # Save centralized results
-    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
-    os.makedirs(res_dir, exist_ok=True)
-    raw_res_dir = os.path.join(res_dir, "raw_results")
-    os.makedirs(raw_res_dir, exist_ok=True)
-
-    with open(os.path.join(res_dir, "post_dkr.json"), "w") as f:
-        json.dump(ALL_RESULTS, f, indent=2)
-
-    with open(os.path.join(raw_res_dir, "post_dkr_raw.json"), "w") as f:
-        json.dump(RAW_RESULTS, f, indent=2)
 
     print("\n=================================================================")
     print(" POST Docker Benchmark Finished!")
