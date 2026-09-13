@@ -198,16 +198,23 @@ flowchart TD
 
 | ชุดทดสอบ | ภาษา | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | ผลต่าง Overhead / Gain |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
-| **get_no_index** | **Go** | 10,988.10 | 11,928.00 | 10.67ms / 10.67ms | 9.30ms / 9.30ms | +8.6% BME เร็วกว่า |
-| **get_no_index** | **Java** | 9,231.73 | 11,958.11 | 12.24ms / 12.24ms | 8.37ms / 8.37ms | +29.5% BME เร็วกว่า |
-| **get_no_index** | **Node.js** | 2,041.90 | 7,016.52 | 49.18ms / 49.18ms | 16.30ms / 16.30ms | +243.6% BME เร็วกว่า |
-| **get_no_index** | **PHP** | 16,002.61 | 15,762.22 | 6.94ms / 6.94ms | 7.27ms / 7.27ms | -1.5% BME ใกล้เคียงกัน |
-| **get_no_index** | **Python** | 2,515.54 | 1,624.44 | 40.03ms / 40.03ms | 61.24ms / 61.24ms | -35.4% Docker สูงกว่า |
-| **get_with_index** | **Go** | 10,958.75 | 11,824.33 | 10.71ms / 10.71ms | 9.34ms / 9.34ms | +7.9% BME เร็วกว่า |
-| **get_with_index** | **Java** | 10,133.17 | 11,760.51 | 10.80ms / 10.80ms | 8.51ms / 8.51ms | +16.1% BME เร็วกว่า |
-| **get_with_index** | **Node.js** | 2,046.80 | 11,071.53 | 49.07ms / 49.07ms | 9.10ms / 9.10ms | +440.9% BME เร็วกว่า |
-| **get_with_index** | **PHP** | 17,011.24 | 16,817.10 | 7.51ms / 7.51ms | 6.27ms / 6.27ms | -1.1% BME ใกล้เคียงกัน |
-| **get_with_index** | **Python** | 2,557.69 | 1,908.37 | 41.69ms / 41.69ms | 52.19ms / 52.19ms | -25.4% Docker สูงกว่า |
+| **get_no_index** | **Go** | 7,850.23 ± 51.75 | 9,711.19 ± 61.88 | 2.46ms / 4.15ms | 1.96ms / 3.56ms | +23.7% BME เร็วกว่า |
+| **get_no_index** | **Java** | 9,105.18 ± 89.66 | 11,762.53 ± 64.90 | 2.06ms / 3.38ms | 1.57ms / 2.67ms | +29.2% BME เร็วกว่า |
+| **get_no_index** | **Node.js** | 2,323.77 ± 24.37 | 9,370.35 ± 3882.84 | 8.29ms / 15.86ms | 3.11ms / 13.65ms | +303.2% BME เร็วกว่า |
+| **get_no_index** | **PHP** | 12,918.52 ± 687.64 | 15,043.28 ± 2874.09 | 1.37ms / 2.99ms | 1.16ms / 3.45ms | +16.4% BME เร็วกว่า |
+| **get_no_index** | **Python** | 2,288.60 ± 170.13 | 449.78 ± 0.68* | 8.45ms / 16.19ms | 44.02ms / 46.29ms* | -80.3% Docker สูงกว่า* |
+| **get_with_index** | **Go** | 8,027.43 ± 54.25 | 9,867.88 ± 55.62 | 2.40ms / 4.05ms | 1.93ms / 3.50ms | +22.9% BME เร็วกว่า |
+| **get_with_index** | **Java** | 9,208.99 ± 100.33 | 11,829.43 ± 79.23 | 2.03ms / 3.33ms | 1.56ms / 2.67ms | +28.5% BME เร็วกว่า |
+| **get_with_index** | **Node.js** | 2,324.28 ± 21.65 | 11,396.15 ± 218.38 | 8.19ms / 15.89ms | 1.75ms / 2.48ms | +390.3% BME เร็วกว่า |
+| **get_with_index** | **PHP** | 12,932.29 ± 647.82 | 15,418.73 ± 1922.61 | 1.37ms / 2.91ms | 1.08ms / 3.19ms | +19.2% BME เร็วกว่า |
+| **get_with_index** | **Python** | 2,279.05 ± 238.58 | 449.66 ± 0.64* | 8.14ms / 15.60ms | 44.02ms / 46.06ms* | -80.3% Docker สูงกว่า* |
+| **post** | **Go** | 9,833.50 ± 164.97 | 12,905.17 ± 144.17 | 1.84ms / 4.21ms | 1.39ms / 3.29ms | +31.2% BME เร็วกว่า |
+| **post** | **Java** | 9,774.09 ± 156.45 | 12,851.51 ± 85.05 | 1.85ms / 4.14ms | 1.37ms / 3.49ms | +31.5% BME เร็วกว่า |
+| **post** | **Node.js** | 10,604.52 ± 170.15 | 14,308.05 ± 202.11 | 1.71ms / 3.83ms | 1.33ms / 2.83ms | +34.9% BME เร็วกว่า |
+| **post** | **PHP** | 12,581.47 ± 910.07 | 18,730.75 ± 1048.83 | 1.30ms / 4.50ms | 0.87ms / 3.34ms | +48.9% BME เร็วกว่า |
+| **post** | **Python** | 9,324.90 ± 333.54 | 10,087.07 ± 1284.45 | 1.95ms / 4.11ms | 1.85ms / 3.40ms | +8.2% BME เร็วกว่า |
+
+*\*หมายเหตุเกี่ยวกับความผิดปกติของข้อมูล Python GET บน Bare Metal ในอดีต: ข้อมูลประวัติเดิมของ Python GET ติดคอขวด Serialization ของ `jsonable_encoder()` และขาด `uvloop` ทำให้รันได้เพียง ~449 Req/s เมื่อปรับปรุงด้วย `CustomORJSONResponse` พบว่าสามารถปลดล็อกทำได้ถึง 1,941.64 Req/s (With-Index) และ 2,585.76 Req/s (No-Index) ในระดับโหลด POC ดูการวิเคราะห์ปัญหาอย่างละเอียดได้ที่ [issue.md](main_web_benchmark/issue.md#12-python-fastapi-get-benchmark-bottleneck-missing-c-extensions-uvloophttptools--gil-bound-response-serialization-jsonable_encoder)*
 
 > ตรวจสอบผลลัพธ์ฉบับสมบูรณ์พร้อมค่า Mean ± SD, ช่วงความเชื่อมั่น 95% (95% CI) และ Percentiles (p50, p90, p95, p99) ของทุก Endpoint และระดับโหลดได้ที่ [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) และ [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv)
 

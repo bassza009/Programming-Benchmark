@@ -1,11 +1,23 @@
 import aiomysql
 import asyncio
+from decimal import Decimal
 from fastapi import FastAPI
+from fastapi.responses import Response
 import uvicorn
 import logging
 import os
 
-app = FastAPI()
+try:
+    import orjson
+    class CustomORJSONResponse(Response):
+        media_type = "application/json"
+        def render(self, content) -> bytes:
+            return orjson.dumps(content, default=lambda o: float(o) if isinstance(o, Decimal) else str(o))
+    default_resp_class = CustomORJSONResponse
+except ImportError:
+    default_resp_class = Response
+
+app = FastAPI(default_response_class=default_resp_class)
 pool = None
 
 logging.getLogger("uvicorn.access").disabled = True
@@ -39,49 +51,48 @@ async def init_db(retries=15):
 
     async with pool.acquire() as conn:
         async with conn.cursor() as cursor:
-            # INDEXES on user_id / foreign keys
-            await cursor.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(100),
-                    email VARCHAR(100)
-                )
-            """)
+            await cursor.execute("SHOW TABLES LIKE 'users'")
+            if not await cursor.fetchone():
+                # INDEXES on user_id / foreign keys
+                await cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS users (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(100),
+                        email VARCHAR(100)
+                    )
+                """)
 
-            await cursor.execute("""
-                CREATE TABLE IF NOT EXISTS profiles (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT,
-                    age INT,
-                    bio VARCHAR(255),
-                    phone VARCHAR(20),
-                    address VARCHAR(255),
-                    INDEX idx_profiles_user_id (user_id)
-                )
-            """)
+                await cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS profiles (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        user_id INT,
+                        age INT,
+                        bio VARCHAR(255),
+                        phone VARCHAR(20),
+                        address VARCHAR(255),
+                        INDEX idx_profiles_user_id (user_id)
+                    )
+                """)
 
-            await cursor.execute("""
-                CREATE TABLE IF NOT EXISTS orders (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT,
-                    total_amount DECIMAL(10, 2),
-                    INDEX idx_orders_user_id (user_id)
-                )
-            """)
+                await cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS orders (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        user_id INT,
+                        total_amount DECIMAL(10, 2),
+                        INDEX idx_orders_user_id (user_id)
+                    )
+                """)
 
-            await cursor.execute("""
-                CREATE TABLE IF NOT EXISTS order_items (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    order_id INT,
-                    product_name VARCHAR(100),
-                    price DECIMAL(10, 2),
-                    INDEX idx_order_items_order_id (order_id)
-                )
-            """)
+                await cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS order_items (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        order_id INT,
+                        product_name VARCHAR(100),
+                        price DECIMAL(10, 2),
+                        INDEX idx_order_items_order_id (order_id)
+                    )
+                """)
 
-            await cursor.execute("SELECT 1 FROM users LIMIT 1")
-            has_data = await cursor.fetchone()
-            if not has_data:
                 await insert_mock_data(conn, cursor)
 
 async def insert_mock_data(conn, cursor):
@@ -141,4 +152,4 @@ async def shutdown():
 if __name__ == "__main__":
     import multiprocessing
     workers = min(multiprocessing.cpu_count(), 8)
-    uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers)
+    uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers, loop="auto", http="auto")
