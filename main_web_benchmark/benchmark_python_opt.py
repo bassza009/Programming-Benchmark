@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import argparse
+import datetime
 import json
 import math
 import os
 import resource
 import subprocess
+import sys
 import time
 import urllib.request
 
@@ -15,12 +18,53 @@ except Exception as e:
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 RESULTS_DIR = os.path.join(BASE_DIR, "results")
+SCRIPTS_DIR = os.path.join(os.path.dirname(BASE_DIR), "scripts")
 
 T_CRIT_95 = {
     1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
     6: 2.447,  7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
-    15: 2.131, 20: 2.086, 30: 2.042
+    15: 2.131, 19: 2.093, 20: 2.086, 30: 2.042
 }
+
+TIERS_FULL_SPEC = {
+    "poc": {
+        "name": "POC / Small internal system",
+        "scenario": "Thesis project, department website prototype",
+        "threads": 2,
+        "connections": 20,
+        "duration": "30s"
+    },
+    "small": {
+        "name": "Small production website",
+        "scenario": "Small company local business",
+        "threads": 4,
+        "connections": 100,
+        "duration": "60s"
+    },
+    "general": {
+        "name": "General web application",
+        "scenario": "University system e-commerce CMS",
+        "threads": 8,
+        "connections": 500,
+        "duration": "60s"
+    },
+    "high": {
+        "name": "High-density website",
+        "scenario": "Popular portals SaaS platforms",
+        "threads": 8,
+        "connections": 2000,
+        "duration": "120s"
+    },
+    "stress": {
+        "name": "Stress testing",
+        "scenario": "Find saturation point",
+        "threads": 16,
+        "connections": 10000,
+        "duration": "300s"
+    }
+}
+
+ENDPOINTS = ["/raw/1table", "/raw/2join", "/raw/3join", "/raw/4join"]
 
 def get_t_crit(n):
     if n <= 1:
@@ -105,10 +149,10 @@ def run_wrk_endpoint(port, ep, lua_script, threads, conns, duration):
             return json.loads(stdout[j_start:j_end])
         return json.loads(stdout)
     except Exception as e:
-        print(f"  [!] Error running wrk {ep}: {e}")
+        print(f"  [!] Error running wrk {ep}: {e}", flush=True)
         return {"requests_per_sec": 0.0, "latency_mean_ms": 0.0, "errors": 1}
 
-def wait_for_port(port, max_retries=30):
+def wait_for_port(port, max_retries=40):
     for _ in range(max_retries):
         try:
             with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=1) as resp:
@@ -118,141 +162,201 @@ def wait_for_port(port, max_retries=30):
             time.sleep(0.5)
     return False
 
-def benchmark_suite(suite_dir, lua_script, runs=3):
-    print(f"\n=======================================================")
-    print(f" Starting Benchmark for: {suite_dir}")
-    print(f"=======================================================")
-    
+def drop_os_caches():
+    try:
+        subprocess.run(["sync"], capture_output=True)
+        with open("/proc/sys/vm/drop_caches", "w") as f:
+            f.write("3\n")
+    except Exception:
+        pass
+
+def save_checkpoint(target_file, env_type, tier_key, tier_cfg, ep, metrics):
+    data = {}
+    if os.path.exists(target_file):
+        try:
+            with open(target_file, "r") as f:
+                data = json.load(f)
+        except Exception:
+            data = {}
+
+    if "Python (opt.)" not in data:
+        data["Python (opt.)"] = {"Environment": env_type, "tiers": {}}
+
+    if tier_key not in data["Python (opt.)"]["tiers"]:
+        data["Python (opt.)"]["tiers"][tier_key] = {
+            "config": tier_cfg,
+            "endpoints": {}
+        }
+
+    data["Python (opt.)"]["tiers"][tier_key]["endpoints"][ep] = metrics
+
+    with open(target_file, "w") as f:
+        json.dump(data, f, indent=2)
+
+def sync_reports_and_git(commit_message):
+    print(f"\n[SYNC] Re-exporting reports and pushing to GitHub...", flush=True)
+    try:
+        subprocess.run([sys.executable, "export_excel.py"], cwd=RESULTS_DIR, check=True)
+        subprocess.run([sys.executable, "generate_summary.py"], cwd=RESULTS_DIR, check=True)
+        subprocess.run([sys.executable, "export_csv.py"], cwd=RESULTS_DIR, check=True)
+        sync_script = os.path.join(SCRIPTS_DIR, "sync_benchmark_report.py")
+        if os.path.exists(sync_script):
+            subprocess.run([sys.executable, sync_script, "--docx"], cwd=SCRIPTS_DIR, capture_output=True)
+        
+        repo_root = os.path.dirname(BASE_DIR)
+        subprocess.run(["git", "add", "."], cwd=repo_root, capture_output=True)
+        subprocess.run(["git", "commit", "-m", commit_message], cwd=repo_root, capture_output=True)
+        subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, capture_output=True)
+        print(f"[SYNC ✓] Pushed progress upstream: {commit_message}", flush=True)
+    except Exception as e:
+        print(f"[SYNC !] Warning during sync: {e}", flush=True)
+
+def benchmark_endpoint(env_name, port, ep, lua_script, t_cfg, runs):
+    # Warmup run (3s)
+    subprocess.run(["wrk", "-t2", "-c20", "-d3s", "-s", lua_script, f"http://127.0.0.1:{port}{ep}"], capture_output=True)
+
+    runs_data = []
+    for r in range(runs):
+        run_start = time.time()
+        data = run_wrk_endpoint(port, ep, lua_script, t_cfg["threads"], t_cfg["connections"], t_cfg["duration"])
+        runs_data.append(data)
+        elapsed = time.time() - run_start
+        rps = data.get("requests_per_sec", 0.0)
+        lat = data.get("latency_mean_ms", 0.0)
+        errs = data.get("errors", 0)
+        now_str = datetime.datetime.now().strftime("%H:%M:%S")
+        print(f"      [{now_str}] [{env_name}] Run {r+1:>2}/{runs} ({elapsed:>4.1f}s): {rps:>9.2f} Req/s | Latency: {lat:>6.2f} ms | Errors: {errs}", flush=True)
+        time.sleep(0.5)
+
+    return compute_average_metrics(runs_data)
+
+def benchmark_tier_dkr(suite_dir, lua_script, target_file, t_key, t_cfg, runs):
+    print(f"\n  ---> Starting DOCKER (DKR) Container for Tier {t_key.upper()}...", flush=True)
     subprocess.run(["fuser", "-k", "8001/tcp"], capture_output=True)
     time.sleep(1)
+    drop_os_caches()
+
+    subprocess.run(["docker", "compose", "up", "-d", "server-python"], cwd=suite_dir, check=True)
+    if not wait_for_port(8001):
+        print(f"  [!] Failed to start Docker container for {t_key}", flush=True)
+        subprocess.run(["docker", "compose", "down"], cwd=suite_dir, capture_output=True)
+        return False
+
+    print(f"  [✓] Docker container server-python is UP on port 8001", flush=True)
+    for ep_idx, ep in enumerate(ENDPOINTS, 1):
+        print(f"\n    [DKR] [{t_key.upper()}] Endpoint {ep_idx}/4: {ep} ({runs} runs x {t_cfg['duration']})...", flush=True)
+        avg = benchmark_endpoint("DKR", 8001, ep, lua_script, t_cfg, runs)
+        print(f"    [DKR ✓] Completed -> Mean: {avg['requests_per_sec']:>9.2f} Req/s | Latency: {avg['latency_mean_ms']:>6.2f} ms | Errors: {avg['errors']}", flush=True)
+        save_checkpoint(target_file, "DKR", t_key, t_cfg, ep, avg)
+
+    subprocess.run(["docker", "compose", "stop", "server-python"], cwd=suite_dir, capture_output=True)
+    subprocess.run(["docker", "compose", "rm", "-f", "server-python"], cwd=suite_dir, capture_output=True)
+    subprocess.run(["fuser", "-k", "8001/tcp"], capture_output=True)
+    time.sleep(1)
+    return True
+
+def benchmark_tier_bme(suite_dir, lua_script, target_file, t_key, t_cfg, runs):
+    print(f"\n  ---> Starting BARE METAL (BME) Server for Tier {t_key.upper()}...", flush=True)
+    subprocess.run(["fuser", "-k", "8001/tcp"], capture_output=True)
+    time.sleep(1)
+    drop_os_caches()
 
     server_cwd = os.path.join(suite_dir, "frameworks", "python", "fastapi")
     proc = subprocess.Popen(["python3", "server.py"], cwd=server_cwd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     if not wait_for_port(8001):
-        print("[!] Failed to start Python server on port 8001")
+        print(f"  [!] Failed to start Bare Metal server for {t_key}", flush=True)
         proc.kill()
-        return None
+        return False
 
-    print("[✓] Python server is UP and READY on port 8001")
-
-    tiers = {
-        "poc": {"name": "POC / Small internal system", "threads": 2, "connections": 20, "duration": "5s"},
-        "small": {"name": "Small production website", "threads": 4, "connections": 100, "duration": "5s"},
-        "general": {"name": "General web application", "threads": 8, "connections": 500, "duration": "5s"},
-        "high": {"name": "High-density website", "threads": 8, "connections": 2000, "duration": "5s"},
-        "stress": {"name": "Stress testing", "threads": 16, "connections": 10000, "duration": "5s"}
-    }
-
-    endpoints = ["/raw/1table", "/raw/2join", "/raw/3join", "/raw/4join"]
-    suite_tiers = {}
-
-    for t_key, t_cfg in tiers.items():
-        print(f"\n>>> Running Tier: {t_key.upper()} ({t_cfg['connections']} conns, {t_cfg['duration']} / run)")
-        ep_dict = {}
-        for ep in endpoints:
-            print(f"    Benchmarking {ep} ({runs} runs)...", end="", flush=True)
-            # warmup
-            subprocess.run(["wrk", "-t2", "-c20", "-d2s", "-s", lua_script, f"http://127.0.0.1:8001{ep}"], capture_output=True)
-            runs_data = []
-            for r in range(runs):
-                data = run_wrk_endpoint(8001, ep, lua_script, t_cfg["threads"], t_cfg["connections"], t_cfg["duration"])
-                runs_data.append(data)
-                time.sleep(0.5)
-            avg = compute_average_metrics(runs_data)
-            ep_dict[ep] = avg
-            print(f" -> Req/s: {avg['requests_per_sec']:>9.2f} | Latency: {avg['latency_mean_ms']:>5.2f} ms | Errors: {avg['errors']}")
-        suite_tiers[t_key] = {
-            "config": t_cfg,
-            "endpoints": ep_dict
-        }
+    print(f"  [✓] Bare Metal server is UP on port 8001", flush=True)
+    for ep_idx, ep in enumerate(ENDPOINTS, 1):
+        print(f"\n    [BME] [{t_key.upper()}] Endpoint {ep_idx}/4: {ep} ({runs} runs x {t_cfg['duration']})...", flush=True)
+        avg = benchmark_endpoint("BME", 8001, ep, lua_script, t_cfg, runs)
+        print(f"    [BME ✓] Completed -> Mean: {avg['requests_per_sec']:>9.2f} Req/s | Latency: {avg['latency_mean_ms']:>6.2f} ms | Errors: {avg['errors']}", flush=True)
+        save_checkpoint(target_file, "BME", t_key, t_cfg, ep, avg)
 
     proc.terminate()
     try:
-        proc.wait(timeout=3)
+        proc.wait(timeout=5)
     except Exception:
         proc.kill()
     subprocess.run(["fuser", "-k", "8001/tcp"], capture_output=True)
     time.sleep(1)
+    return True
 
-    return {"Environment": "BME", "tiers": suite_tiers}
+def run_suite(suite_dir, lua_script, dkr_file, bme_file, runs=20, selected_tiers=None, env_choice="both"):
+    suite_name = os.path.basename(suite_dir)
+    print(f"\n=======================================================")
+    print(f" Running Suite: {suite_name} (Environment: {env_choice.upper()}, Runs: {runs})")
+    print(f" Timestamp: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"=======================================================", flush=True)
+
+    tiers_to_run = selected_tiers or list(TIERS_FULL_SPEC.keys())
+
+    for t_idx, t_key in enumerate(tiers_to_run, 1):
+        t_cfg = TIERS_FULL_SPEC[t_key]
+        print(f"\n" + ("#" * 70), flush=True)
+        print(f" [{suite_name}] TIER {t_idx}/{len(tiers_to_run)}: {t_key.upper()} ({t_cfg['connections']} conns, {t_cfg['duration']}/run, {runs} runs)", flush=True)
+        print(f" Scenario: {t_cfg.get('scenario', '')}", flush=True)
+        print(("#" * 70), flush=True)
+
+        if env_choice in ["dkr", "both"]:
+            benchmark_tier_dkr(suite_dir, lua_script, dkr_file, t_key, t_cfg, runs)
+
+        if env_choice in ["bme", "both"]:
+            benchmark_tier_bme(suite_dir, lua_script, bme_file, t_key, t_cfg, runs)
+
+        # Sync and commit after tier finishes
+        commit_msg = f"benchmarks: Python (opt.) {suite_name} tier {t_key.upper()} completed ({runs} runs DKR & BME)"
+        sync_reports_and_git(commit_msg)
+
+    return True
 
 def main():
+    parser = argparse.ArgumentParser(description="Full-Spec 20-Run Benchmark for Python (opt.) DKR & BME")
+    parser.add_argument("--runs", "-r", type=int, default=20, help="Number of runs per endpoint (default: 20)")
+    parser.add_argument("--tiers", nargs="+", default=None, help="Specific tiers to run (e.g. poc small general high stress)")
+    parser.add_argument("--suite", choices=["with_index", "no_index", "all"], default="all", help="Suites to benchmark")
+    parser.add_argument("--env", choices=["dkr", "bme", "both"], default="both", help="Environment to benchmark (dkr, bme, both)")
+    args = parser.parse_args()
+
     print("=================================================================")
-    print(" PROGRAMMING BENCHMARK: PYTHON (OPT.) STANDARDIZED BENCHMARK RUNNER")
-    print("=================================================================")
+    print(" PROGRAMMING BENCHMARK: PYTHON (OPT.) FULL-SPEC DKR & BME RUNNER")
+    print(f" Planned Config: {args.runs} runs/ep | Env: {args.env.upper()} | Suite: {args.suite.upper()}")
+    print("=================================================================", flush=True)
+
+    with_idx_dkr = os.path.join(RESULTS_DIR, "get_with_index_dkr.json")
+    with_idx_bme = os.path.join(RESULTS_DIR, "get_with_index_bme.json")
+    no_idx_dkr = os.path.join(RESULTS_DIR, "get_no_index_dkr.json")
+    no_idx_bme = os.path.join(RESULTS_DIR, "get_no_index_bme.json")
 
     # 1. Benchmark GET With-Index
-    lua_with_idx = os.path.join(BASE_DIR, "GET", "get_with_index", "wrk_json_reporter.lua")
-    dir_with_idx = os.path.join(BASE_DIR, "GET", "get_with_index")
-    # Ensure secondary indexes exist
-    subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles ADD INDEX idx_profiles_user_id (user_id); ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id); ALTER TABLE order_items ADD INDEX idx_order_items_order_id (order_id);"], capture_output=True)
-    
-    res_with_idx = benchmark_suite(dir_with_idx, lua_with_idx, runs=3)
+    if args.suite in ["with_index", "all"]:
+        lua_with_idx = os.path.join(BASE_DIR, "GET", "get_with_index", "wrk_json_reporter.lua")
+        dir_with_idx = os.path.join(BASE_DIR, "GET", "get_with_index")
+
+        print("\n[DB] Ensuring secondary indexes exist for With-Index suite...", flush=True)
+        subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles ADD INDEX idx_profiles_user_id (user_id); ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id); ALTER TABLE order_items ADD INDEX idx_order_items_order_id (order_id);"], capture_output=True)
+
+        run_suite(dir_with_idx, lua_with_idx, with_idx_dkr, with_idx_bme, runs=args.runs, selected_tiers=args.tiers, env_choice=args.env)
 
     # 2. Benchmark GET No-Index
-    lua_no_idx = os.path.join(BASE_DIR, "GET", "get_no_index", "wrk_json_reporter.lua")
-    dir_no_idx = os.path.join(BASE_DIR, "GET", "get_no_index")
-    # Drop secondary indexes
-    subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles DROP INDEX idx_profiles_user_id; ALTER TABLE orders DROP INDEX idx_orders_user_id; ALTER TABLE order_items DROP INDEX idx_order_items_order_id;"], capture_output=True)
-    
-    res_no_idx = benchmark_suite(dir_no_idx, lua_no_idx, runs=3)
+    if args.suite in ["no_index", "all"]:
+        lua_no_idx = os.path.join(BASE_DIR, "GET", "get_no_index", "wrk_json_reporter.lua")
+        dir_no_idx = os.path.join(BASE_DIR, "GET", "get_no_index")
 
-    # Restore secondary indexes
-    subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles ADD INDEX idx_profiles_user_id (user_id); ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id); ALTER TABLE order_items ADD INDEX idx_order_items_order_id (order_id);"], capture_output=True)
+        print("\n[DB] Dropping secondary indexes for No-Index suite...", flush=True)
+        subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles DROP INDEX idx_profiles_user_id; ALTER TABLE orders DROP INDEX idx_orders_user_id; ALTER TABLE order_items DROP INDEX idx_order_items_order_id;"], capture_output=True)
 
-    # 3. Update Results JSONs with "Python (opt.)" key while preserving baseline "Python"
-    # A. get_with_index
-    with_idx_file = os.path.join(RESULTS_DIR, "get_with_index_bme.json")
-    with open(with_idx_file, "r") as f:
-        with_idx_data = json.load(f)
-    
-    with_idx_data["Python (opt.)"] = {
-        "Environment": "BME",
-        "tiers": res_with_idx["tiers"]
-    }
-    with open(with_idx_file, "w") as f:
-        json.dump(with_idx_data, f, indent=2)
-    print(f"[✓] Successfully injected 'Python (opt.)' into {with_idx_file}")
+        run_suite(dir_no_idx, lua_no_idx, no_idx_dkr, no_idx_bme, runs=args.runs, selected_tiers=args.tiers, env_choice=args.env)
 
-    # B. get_no_index
-    no_idx_file = os.path.join(RESULTS_DIR, "get_no_index_bme.json")
-    with open(no_idx_file, "r") as f:
-        no_idx_data = json.load(f)
-    
-    no_idx_data["Python (opt.)"] = {
-        "Environment": "BME",
-        "tiers": res_no_idx["tiers"]
-    }
-    with open(no_idx_file, "w") as f:
-        json.dump(no_idx_data, f, indent=2)
-    print(f"[✓] Successfully injected 'Python (opt.)' into {no_idx_file}")
-
-    # C. post
-    post_file = os.path.join(RESULTS_DIR, "post_bme.json")
-    with open(post_file, "r") as f:
-        post_data = json.load(f)
-    if "Python" in post_data:
-        post_data["Python (opt.)"] = dict(post_data["Python"])
-        with open(post_file, "w") as f:
-            json.dump(post_data, f, indent=2)
-        print(f"[✓] Successfully mirrored 'Python (opt.)' into {post_file}")
-
-    # Mirror into DKR files so Docker vs BME can compare Python (opt.) directly
-    for dkr_fname in ["get_with_index_dkr.json", "get_no_index_dkr.json", "post_dkr.json"]:
-        dkr_fpath = os.path.join(RESULTS_DIR, dkr_fname)
-        if os.path.exists(dkr_fpath):
-            with open(dkr_fpath, "r") as f:
-                dkr_data = json.load(f)
-            if "Python" in dkr_data:
-                dkr_data["Python (opt.)"] = dict(dkr_data["Python"])
-                with open(dkr_fpath, "w") as f:
-                    json.dump(dkr_data, f, indent=2)
-                print(f"[✓] Mirrored Docker baseline into {dkr_fname} as 'Python (opt.)'")
+        print("\n[DB] Restoring secondary indexes after No-Index suite...", flush=True)
+        subprocess.run(["mysql", "-h127.0.0.1", "-P3306", "-uadmin", "-psecret", "benchmark_db", "-e", "ALTER TABLE profiles ADD INDEX idx_profiles_user_id (user_id); ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id); ALTER TABLE order_items ADD INDEX idx_order_items_order_id (order_id);"], capture_output=True)
 
     print("\n=================================================================")
-    print(" Python (opt.) Benchmark Finished Successfully!")
-    print("=================================================================")
+    print(f" ALL BENCHMARKS COMPLETED SUCCESSFULLY AT {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}!")
+    print("=================================================================", flush=True)
 
 if __name__ == "__main__":
     main()
