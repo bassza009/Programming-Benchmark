@@ -87,6 +87,10 @@ FRAMEWORKS = [
     {"name": "Java",    "framework": "Spring Boot", "runtime": "Java 17 (HikariCP / JDBC)"},
 ]
 
+OPTIMIZED_FRAMEWORKS = [
+    {"name": "Python (opt.)", "base_name": "Python", "framework": "FastAPI (Opt)", "runtime": "Python 3.12 (CustomORJSONResponse / uvloop / 16 workers)"},
+]
+
 SUITES = [
     {"id": "get_no_index",   "title": "1. GET (No-Index) Suite - Full Table Scans",               "dkr_file": "get_no_index_dkr.json",   "bme_file": "get_no_index_bme.json"},
     {"id": "get_with_index", "title": "2. GET (With-Index) Suite - Indexed B-Tree Point Lookups", "dkr_file": "get_with_index_dkr.json", "bme_file": "get_with_index_bme.json"},
@@ -429,7 +433,8 @@ def build_language_sheet(wb, fw_info, all_data):
         data_start_row = curr_row
 
         # Fetch Data for Language
-        dkr_json = all_data.get(suite["dkr_file"], {}).get(lang_name, {})
+        base_name = fw_info.get("base_name", lang_name)
+        dkr_json = all_data.get(suite["dkr_file"], {}).get(lang_name) or all_data.get(suite["dkr_file"], {}).get(base_name, {})
         bme_json = all_data.get(suite["bme_file"], {}).get(lang_name, {})
 
         dkr_tiers = dkr_json.get("tiers", {})
@@ -569,6 +574,11 @@ def generate_excel_report():
 
     # 2. Individual Language Sheets
     for fw in FRAMEWORKS:
+        print(f"[+] Building '{fw['name']}' worksheet (Side-by-Side Dkr vs BME)...")
+        build_language_sheet(wb, fw, all_data)
+
+    # 3. Optimized Framework Sheets
+    for fw in OPTIMIZED_FRAMEWORKS:
         print(f"[+] Building '{fw['name']}' worksheet (Side-by-Side Dkr vs BME)...")
         build_language_sheet(wb, fw, all_data)
 
