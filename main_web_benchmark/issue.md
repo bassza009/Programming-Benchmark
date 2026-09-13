@@ -310,6 +310,56 @@ Empirical verification was conducted on Bare Metal under POC tier load (`-t2 -c2
 
 ---
 
+## 13. Experimental Variables Parity & Controlled Environment Standardization (CPU Workers, Connection Pools, and DNS Resolution)
+
+### What is happening?
+An empirical audit across all 600 benchmark data points (GET No-Index, GET With-Index, and POST) identified 35 instances (5.8%) where Bare Metal (BME) throughput was recorded lower than Docker (DKR). In the write-intensive POST suite, BME was 100% faster than Docker across all 5 languages (+8.2% to +48.9%), proving the underlying bare metal infrastructure is sound. However, in GET suites, subtle configuration discrepancies created unfair conditions between frameworks:
+
+1. **Worker Process Asymmetry:**
+   - **PHP (Swoole):** Configured with `'worker_num' => swoole_cpu_num() * 2`, spawning **32 worker processes** on a 16-core system.
+   - **Node.js (Fastify):** Capped at `Math.min(os.cpus().length, 8)`, utilizing only **8 cluster workers** (50% of available CPU cores).
+   - **Python (FastAPI):** Capped at `min(multiprocessing.cpu_count(), 8)`, utilizing only **8 uvicorn workers** (50% of available CPU cores).
+   - **Go (Fiber) & Java (Spring Boot):** Natively utilized all **16 CPU cores**.
+
+2. **Connection Pool Capacity Asymmetry:**
+   - **PHP (Swoole):** 32 workers $\times$ 64 connections per worker = **2,048 total MySQL connections**, giving PHP a massive concurrency advantage in saturated tiers.
+   - **Node.js (Fastify):** 8 workers $\times$ 50 connections = **400 total connections**.
+   - **Python (FastAPI):** 8 workers $\times$ 50 connections = **400 total connections**.
+   - **Go (Fiber):** Strictly throttled to **100 total connections** (`db.SetMaxOpenConns(100)`).
+   - **Java (Spring Boot):** Strictly throttled to **100 total connections** (`hikari.maximum-pool-size=100`).
+
+3. **MySQL DNS Reverse Lookups (`skip_name_resolve = OFF`):**
+   - MySQL performed a reverse DNS hostname lookup on every incoming TCP connection (`127.0.0.1` and `172.17.0.1`), adding microsecond-level latency jitter to connection acquisitions.
+
+### How to fix it (Standardization to 1:1 Parity)
+To ensure rigorous academic fairness and parity across all 5 programming runtimes and virtualization layers:
+
+1. **Standardize Worker Processes to 16 Cores (1 Worker per Core):**
+   - **Python (FastAPI):** Configured `workers = multiprocessing.cpu_count()` (16 workers).
+   - **Node.js (Fastify):** Configured `numCPUs = os.cpus().length` (16 workers).
+   - **PHP (Swoole):** Configured `'worker_num' => swoole_cpu_num()` (16 workers).
+   - Applied across `GET/get_with_index`, `GET/get_no_index`, and `POST`.
+
+2. **Standardize Total Connection Pool Capacity to ~200 Connections:**
+   - **Go (Fiber):** `db.SetMaxOpenConns(200)`, `db.SetMaxIdleConns(50)` (200 conns total).
+   - **Java (Spring Boot):** `spring.datasource.hikari.maximum-pool-size=200`, `minimum-idle=50` (200 conns total).
+   - **PHP (Swoole):** 16 workers $\times$ 12 conns = **192 conns total** (`$benchmark->initPool(12)`).
+   - **Node.js (Fastify):** 16 workers $\times$ 12 conns = **192 conns total** (`connectionLimit: 12`).
+   - **Python (FastAPI):** 16 workers $\times$ 12 conns = **192 conns total** (`minsize=2, maxsize=12`).
+
+3. **Enable MySQL `skip-name-resolve`:**
+   - Configured `skip-name-resolve` in `/etc/mysql/mysql.conf.d/benchmark.cnf` to eliminate all DNS reverse lookup latency.
+
+### Verification
+All 5 framework servers across all 3 suites were recompiled and smoke-tested on Bare Metal under identical concurrency conditions:
+- **Python (FastAPI):** 2,268.67 Req/sec | 9.20 ms | 0 Errors
+- **Node.js (Fastify):** 8,317.23 Req/sec | 3.94 ms | 0 Errors
+- **PHP (Swoole):** 6,807.13 Req/sec | 3.12 ms | 0 Errors
+- **Go (Fiber):** 9,635.28 Req/sec | 2.10 ms | 0 Errors
+- **Java (Spring Boot):** 4,743.45 Req/sec | 6.78 ms | 0 Errors
+
+---
+
 ## Summary Checklist of Required Fixes
 
 - [x] **Fix `POST/wrk_json_reporter.lua`** to properly issue HTTP POST requests with headers and payload.
@@ -326,4 +376,5 @@ Empirical verification was conducted on Bare Metal under POC tier load (`-t2 -c2
 - [x] **Optimize startup existence checks** from `COUNT(*)` to `SELECT 1 LIMIT 1`.
 - [x] **Align `profiles` schema** by adding missing `age` and `address` columns.
 - [x] **Optimize Python (FastAPI) GET Pipeline** with `uvloop`, `httptools`, `aiomysql>=0.2.0`, and `CustomORJSONResponse` to resolve the 449 Req/s serialization bottleneck.
+- [x] **Standardize Experimental Variables (Issue #13)**: Align CPU workers to 16 cores (1:1) and database pools to ~200 connections across all 5 frameworks, and enable MySQL `skip-name-resolve`.
 

@@ -140,7 +140,7 @@ app.get('/raw/4join', async (request, reply) => {
 
 if (cluster.isPrimary || cluster.isMaster) {
   initDB().then(() => {
-    const numCPUs = Math.min(os.cpus().length, 8);
+    const numCPUs = os.cpus().length;
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }
@@ -159,7 +159,7 @@ if (cluster.isPrimary || cluster.isMaster) {
     password: DB_PASS,
     database: DB_NAME,
     waitForConnections: true,
-    connectionLimit: 50,
+    connectionLimit: 12,
     queueLimit: 0
   });
 

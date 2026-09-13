@@ -44,7 +44,7 @@ func initDB() error {
 	if err != nil {
 		return err
 	}
-	db.SetMaxOpenConns(100)
+	db.SetMaxOpenConns(200)
 	db.SetMaxIdleConns(50)
 
 	if err := db.Ping(); err != nil {

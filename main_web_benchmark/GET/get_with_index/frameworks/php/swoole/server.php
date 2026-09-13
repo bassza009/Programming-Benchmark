@@ -189,13 +189,13 @@ $benchmark = new BenchmarkGetWithIndexServer();
 $benchmark->initDatabase();
 
 $server->set([
-    'worker_num' => swoole_cpu_num() * 2,
+    'worker_num' => swoole_cpu_num(),
     'enable_coroutine' => true,
     'log_level' => SWOOLE_LOG_ERROR
 ]);
 
 $server->on("WorkerStart", function (Server $serv, int $workerId) use ($benchmark) {
-    $benchmark->initPool(64);
+    $benchmark->initPool(12);
 });
 
 $server->on("request", function (Request $request, Response $response) use ($benchmark) {

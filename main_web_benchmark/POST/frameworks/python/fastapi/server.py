@@ -29,8 +29,8 @@ async def init_db(retries=15):
                 user=DB_USER,
                 password=DB_PASS,
                 db=DB_NAME,
-                minsize=5,
-                maxsize=50,
+                minsize=2,
+                maxsize=12,
                 autocommit=True
             )
             break
@@ -166,5 +166,5 @@ async def shutdown():
 
 if __name__ == "__main__":
     import multiprocessing
-    workers = min(multiprocessing.cpu_count(), 8)
-    uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers)
+    workers = multiprocessing.cpu_count()
+    uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers, loop="auto", http="auto")
