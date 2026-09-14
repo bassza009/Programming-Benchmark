@@ -4,7 +4,7 @@ get_no_index,Bare Metal,POC / Small internal system,Java,11762.53,1.68,7287.86,2
 get_no_index,Bare Metal,POC / Small internal system,Node.js,9370.35,4.44,7681.56,2.58,323.12,61.83,78.98,251.97,0
 get_no_index,Bare Metal,POC / Small internal system,PHP,15043.28,1.48,7627.68,2.84,319.52,67.83,48.90,442.14,152
 get_no_index,Bare Metal,POC / Small internal system,Python,449.78,44.41,448.03,44.59,293.44,68.05,70.57,282.05,0
-get_no_index,Bare Metal,POC / Small internal system,Python (opt.),1384.43,24.98,2423.24,8.32,317.22,62.55,722.62,27.60,0
+get_no_index,Bare Metal,POC / Small internal system,Python (opt.),2814.82,7.71,2704.72,7.64,309.51,64.51,716.13,27.93,0
 get_no_index,Bare Metal,Small production website,Go,15095.84,8.31,8889.59,11.33,319.52,311.96,73.93,1336.05,76
 get_no_index,Bare Metal,Small production website,Java,16196.58,6.33,8432.75,11.89,310.81,320.73,73.62,1342.43,60
 get_no_index,Bare Metal,Small production website,Node.js,11669.59,8.56,8539.62,11.74,317.57,313.92,73.92,1336.82,41
@@ -34,7 +34,7 @@ get_no_index,Docker,POC / Small internal system,Java,9105.18,2.19,6306.58,3.15,3
 get_no_index,Docker,POC / Small internal system,Node.js,2323.77,8.71,2915.43,6.98,315.02,63.40,75.34,264.16,0
 get_no_index,Docker,POC / Small internal system,PHP,12918.52,1.57,7184.34,2.89,322.01,66.28,61.68,347.26,5
 get_no_index,Docker,POC / Small internal system,Python,2288.60,8.92,2583.93,7.78,308.21,64.81,71.85,276.98,0
-get_no_index,Docker,POC / Small internal system,Python (opt.),2288.60,8.92,2583.93,7.78,308.21,64.81,71.85,276.98,0
+get_no_index,Docker,POC / Small internal system,Python (opt.),3228.25,6.28,2925.46,6.96,311.47,64.13,705.24,28.35,0
 get_no_index,Docker,Small production website,Go,11569.88,10.25,7994.66,12.66,308.26,323.28,73.37,1345.63,137
 get_no_index,Docker,Small production website,Java,12186.71,8.69,7624.33,13.19,321.48,310.05,73.68,1340.58,42
 get_no_index,Docker,Small production website,Node.js,2244.07,44.54,3095.74,32.35,306.24,325.36,71.89,1370.91,334
