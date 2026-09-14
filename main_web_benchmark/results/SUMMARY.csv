@@ -88,7 +88,7 @@ get_with_index,Bare Metal,Stress testing,Java,16308.90,493.50,7706.00,1051.58,19
 get_with_index,Bare Metal,Stress testing,Node.js,9123.71,1011.93,7475.35,1318.69,1974.14,59.00,1628.15,59.78,22206542
 get_with_index,Bare Metal,Stress testing,PHP,25672.05,389.19,8836.81,1101.96,2080.74,1347.43,1858.20,1201.47,24681253
 get_with_index,Bare Metal,Stress testing,Python,1976.91,480.44,2248.52,439.19,1713.54,582.53,1457.54,482.21,17776914
-get_with_index,Bare Metal,Stress testing,Python (opt.),3908.34,233.79,3597.59,259.18,1109.40,411.09,868.96,560.41,18321
+get_with_index,Bare Metal,Stress testing,Python (opt.),4117.97,1074.02,3962.04,245.95,1667.10,156.04,1643.54,176.01,42148637
 get_with_index,Docker,POC / Small internal system,Go,8027.43,2.47,5574.52,3.56,2191.46,9.16,1961.29,10.21,0
 get_with_index,Docker,POC / Small internal system,Java,9208.99,2.16,6205.60,3.20,2017.25,9.94,1846.70,10.84,0
 get_with_index,Docker,POC / Small internal system,Node.js,2324.28,8.71,2939.46,6.91,1721.40,11.68,1326.75,15.14,0
@@ -118,7 +118,7 @@ get_with_index,Docker,Stress testing,Java,12195.27,670.38,7066.73,1154.11,1994.8
 get_with_index,Docker,Stress testing,Node.js,1972.18,1098.68,2599.09,1079.74,1826.45,1249.10,1450.83,1275.16,34012905
 get_with_index,Docker,Stress testing,PHP,16587.39,602.92,8294.03,1115.18,2077.43,1424.49,1882.19,1334.04,27270910
 get_with_index,Docker,Stress testing,Python,2029.15,704.30,2252.10,539.93,1739.50,435.79,1433.16,384.15,10324148
-get_with_index,Docker,Stress testing,Python (opt.),2029.15,704.30,2252.10,539.93,1739.50,435.79,1433.16,384.15,10324148
+get_with_index,Docker,Stress testing,Python (opt.),3561.39,1178.20,3564.67,205.92,1651.09,171.61,1641.29,184.24,40982355
 post,Bare Metal,POC / Small internal system,Go,12905.17,1.74,6051.09,3.46,4555.75,4.97,3019.23,6.80,0
 post,Bare Metal,POC / Small internal system,Java,12851.51,1.79,5946.41,4.18,5049.73,4.12,3820.80,5.41,0
 post,Bare Metal,POC / Small internal system,Node.js,14308.05,1.65,5908.40,3.81,4863.33,4.28,3625.69,5.70,0
