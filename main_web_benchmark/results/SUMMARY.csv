@@ -16,7 +16,7 @@ get_no_index,Bare Metal,General web application,Java,16300.78,32.08,8179.94,60.6
 get_no_index,Bare Metal,General web application,Node.js,11008.03,45.41,8221.16,61.18,314.42,1446.85,66.75,1197.36,129097
 get_no_index,Bare Metal,General web application,PHP,26659.76,18.99,9690.85,52.39,308.70,933.29,53.26,1276.61,149433
 get_no_index,Bare Metal,General web application,Python,2232.60,224.62,2568.77,193.76,310.45,1353.46,65.91,1229.82,156641
-get_no_index,Bare Metal,General web application,Python (opt.),4598.21,119.96,4290.31,140.01,268.06,1122.48,646.46,667.42,1122
+get_no_index,Bare Metal,General web application,Python (opt.),4635.03,118.54,4323.16,143.49,299.99,1166.03,668.43,710.97,117431
 get_no_index,Bare Metal,High-density website,Go,18501.19,168.49,8886.85,224.33,292.17,952.62,60.70,1625.75,1080678
 get_no_index,Bare Metal,High-density website,Java,16197.63,123.33,8175.24,243.62,296.51,653.84,59.61,1342.73,836935
 get_no_index,Bare Metal,High-density website,Node.js,8926.05,219.59,7887.25,252.25,307.08,76.02,58.63,83.21,899690
@@ -46,7 +46,7 @@ get_no_index,Docker,General web application,Java,11972.58,44.10,7394.08,67.48,31
 get_no_index,Docker,General web application,Node.js,2114.42,234.08,2827.51,177.61,305.91,1415.86,65.06,1213.23,154109
 get_no_index,Docker,General web application,PHP,17376.97,30.79,8858.58,62.77,304.66,676.14,70.05,1127.75,137745
 get_no_index,Docker,General web application,Python,2263.24,223.68,2536.46,203.19,312.48,1318.84,66.38,1208.08,160100
-get_no_index,Docker,General web application,Python (opt.),2263.24,223.68,2536.46,203.19,312.48,1318.84,66.38,1208.08,160100
+get_no_index,Docker,General web application,Python (opt.),4106.33,123.46,3913.44,135.50,296.84,1034.73,651.41,728.72,119015
 get_no_index,Docker,High-density website,Go,14643.50,182.32,8019.01,236.02,290.43,982.78,60.31,1630.89,1129778
 get_no_index,Docker,High-density website,Java,12535.68,160.73,7302.98,273.84,300.87,663.78,59.92,1593.69,849290
 get_no_index,Docker,High-density website,Node.js,1981.91,880.17,2582.40,700.37,292.44,69.72,56.42,0.00,898697
