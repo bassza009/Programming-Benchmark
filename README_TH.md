@@ -203,13 +203,13 @@ flowchart TD
 | **get_no_index** | **Node.js** | 2,323.77 ± 24.37 | 9,370.35 ± 3882.84 | 8.29ms / 15.86ms | 3.11ms / 13.65ms | +303.2% BME เร็วกว่า |
 | **get_no_index** | **PHP** | 12,918.52 ± 687.64 | 15,043.28 ± 2874.09 | 1.37ms / 2.99ms | 1.16ms / 3.45ms | +16.4% BME เร็วกว่า |
 | **get_no_index** | **Python** | 2,288.60 ± 170.13 | 449.78 ± 0.68* | 8.45ms / 16.19ms | 44.02ms / 46.29ms* | -80.3% Docker สูงกว่า* |
-| **get_no_index** | **Python (opt.)** | 2,288.60 ± 170.13 | 1,384.43 ± 752.95 | 8.45ms / 16.19ms | 14.54ms / 87.82ms | -39.5% Docker สูงกว่า |
+| **get_no_index** | **Python (opt.)** | 3,228.25 ± 195.23 | 2,814.82 ± 431.46 | 5.71ms / 11.14ms | 6.15ms / 17.14ms | -12.8% Docker สูงกว่า |
 | **get_with_index** | **Go** | 8,027.43 ± 54.25 | 9,867.88 ± 55.62 | 2.40ms / 4.05ms | 1.93ms / 3.50ms | +22.9% BME เร็วกว่า |
 | **get_with_index** | **Java** | 9,208.99 ± 100.33 | 11,829.43 ± 79.23 | 2.03ms / 3.33ms | 1.56ms / 2.67ms | +28.5% BME เร็วกว่า |
 | **get_with_index** | **Node.js** | 2,324.28 ± 21.65 | 11,396.15 ± 218.38 | 8.19ms / 15.89ms | 1.75ms / 2.48ms | +390.3% BME เร็วกว่า |
 | **get_with_index** | **PHP** | 12,932.29 ± 647.82 | 15,418.73 ± 1922.61 | 1.37ms / 2.91ms | 1.08ms / 3.19ms | +19.2% BME เร็วกว่า |
 | **get_with_index** | **Python** | 2,279.05 ± 238.58 | 449.66 ± 0.64* | 8.14ms / 15.60ms | 44.02ms / 46.06ms* | -80.3% Docker สูงกว่า* |
-| **get_with_index** | **Python (opt.)** | 2,279.05 ± 238.58 | 3,023.71 ± 75.59 | 8.14ms / 15.60ms | 5.78ms / 12.16ms | +32.7% BME เร็วกว่า |
+| **get_with_index** | **Python (opt.)** | 3,202.93 ± 273.46 | 2,913.31 ± 504.98 | 5.67ms / 11.54ms | 5.94ms / 14.43ms | -9.0% Docker สูงกว่า |
 | **post** | **Go** | 9,833.50 ± 164.97 | 12,905.17 ± 144.17 | 1.84ms / 4.21ms | 1.39ms / 3.29ms | +31.2% BME เร็วกว่า |
 | **post** | **Java** | 9,774.09 ± 156.45 | 12,851.51 ± 85.05 | 1.85ms / 4.14ms | 1.37ms / 3.49ms | +31.5% BME เร็วกว่า |
 | **post** | **Node.js** | 10,604.52 ± 170.15 | 14,308.05 ± 202.11 | 1.71ms / 3.83ms | 1.33ms / 2.83ms | +34.9% BME เร็วกว่า |
@@ -217,7 +217,7 @@ flowchart TD
 | **post** | **Python** | 9,324.90 ± 333.54 | 10,087.07 ± 1284.45 | 1.95ms / 4.11ms | 1.85ms / 3.40ms | +8.2% BME เร็วกว่า |
 | **post** | **Python (opt.)** | 9,324.90 ± 333.54 | 10,087.07 ± 1284.45 | 1.95ms / 4.11ms | 1.85ms / 3.40ms | +8.2% BME เร็วกว่า |
 
-*\*หมายเหตุเกี่ยวกับความผิดปกติของข้อมูล Python GET บน Bare Metal ในอดีต: ข้อมูลประวัติเดิมของ Python GET ติดคอขวด Serialization ของ `jsonable_encoder()` และขาด `uvloop` ทำให้รันได้เพียง ~449 Req/s เมื่อปรับปรุงด้วย `CustomORJSONResponse` และ 16 workers พบว่าสามารถปลดล็อกทำได้ถึง 3,023.71 Req/s (With-Index) และแตะสูงสุด 4,660.62 Req/s (ระดับโหลด Small) ดูการวิเคราะห์ปัญหาอย่างละเอียดได้ที่ [issue.md](main_web_benchmark/issue.md#12-python-fastapi-get-benchmark-bottleneck-missing-c-extensions-uvloophttptools--gil-bound-response-serialization-jsonable_encoder) และแท็บชีตเฉพาะ `Python (opt.)` ในไฟล์ `Programming_Benchmark_Report.xlsx`*
+*\*หมายเหตุเกี่ยวกับความผิดปกติของข้อมูล Python GET บน Bare Metal ในอดีต: ข้อมูลประวัติเดิมของ Python GET ติดคอขวด Serialization ของ `jsonable_encoder()` และขาด `uvloop` ทำให้รันได้เพียง ~449 Req/s เมื่อปรับปรุงด้วย `CustomORJSONResponse` และ 16 workers ทั้งบน Docker และ Bare Metal พบว่าสามารถปลดล็อกทำได้ถึง ~3,200 Req/s บน Docker และแตะสูงสุด 4,754.70 Req/s บน Bare Metal (ระดับโหลด Small) จากการทดสอบ 20 รอบจริงเต็ม ดูการวิเคราะห์ปัญหาอย่างละเอียดได้ที่ [issue.md](main_web_benchmark/issue.md#12-python-fastapi-get-benchmark-bottleneck-missing-c-extensions-uvloophttptools--gil-bound-response-serialization-jsonable_encoder) และแท็บชีตเฉพาะ `Python (opt.)` ในไฟล์ `Programming_Benchmark_Report.xlsx`*
 
 > ตรวจสอบผลลัพธ์ฉบับสมบูรณ์พร้อมค่า Mean ± SD, ช่วงความเชื่อมั่น 95% (95% CI) และ Percentiles (p50, p90, p95, p99) ของทุก Endpoint และระดับโหลดได้ที่ [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) และ [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv)
 

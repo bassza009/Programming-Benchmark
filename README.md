@@ -202,13 +202,13 @@ Tested under two database states:
 | **get_no_index** | **Node.js** | 2,323.77 ± 24.37 | 9,370.35 ± 3882.84 | 8.29ms / 15.86ms | 3.11ms / 13.65ms | +303.2% BME |
 | **get_no_index** | **PHP** | 12,918.52 ± 687.64 | 15,043.28 ± 2874.09 | 1.37ms / 2.99ms | 1.16ms / 3.45ms | +16.4% BME |
 | **get_no_index** | **Python** | 2,288.60 ± 170.13 | 449.78 ± 0.68* | 8.45ms / 16.19ms | 44.02ms / 46.29ms* | -80.3% BME* |
-| **get_no_index** | **Python (opt.)** | 2,288.60 ± 170.13 | 1,384.43 ± 752.95 | 8.45ms / 16.19ms | 14.54ms / 87.82ms | -39.5% BME |
+| **get_no_index** | **Python (opt.)** | 3,228.25 ± 195.23 | 2,814.82 ± 431.46 | 5.71ms / 11.14ms | 6.15ms / 17.14ms | -12.8% BME |
 | **get_with_index** | **Go** | 8,027.43 ± 54.25 | 9,867.88 ± 55.62 | 2.40ms / 4.05ms | 1.93ms / 3.50ms | +22.9% BME |
 | **get_with_index** | **Java** | 9,208.99 ± 100.33 | 11,829.43 ± 79.23 | 2.03ms / 3.33ms | 1.56ms / 2.67ms | +28.5% BME |
 | **get_with_index** | **Node.js** | 2,324.28 ± 21.65 | 11,396.15 ± 218.38 | 8.19ms / 15.89ms | 1.75ms / 2.48ms | +390.3% BME |
 | **get_with_index** | **PHP** | 12,932.29 ± 647.82 | 15,418.73 ± 1922.61 | 1.37ms / 2.91ms | 1.08ms / 3.19ms | +19.2% BME |
 | **get_with_index** | **Python** | 2,279.05 ± 238.58 | 449.66 ± 0.64* | 8.14ms / 15.60ms | 44.02ms / 46.06ms* | -80.3% BME* |
-| **get_with_index** | **Python (opt.)** | 2,279.05 ± 238.58 | 3,023.71 ± 75.59 | 8.14ms / 15.60ms | 5.78ms / 12.16ms | +32.7% BME |
+| **get_with_index** | **Python (opt.)** | 3,202.93 ± 273.46 | 2,913.31 ± 504.98 | 5.67ms / 11.54ms | 5.94ms / 14.43ms | -9.0% BME |
 | **post** | **Go** | 9,833.50 ± 164.97 | 12,905.17 ± 144.17 | 1.84ms / 4.21ms | 1.39ms / 3.29ms | +31.2% BME |
 | **post** | **Java** | 9,774.09 ± 156.45 | 12,851.51 ± 85.05 | 1.85ms / 4.14ms | 1.37ms / 3.49ms | +31.5% BME |
 | **post** | **Node.js** | 10,604.52 ± 170.15 | 14,308.05 ± 202.11 | 1.71ms / 3.83ms | 1.33ms / 2.83ms | +34.9% BME |
@@ -216,7 +216,7 @@ Tested under two database states:
 | **post** | **Python** | 9,324.90 ± 333.54 | 10,087.07 ± 1284.45 | 1.95ms / 4.11ms | 1.85ms / 3.40ms | +8.2% BME |
 | **post** | **Python (opt.)** | 9,324.90 ± 333.54 | 10,087.07 ± 1284.45 | 1.95ms / 4.11ms | 1.85ms / 3.40ms | +8.2% BME |
 
-*\*Note on Historical Python GET BME Anomaly: Bare Metal Python GET historical runs were bottlenecked at ~449 Req/s due to pure-Python `jsonable_encoder()` serialization overhead and unattached `uvloop`. Optimization with `CustomORJSONResponse` and 16 workers unlocks 3,023.71 Req/s (With-Index) and up to 4,660.62 Req/s (Small tier) on Bare Metal. See [issue.md](main_web_benchmark/issue.md#12-python-fastapi-get-benchmark-bottleneck-missing-c-extensions-uvloophttptools--gil-bound-response-serialization-jsonable_encoder) and the dedicated `Python (opt.)` worksheet in `Programming_Benchmark_Report.xlsx`.*
+*\*Note on Historical Python GET BME Anomaly: Bare Metal Python GET historical runs were bottlenecked at ~449 Req/s due to pure-Python `jsonable_encoder()` serialization overhead and unattached `uvloop`. Optimization with `CustomORJSONResponse` and 16 workers unlocks ~3,200 Req/s in Docker and up to 4,754.70 Req/s (Small tier) on Bare Metal across 20 rigorous benchmark runs. See [issue.md](main_web_benchmark/issue.md#12-python-fastapi-get-benchmark-bottleneck-missing-c-extensions-uvloophttptools--gil-bound-response-serialization-jsonable_encoder) and the dedicated `Python (opt.)` worksheet in `Programming_Benchmark_Report.xlsx`.*
 
 > For complete tabular results with Mean ± SD, 95% Confidence Intervals, and p50/p90/p95/p99 percentiles across all endpoints and tiers, see [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) and [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv).
 
