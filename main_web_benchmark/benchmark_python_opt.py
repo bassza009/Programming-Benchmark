@@ -193,17 +193,78 @@ def save_checkpoint(target_file, env_type, tier_key, tier_cfg, ep, metrics):
     with open(target_file, "w") as f:
         json.dump(data, f, indent=2)
 
+def update_readmes_from_summary(repo_root):
+    summary_path = os.path.join(RESULTS_DIR, "SUMMARY.md")
+    if not os.path.exists(summary_path):
+        return
+    try:
+        with open(summary_path, "r", encoding="utf-8") as f:
+            summary_content = f.read()
+
+        if "## Executive Comparison: Docker vs Bare Metal" not in summary_content:
+            return
+        sec = summary_content.split("## Executive Comparison: Docker vs Bare Metal")[1]
+        sec = sec.split("## Suite:")[0].strip()
+        table_lines = [line.strip() for line in sec.splitlines() if line.strip().startswith("|") and not line.strip().startswith("| :---")]
+        if len(table_lines) < 2:
+            return
+        data_rows = table_lines[1:]
+
+        # README.md
+        readme_path = os.path.join(repo_root, "README.md")
+        if os.path.exists(readme_path):
+            with open(readme_path, "r", encoding="utf-8") as f:
+                t = f.read()
+            s = t.find("| Suite | Language | Docker (Req/s ± SD) |")
+            e = t.find("*\\*Note on Historical Python GET BME Anomaly:")
+            if s != -1 and e != -1:
+                new_table = "| Suite | Language | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | Overhead / Gain |\n| :--- | :--- | :---: | :---: | :---: | :---: | :---: |\n"
+                for r in data_rows:
+                    cols = [c.strip() for c in r.split("|")[1:-1]]
+                    if len(cols) == 7:
+                        new_table += f"| {cols[0]} | {cols[1]} | {cols[2]} | {cols[3]} | {cols[4]} | {cols[5]} | {cols[6]} |\n"
+                t = t[:s] + new_table + "\n" + t[e:]
+                with open(readme_path, "w", encoding="utf-8") as f:
+                    f.write(t)
+
+        # README_TH.md
+        readme_th_path = os.path.join(repo_root, "README_TH.md")
+        if os.path.exists(readme_th_path):
+            with open(readme_th_path, "r", encoding="utf-8") as f:
+                t_th = f.read()
+            s_th = t_th.find("| ชุดทดสอบ | ภาษา | Docker (Req/s ± SD) |")
+            e_th = t_th.find("*\\*หมายเหตุเกี่ยวกับความผิดปกติของข้อมูล Python GET บน Bare Metal ในอดีต:")
+            if s_th != -1 and e_th != -1:
+                new_table_th = "| ชุดทดสอบ | ภาษา | Docker (Req/s ± SD) | Bare Metal (Req/s ± SD) | Docker p50 / p95 (ms) | BME p50 / p95 (ms) | ผลต่าง Overhead / Gain |\n| :--- | :--- | :---: | :---: | :---: | :---: | :---: |\n"
+                for r in data_rows:
+                    cols = [c.strip() for c in r.split("|")[1:-1]]
+                    if len(cols) == 7:
+                        gain_th = cols[6]
+                        if "BME" in gain_th:
+                            gain_th = gain_th.replace("BME", "BME เร็วกว่า")
+                        elif "-" in gain_th:
+                            gain_th = gain_th.replace("BME", "Docker สูงกว่า")
+                        new_table_th += f"| {cols[0]} | {cols[1]} | {cols[2]} | {cols[3]} | {cols[4]} | {cols[5]} | {gain_th} |\n"
+                t_th = t_th[:s_th] + new_table_th + "\n" + t_th[e_th:]
+                with open(readme_th_path, "w", encoding="utf-8") as f:
+                    f.write(t_th)
+    except Exception as err:
+        print(f"[SYNC !] Warning syncing READMEs: {err}", flush=True)
+
 def sync_reports_and_git(commit_message):
     print(f"\n[SYNC] Re-exporting reports and pushing to GitHub...", flush=True)
     try:
         subprocess.run([sys.executable, "export_excel.py"], cwd=RESULTS_DIR, check=True)
         subprocess.run([sys.executable, "generate_summary.py"], cwd=RESULTS_DIR, check=True)
         subprocess.run([sys.executable, "export_csv.py"], cwd=RESULTS_DIR, check=True)
+        
+        repo_root = os.path.dirname(BASE_DIR)
+        update_readmes_from_summary(repo_root)
+
         sync_script = os.path.join(SCRIPTS_DIR, "sync_benchmark_report.py")
         if os.path.exists(sync_script):
             subprocess.run([sys.executable, sync_script, "--docx"], cwd=SCRIPTS_DIR, capture_output=True)
         
-        repo_root = os.path.dirname(BASE_DIR)
         subprocess.run(["git", "add", "."], cwd=repo_root, capture_output=True)
         subprocess.run(["git", "commit", "-m", commit_message], cwd=repo_root, capture_output=True)
         subprocess.run(["git", "push", "origin", "main"], cwd=repo_root, capture_output=True)
@@ -307,8 +368,7 @@ def run_suite(suite_dir, lua_script, dkr_file, bme_file, runs=20, selected_tiers
         if env_choice in ["bme", "both"]:
             benchmark_tier_bme(suite_dir, lua_script, bme_file, t_key, t_cfg, runs)
 
-        # Sync and commit after tier finishes
-        commit_msg = f"benchmarks: Python (opt.) {suite_name} tier {t_key.upper()} completed ({runs} runs DKR & BME)"
+        commit_msg = f"benchmarks: Python (opt.) {suite_name} tier {t_key.upper()} completed ({runs} runs {env_choice.upper()})"
         sync_reports_and_git(commit_msg)
 
     return True
