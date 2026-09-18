@@ -34,7 +34,7 @@ get_no_index,Docker,POC / Small internal system,Java,9105.18,2.19,6306.58,3.15,3
 get_no_index,Docker,POC / Small internal system,Node.js,2323.77,8.71,2915.43,6.98,315.02,63.40,75.34,264.16,0
 get_no_index,Docker,POC / Small internal system,PHP,12918.52,1.57,7184.34,2.89,322.01,66.28,61.68,347.26,5
 get_no_index,Docker,POC / Small internal system,Python,2288.60,8.92,2583.93,7.78,308.21,64.81,71.85,276.98,0
-get_no_index,Docker,POC / Small internal system,Python (opt.),3228.25,6.28,2925.46,6.96,311.47,64.13,705.24,28.35,0
+get_no_index,Docker,POC / Small internal system,Python (opt.),3216.02,6.33,2867.09,7.08,300.57,66.45,701.38,28.51,0
 get_no_index,Docker,Small production website,Go,11569.88,10.25,7994.66,12.66,308.26,323.28,73.37,1345.63,137
 get_no_index,Docker,Small production website,Java,12186.71,8.69,7624.33,13.19,321.48,310.05,73.68,1340.58,42
 get_no_index,Docker,Small production website,Node.js,2244.07,44.54,3095.74,32.35,306.24,325.36,71.89,1370.91,334
