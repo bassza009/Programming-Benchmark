@@ -240,10 +240,10 @@ def update_readmes_from_summary(repo_root):
                     cols = [c.strip() for c in r.split("|")[1:-1]]
                     if len(cols) == 7:
                         gain_th = cols[6]
-                        if "BME" in gain_th:
-                            gain_th = gain_th.replace("BME", "BME เร็วกว่า")
-                        elif "-" in gain_th:
+                        if "-" in gain_th:
                             gain_th = gain_th.replace("BME", "Docker สูงกว่า")
+                        elif "BME" in gain_th:
+                            gain_th = gain_th.replace("BME", "BME เร็วกว่า")
                         new_table_th += f"| {cols[0]} | {cols[1]} | {cols[2]} | {cols[3]} | {cols[4]} | {cols[5]} | {gain_th} |\n"
                 t_th = t_th[:s_th] + new_table_th + "\n" + t_th[e_th:]
                 with open(readme_th_path, "w", encoding="utf-8") as f:
