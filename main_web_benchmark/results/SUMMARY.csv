@@ -40,7 +40,7 @@ get_no_index,Docker,Small production website,Java,12186.71,8.69,7624.33,13.19,32
 get_no_index,Docker,Small production website,Node.js,2244.07,44.54,3095.74,32.35,306.24,325.36,71.89,1370.91,334
 get_no_index,Docker,Small production website,PHP,17126.59,6.58,8846.27,13.92,300.97,364.79,78.52,765.08,17604
 get_no_index,Docker,Small production website,Python,2442.05,41.10,2845.01,35.14,315.72,315.65,72.88,1350.84,515
-get_no_index,Docker,Small production website,Python (opt.),4212.22,24.51,3943.07,26.42,300.41,331.72,662.19,152.00,0
+get_no_index,Docker,Small production website,Python (opt.),4120.04,25.34,3820.01,27.16,296.00,336.84,663.11,151.77,0
 get_no_index,Docker,General web application,Go,12838.36,59.43,8001.60,120.29,301.06,788.23,68.36,1603.38,136899
 get_no_index,Docker,General web application,Java,11972.58,44.10,7394.08,67.48,311.98,1557.60,68.32,1368.01,88698
 get_no_index,Docker,General web application,Node.js,2114.42,234.08,2827.51,177.61,305.91,1415.86,65.06,1213.23,154109
