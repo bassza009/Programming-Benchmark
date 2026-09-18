@@ -52,7 +52,7 @@ get_no_index,Docker,High-density website,Java,12535.68,160.73,7302.98,273.84,300
 get_no_index,Docker,High-density website,Node.js,1981.91,880.17,2582.40,700.37,292.44,69.72,56.42,0.00,898697
 get_no_index,Docker,High-density website,PHP,16832.13,121.54,8774.07,236.93,297.78,1332.81,63.52,1164.55,793253
 get_no_index,Docker,High-density website,Python,2238.59,666.52,2556.75,536.61,301.12,1239.21,57.79,944.62,1311814
-get_no_index,Docker,High-density website,Python (opt.),3962.61,442.89,3805.89,473.23,291.63,796.85,637.26,872.92,2534777
+get_no_index,Docker,High-density website,Python (opt.),3907.05,413.46,3712.62,476.89,283.41,821.79,636.13,861.19,2532794
 get_no_index,Docker,Stress testing,Go,15155.39,370.69,8003.86,468.24,273.34,1092.33,21.06,569.21,15873764
 get_no_index,Docker,Stress testing,Java,12098.14,673.35,7236.70,1126.92,293.92,645.02,47.75,1616.73,2538571
 get_no_index,Docker,Stress testing,Node.js,1928.95,1037.31,2559.21,1074.31,269.37,66.58,39.25,0.00,20757132
