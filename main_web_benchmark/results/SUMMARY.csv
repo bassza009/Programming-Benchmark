@@ -46,7 +46,7 @@ get_no_index,Docker,General web application,Java,11972.58,44.10,7394.08,67.48,31
 get_no_index,Docker,General web application,Node.js,2114.42,234.08,2827.51,177.61,305.91,1415.86,65.06,1213.23,154109
 get_no_index,Docker,General web application,PHP,17376.97,30.79,8858.58,62.77,304.66,676.14,70.05,1127.75,137745
 get_no_index,Docker,General web application,Python,2263.24,223.68,2536.46,203.19,312.48,1318.84,66.38,1208.08,160100
-get_no_index,Docker,General web application,Python (opt.),4106.33,123.46,3913.44,135.50,296.84,1034.73,651.41,728.72,119015
+get_no_index,Docker,General web application,Python (opt.),4018.10,125.65,3797.28,139.35,292.21,1069.60,649.09,724.93,126099
 get_no_index,Docker,High-density website,Go,14643.50,182.32,8019.01,236.02,290.43,982.78,60.31,1630.89,1129778
 get_no_index,Docker,High-density website,Java,12535.68,160.73,7302.98,273.84,300.87,663.78,59.92,1593.69,849290
 get_no_index,Docker,High-density website,Node.js,1981.91,880.17,2582.40,700.37,292.44,69.72,56.42,0.00,898697
