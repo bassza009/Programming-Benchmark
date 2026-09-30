@@ -8,10 +8,8 @@ services:
     container_name: pos-server-python-get-with-index
     ports:
       - "8001:8001"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: benchmark-postgres
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: secret
@@ -28,10 +26,8 @@ services:
     container_name: pos-server-node-get-with-index
     ports:
       - "8002:8002"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: benchmark-postgres
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: secret
@@ -48,10 +44,8 @@ services:
     container_name: pos-server-php-get-with-index
     ports:
       - "8003:8003"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: benchmark-postgres
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: secret
@@ -68,10 +62,8 @@ services:
     container_name: pos-server-go-get-with-index
     ports:
       - "8004:8004"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: benchmark-postgres
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: secret
@@ -88,10 +80,8 @@ services:
     container_name: pos-server-java-get-with-index
     ports:
       - "8005:8005"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      DB_HOST: host.docker.internal
+      DB_HOST: benchmark-postgres
       DB_PORT: 5432
       DB_USER: admin
       DB_PASS: secret
@@ -100,3 +90,8 @@ services:
       nofile:
         soft: 65535
         hard: 65535
+
+networks:
+  default:
+    name: db_default
+    external: true

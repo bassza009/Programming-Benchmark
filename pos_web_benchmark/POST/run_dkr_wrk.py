@@ -248,6 +248,11 @@ def main():
         except Exception:
             pass
 
+    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
+    os.makedirs(res_dir, exist_ok=True)
+    raw_res_dir = os.path.join(res_dir, "raw_results")
+    os.makedirs(raw_res_dir, exist_ok=True)
+
     for s in target_services:
         print(f"\n---> Spinning up Docker container: {s['service']} on Port {s['port']}")
         subprocess.run(["docker", "compose", "up", "-d", "--build", s['service']], check=True)
@@ -256,8 +261,12 @@ def main():
         if not wait_for_server(s['port'], max_wait=40):
             print(f"  [!] Timeout waiting for {s['name']} server on port {s['port']}")
 
-        lang_results = {"Environment": "Docker", "tiers": {}}
-        raw_lang_results = {"Environment": "Docker", "tiers": {}}
+        lang_results = ALL_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
+        raw_lang_results = RAW_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
+        if "tiers" not in lang_results:
+            lang_results["tiers"] = {}
+        if "tiers" not in raw_lang_results:
+            raw_lang_results["tiers"] = {}
 
         for tier_key in selected_tiers:
             t_cfg = TIERS[tier_key]
@@ -295,29 +304,21 @@ def main():
         ALL_RESULTS[s["name"]] = lang_results
         RAW_RESULTS[s["name"]] = raw_lang_results
 
+        with open("dkr_benchmark_results.json", "w") as f:
+            json.dump(ALL_RESULTS, f, indent=2)
+        with open("raw_results.json", "w") as f:
+            json.dump(RAW_RESULTS, f, indent=2)
+        with open(os.path.join(res_dir, "post_dkr.json"), "w") as f:
+            json.dump(ALL_RESULTS, f, indent=2)
+        with open(os.path.join(raw_res_dir, "post_dkr_raw.json"), "w") as f:
+            json.dump(RAW_RESULTS, f, indent=2)
+
         print(f"---> Stopping container {s['service']}...")
         subprocess.run(["docker", "compose", "stop", s['service']], check=True)
         subprocess.run(["docker", "compose", "rm", "-f", s['service']], check=True)
         time.sleep(2)
 
     subprocess.run(["docker", "compose", "down"], check=True)
-
-    with open("dkr_benchmark_results.json", "w") as f:
-        json.dump(ALL_RESULTS, f, indent=2)
-
-    with open("raw_results.json", "w") as f:
-        json.dump(RAW_RESULTS, f, indent=2)
-
-    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
-    os.makedirs(res_dir, exist_ok=True)
-    raw_res_dir = os.path.join(res_dir, "raw_results")
-    os.makedirs(raw_res_dir, exist_ok=True)
-
-    with open(os.path.join(res_dir, "post_dkr.json"), "w") as f:
-        json.dump(ALL_RESULTS, f, indent=2)
-
-    with open(os.path.join(raw_res_dir, "post_dkr_raw.json"), "w") as f:
-        json.dump(RAW_RESULTS, f, indent=2)
 
     print("\n=================================================================")
     print(" POST Docker Benchmark Completed!")

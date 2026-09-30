@@ -1,0 +1,782 @@
+{
+  "Python": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "average": {
+              "requests_per_sec": 1533.77,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 1533.77,
+              "rps_ci95_high": 1533.77,
+              "latency_mean_ms": 13.03,
+              "latency_stdev_ms": 2.47,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 13.03,
+              "latency_ci95_high": 13.03,
+              "latency_p50_ms": 12.94,
+              "latency_p90_ms": 15.84,
+              "latency_p95_ms": 16.6,
+              "latency_p99_ms": 20.25,
+              "latency_max_ms": 47.16,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 1533.77,
+                "latency_mean_ms": 13.03,
+                "latency_stdev_ms": 2.47,
+                "latency_max_ms": 47.16,
+                "latency_p50_ms": 12.94,
+                "latency_p90_ms": 15.84,
+                "latency_p95_ms": 16.6,
+                "latency_p99_ms": 20.25,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/2join": {
+            "average": {
+              "requests_per_sec": 362.53,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 362.53,
+              "rps_ci95_high": 362.53,
+              "latency_mean_ms": 55.09,
+              "latency_stdev_ms": 18.17,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 55.09,
+              "latency_ci95_high": 55.09,
+              "latency_p50_ms": 57.59,
+              "latency_p90_ms": 79.15,
+              "latency_p95_ms": 84.45,
+              "latency_p99_ms": 94.72,
+              "latency_max_ms": 138.75,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 362.53,
+                "latency_mean_ms": 55.09,
+                "latency_stdev_ms": 18.17,
+                "latency_max_ms": 138.75,
+                "latency_p50_ms": 57.59,
+                "latency_p90_ms": 79.15,
+                "latency_p95_ms": 84.45,
+                "latency_p99_ms": 94.72,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/3join": {
+            "average": {
+              "requests_per_sec": 385.8,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 385.8,
+              "rps_ci95_high": 385.8,
+              "latency_mean_ms": 51.78,
+              "latency_stdev_ms": 18.14,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 51.78,
+              "latency_ci95_high": 51.78,
+              "latency_p50_ms": 43.67,
+              "latency_p90_ms": 78.51,
+              "latency_p95_ms": 88.99,
+              "latency_p99_ms": 100.12,
+              "latency_max_ms": 119.37,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 385.8,
+                "latency_mean_ms": 51.78,
+                "latency_stdev_ms": 18.14,
+                "latency_max_ms": 119.37,
+                "latency_p50_ms": 43.67,
+                "latency_p90_ms": 78.51,
+                "latency_p95_ms": 88.99,
+                "latency_p99_ms": 100.12,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/4join": {
+            "average": {
+              "requests_per_sec": 343.4,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 343.4,
+              "rps_ci95_high": 343.4,
+              "latency_mean_ms": 58.18,
+              "latency_stdev_ms": 19.81,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 58.18,
+              "latency_ci95_high": 58.18,
+              "latency_p50_ms": 53.82,
+              "latency_p90_ms": 87.43,
+              "latency_p95_ms": 93.5,
+              "latency_p99_ms": 103.22,
+              "latency_max_ms": 130.19,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 343.4,
+                "latency_mean_ms": 58.18,
+                "latency_stdev_ms": 19.81,
+                "latency_max_ms": 130.19,
+                "latency_p50_ms": 53.82,
+                "latency_p90_ms": 87.43,
+                "latency_p95_ms": 93.5,
+                "latency_p99_ms": 103.22,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Node.js": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "average": {
+              "requests_per_sec": 9736.03,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 9736.03,
+              "rps_ci95_high": 9736.03,
+              "latency_mean_ms": 2.15,
+              "latency_stdev_ms": 2.29,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 2.15,
+              "latency_ci95_high": 2.15,
+              "latency_p50_ms": 2.08,
+              "latency_p90_ms": 2.43,
+              "latency_p95_ms": 2.58,
+              "latency_p99_ms": 3.08,
+              "latency_max_ms": 90.41,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 9736.03,
+                "latency_mean_ms": 2.15,
+                "latency_stdev_ms": 2.29,
+                "latency_max_ms": 90.41,
+                "latency_p50_ms": 2.08,
+                "latency_p90_ms": 2.43,
+                "latency_p95_ms": 2.58,
+                "latency_p99_ms": 3.08,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/2join": {
+            "average": {
+              "requests_per_sec": 378.83,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 378.83,
+              "rps_ci95_high": 378.83,
+              "latency_mean_ms": 52.72,
+              "latency_stdev_ms": 20.82,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 52.72,
+              "latency_ci95_high": 52.72,
+              "latency_p50_ms": 61.1,
+              "latency_p90_ms": 79.23,
+              "latency_p95_ms": 85.19,
+              "latency_p99_ms": 91.5,
+              "latency_max_ms": 159.57,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 378.83,
+                "latency_mean_ms": 52.72,
+                "latency_stdev_ms": 20.82,
+                "latency_max_ms": 159.57,
+                "latency_p50_ms": 61.1,
+                "latency_p90_ms": 79.23,
+                "latency_p95_ms": 85.19,
+                "latency_p99_ms": 91.5,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/3join": {
+            "average": {
+              "requests_per_sec": 338.15,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 338.15,
+              "rps_ci95_high": 338.15,
+              "latency_mean_ms": 59.09,
+              "latency_stdev_ms": 23.66,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 59.09,
+              "latency_ci95_high": 59.09,
+              "latency_p50_ms": 68.23,
+              "latency_p90_ms": 90.88,
+              "latency_p95_ms": 97.39,
+              "latency_p99_ms": 103.55,
+              "latency_max_ms": 174.56,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 338.15,
+                "latency_mean_ms": 59.09,
+                "latency_stdev_ms": 23.66,
+                "latency_max_ms": 174.56,
+                "latency_p50_ms": 68.23,
+                "latency_p90_ms": 90.88,
+                "latency_p95_ms": 97.39,
+                "latency_p99_ms": 103.55,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/4join": {
+            "average": {
+              "requests_per_sec": 344.38,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 344.38,
+              "rps_ci95_high": 344.38,
+              "latency_mean_ms": 58.0,
+              "latency_stdev_ms": 23.22,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 58.0,
+              "latency_ci95_high": 58.0,
+              "latency_p50_ms": 64.38,
+              "latency_p90_ms": 83.47,
+              "latency_p95_ms": 95.88,
+              "latency_p99_ms": 105.78,
+              "latency_max_ms": 194.17,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 344.38,
+                "latency_mean_ms": 58.0,
+                "latency_stdev_ms": 23.22,
+                "latency_max_ms": 194.17,
+                "latency_p50_ms": 64.38,
+                "latency_p90_ms": 83.47,
+                "latency_p95_ms": 95.88,
+                "latency_p99_ms": 105.78,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "PHP": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "average": {
+              "requests_per_sec": 22133.54,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 22133.54,
+              "rps_ci95_high": 22133.54,
+              "latency_mean_ms": 0.91,
+              "latency_stdev_ms": 0.75,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 0.91,
+              "latency_ci95_high": 0.91,
+              "latency_p50_ms": 0.9,
+              "latency_p90_ms": 1.05,
+              "latency_p95_ms": 1.11,
+              "latency_p99_ms": 1.26,
+              "latency_max_ms": 54.95,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 22133.54,
+                "latency_mean_ms": 0.91,
+                "latency_stdev_ms": 0.75,
+                "latency_max_ms": 54.95,
+                "latency_p50_ms": 0.9,
+                "latency_p90_ms": 1.05,
+                "latency_p95_ms": 1.11,
+                "latency_p99_ms": 1.26,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/2join": {
+            "average": {
+              "requests_per_sec": 399.17,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 399.17,
+              "rps_ci95_high": 399.17,
+              "latency_mean_ms": 50.59,
+              "latency_stdev_ms": 21.79,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 50.59,
+              "latency_ci95_high": 50.59,
+              "latency_p50_ms": 56.3,
+              "latency_p90_ms": 74.45,
+              "latency_p95_ms": 82.17,
+              "latency_p99_ms": 119.4,
+              "latency_max_ms": 249.48,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 399.17,
+                "latency_mean_ms": 50.59,
+                "latency_stdev_ms": 21.79,
+                "latency_max_ms": 249.48,
+                "latency_p50_ms": 56.3,
+                "latency_p90_ms": 74.45,
+                "latency_p95_ms": 82.17,
+                "latency_p99_ms": 119.4,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/3join": {
+            "average": {
+              "requests_per_sec": 399.95,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 399.95,
+              "rps_ci95_high": 399.95,
+              "latency_mean_ms": 50.18,
+              "latency_stdev_ms": 18.57,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 50.18,
+              "latency_ci95_high": 50.18,
+              "latency_p50_ms": 49.02,
+              "latency_p90_ms": 70.64,
+              "latency_p95_ms": 74.89,
+              "latency_p99_ms": 101.93,
+              "latency_max_ms": 210.23,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 399.95,
+                "latency_mean_ms": 50.18,
+                "latency_stdev_ms": 18.57,
+                "latency_max_ms": 210.23,
+                "latency_p50_ms": 49.02,
+                "latency_p90_ms": 70.64,
+                "latency_p95_ms": 74.89,
+                "latency_p99_ms": 101.93,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/4join": {
+            "average": {
+              "requests_per_sec": 383.28,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 383.28,
+              "rps_ci95_high": 383.28,
+              "latency_mean_ms": 52.24,
+              "latency_stdev_ms": 19.16,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 52.24,
+              "latency_ci95_high": 52.24,
+              "latency_p50_ms": 41.51,
+              "latency_p90_ms": 74.53,
+              "latency_p95_ms": 78.61,
+              "latency_p99_ms": 100.51,
+              "latency_max_ms": 216.32,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 383.28,
+                "latency_mean_ms": 52.24,
+                "latency_stdev_ms": 19.16,
+                "latency_max_ms": 216.32,
+                "latency_p50_ms": 41.51,
+                "latency_p90_ms": 74.53,
+                "latency_p95_ms": 78.61,
+                "latency_p99_ms": 100.51,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Go": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "average": {
+              "requests_per_sec": 4780.33,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 4780.33,
+              "rps_ci95_high": 4780.33,
+              "latency_mean_ms": 4.16,
+              "latency_stdev_ms": 1.26,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 4.16,
+              "latency_ci95_high": 4.16,
+              "latency_p50_ms": 4.49,
+              "latency_p90_ms": 5.51,
+              "latency_p95_ms": 5.78,
+              "latency_p99_ms": 6.79,
+              "latency_max_ms": 13.6,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 4780.33,
+                "latency_mean_ms": 4.16,
+                "latency_stdev_ms": 1.26,
+                "latency_max_ms": 13.6,
+                "latency_p50_ms": 4.49,
+                "latency_p90_ms": 5.51,
+                "latency_p95_ms": 5.78,
+                "latency_p99_ms": 6.79,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/2join": {
+            "average": {
+              "requests_per_sec": 436.17,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 436.17,
+              "rps_ci95_high": 436.17,
+              "latency_mean_ms": 45.81,
+              "latency_stdev_ms": 18.11,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 45.81,
+              "latency_ci95_high": 45.81,
+              "latency_p50_ms": 37.46,
+              "latency_p90_ms": 69.74,
+              "latency_p95_ms": 81.06,
+              "latency_p99_ms": 89.08,
+              "latency_max_ms": 101.58,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 436.17,
+                "latency_mean_ms": 45.81,
+                "latency_stdev_ms": 18.11,
+                "latency_max_ms": 101.58,
+                "latency_p50_ms": 37.46,
+                "latency_p90_ms": 69.74,
+                "latency_p95_ms": 81.06,
+                "latency_p99_ms": 89.08,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/3join": {
+            "average": {
+              "requests_per_sec": 379.47,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 379.47,
+              "rps_ci95_high": 379.47,
+              "latency_mean_ms": 52.64,
+              "latency_stdev_ms": 21.23,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 52.64,
+              "latency_ci95_high": 52.64,
+              "latency_p50_ms": 42.68,
+              "latency_p90_ms": 79.84,
+              "latency_p95_ms": 92.29,
+              "latency_p99_ms": 101.32,
+              "latency_max_ms": 112.88,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 379.47,
+                "latency_mean_ms": 52.64,
+                "latency_stdev_ms": 21.23,
+                "latency_max_ms": 112.88,
+                "latency_p50_ms": 42.68,
+                "latency_p90_ms": 79.84,
+                "latency_p95_ms": 92.29,
+                "latency_p99_ms": 101.32,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/4join": {
+            "average": {
+              "requests_per_sec": 353.23,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 353.23,
+              "rps_ci95_high": 353.23,
+              "latency_mean_ms": 56.54,
+              "latency_stdev_ms": 22.46,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 56.54,
+              "latency_ci95_high": 56.54,
+              "latency_p50_ms": 52.34,
+              "latency_p90_ms": 90.04,
+              "latency_p95_ms": 98.16,
+              "latency_p99_ms": 102.69,
+              "latency_max_ms": 114.33,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 353.23,
+                "latency_mean_ms": 56.54,
+                "latency_stdev_ms": 22.46,
+                "latency_max_ms": 114.33,
+                "latency_p50_ms": 52.34,
+                "latency_p90_ms": 90.04,
+                "latency_p95_ms": 98.16,
+                "latency_p99_ms": 102.69,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Java": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/1table": {
+            "average": {
+              "requests_per_sec": 9975.97,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 9975.97,
+              "rps_ci95_high": 9975.97,
+              "latency_mean_ms": 2.05,
+              "latency_stdev_ms": 1.13,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 2.05,
+              "latency_ci95_high": 2.05,
+              "latency_p50_ms": 1.95,
+              "latency_p90_ms": 2.32,
+              "latency_p95_ms": 2.46,
+              "latency_p99_ms": 5.47,
+              "latency_max_ms": 29.57,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 9975.97,
+                "latency_mean_ms": 2.05,
+                "latency_stdev_ms": 1.13,
+                "latency_max_ms": 29.57,
+                "latency_p50_ms": 1.95,
+                "latency_p90_ms": 2.32,
+                "latency_p95_ms": 2.46,
+                "latency_p99_ms": 5.47,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/2join": {
+            "average": {
+              "requests_per_sec": 466.95,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 466.95,
+              "rps_ci95_high": 466.95,
+              "latency_mean_ms": 42.79,
+              "latency_stdev_ms": 14.68,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 42.79,
+              "latency_ci95_high": 42.79,
+              "latency_p50_ms": 34.08,
+              "latency_p90_ms": 64.59,
+              "latency_p95_ms": 67.46,
+              "latency_p99_ms": 73.22,
+              "latency_max_ms": 100.27,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 466.95,
+                "latency_mean_ms": 42.79,
+                "latency_stdev_ms": 14.68,
+                "latency_max_ms": 100.27,
+                "latency_p50_ms": 34.08,
+                "latency_p90_ms": 64.59,
+                "latency_p95_ms": 67.46,
+                "latency_p99_ms": 73.22,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/3join": {
+            "average": {
+              "requests_per_sec": 390.99,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 390.99,
+              "rps_ci95_high": 390.99,
+              "latency_mean_ms": 51.1,
+              "latency_stdev_ms": 18.37,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 51.1,
+              "latency_ci95_high": 51.1,
+              "latency_p50_ms": 40.11,
+              "latency_p90_ms": 76.28,
+              "latency_p95_ms": 81.23,
+              "latency_p99_ms": 93.77,
+              "latency_max_ms": 114.02,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 390.99,
+                "latency_mean_ms": 51.1,
+                "latency_stdev_ms": 18.37,
+                "latency_max_ms": 114.02,
+                "latency_p50_ms": 40.11,
+                "latency_p90_ms": 76.28,
+                "latency_p95_ms": 81.23,
+                "latency_p99_ms": 93.77,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          },
+          "/raw/4join": {
+            "average": {
+              "requests_per_sec": 380.42,
+              "rps_stdev": 0.0,
+              "rps_ci95_margin": 0.0,
+              "rps_ci95_low": 380.42,
+              "rps_ci95_high": 380.42,
+              "latency_mean_ms": 52.49,
+              "latency_stdev_ms": 18.51,
+              "latency_ci95_margin": 0.0,
+              "latency_ci95_low": 52.49,
+              "latency_ci95_high": 52.49,
+              "latency_p50_ms": 41.64,
+              "latency_p90_ms": 77.89,
+              "latency_p95_ms": 83.47,
+              "latency_p99_ms": 95.63,
+              "latency_max_ms": 116.64,
+              "errors": 0,
+              "runs_count": 1
+            },
+            "raw_runs": [
+              {
+                "requests_per_sec": 380.42,
+                "latency_mean_ms": 52.49,
+                "latency_stdev_ms": 18.51,
+                "latency_max_ms": 116.64,
+                "latency_p50_ms": 41.64,
+                "latency_p90_ms": 77.89,
+                "latency_p95_ms": 83.47,
+                "latency_p99_ms": 95.63,
+                "errors": 0,
+                "run_index": 1
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

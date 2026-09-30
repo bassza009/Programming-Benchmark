@@ -1,0 +1,462 @@
+{
+  "Python": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/post/1table": {
+            "requests_per_sec": 8822.72,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 8822.72,
+            "rps_ci95_high": 8822.72,
+            "latency_mean_ms": 2.26,
+            "latency_stdev_ms": 0.42,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 2.26,
+            "latency_ci95_high": 2.26,
+            "latency_p50_ms": 2.21,
+            "latency_p90_ms": 2.79,
+            "latency_p95_ms": 2.98,
+            "latency_p99_ms": 3.4,
+            "latency_max_ms": 20.23,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/2table": {
+            "requests_per_sec": 5937.1,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 5937.1,
+            "rps_ci95_high": 5937.1,
+            "latency_mean_ms": 3.46,
+            "latency_stdev_ms": 1.93,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 3.46,
+            "latency_ci95_high": 3.46,
+            "latency_p50_ms": 3.3,
+            "latency_p90_ms": 4.04,
+            "latency_p95_ms": 4.31,
+            "latency_p99_ms": 5.22,
+            "latency_max_ms": 62.41,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/3table": {
+            "requests_per_sec": 5037.29,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 5037.29,
+            "rps_ci95_high": 5037.29,
+            "latency_mean_ms": 4.06,
+            "latency_stdev_ms": 1.84,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 4.06,
+            "latency_ci95_high": 4.06,
+            "latency_p50_ms": 3.87,
+            "latency_p90_ms": 4.59,
+            "latency_p95_ms": 4.83,
+            "latency_p99_ms": 5.71,
+            "latency_max_ms": 66.61,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/4table": {
+            "requests_per_sec": 4543.08,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 4543.08,
+            "rps_ci95_high": 4543.08,
+            "latency_mean_ms": 4.52,
+            "latency_stdev_ms": 2.23,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 4.52,
+            "latency_ci95_high": 4.52,
+            "latency_p50_ms": 4.31,
+            "latency_p90_ms": 4.99,
+            "latency_p95_ms": 5.25,
+            "latency_p99_ms": 6.92,
+            "latency_max_ms": 70.11,
+            "errors": 0,
+            "runs_count": 1
+          }
+        }
+      }
+    }
+  },
+  "Node.js": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/post/1table": {
+            "requests_per_sec": 28300.84,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 28300.84,
+            "rps_ci95_high": 28300.84,
+            "latency_mean_ms": 0.82,
+            "latency_stdev_ms": 2.66,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 0.82,
+            "latency_ci95_high": 0.82,
+            "latency_p50_ms": 0.67,
+            "latency_p90_ms": 0.81,
+            "latency_p95_ms": 0.91,
+            "latency_p99_ms": 1.31,
+            "latency_max_ms": 103.34,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/2table": {
+            "requests_per_sec": 14139.78,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 14139.78,
+            "rps_ci95_high": 14139.78,
+            "latency_mean_ms": 1.44,
+            "latency_stdev_ms": 1.06,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.44,
+            "latency_ci95_high": 1.44,
+            "latency_p50_ms": 1.39,
+            "latency_p90_ms": 1.6,
+            "latency_p95_ms": 1.73,
+            "latency_p99_ms": 2.13,
+            "latency_max_ms": 97.47,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/3table": {
+            "requests_per_sec": 10494.52,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 10494.52,
+            "rps_ci95_high": 10494.52,
+            "latency_mean_ms": 1.93,
+            "latency_stdev_ms": 1.2,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.93,
+            "latency_ci95_high": 1.93,
+            "latency_p50_ms": 1.83,
+            "latency_p90_ms": 2.31,
+            "latency_p95_ms": 2.44,
+            "latency_p99_ms": 2.93,
+            "latency_max_ms": 113.39,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/4table": {
+            "requests_per_sec": 8495.46,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 8495.46,
+            "rps_ci95_high": 8495.46,
+            "latency_mean_ms": 2.38,
+            "latency_stdev_ms": 1.02,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 2.38,
+            "latency_ci95_high": 2.38,
+            "latency_p50_ms": 2.34,
+            "latency_p90_ms": 2.79,
+            "latency_p95_ms": 2.94,
+            "latency_p99_ms": 3.59,
+            "latency_max_ms": 52.61,
+            "errors": 0,
+            "runs_count": 1
+          }
+        }
+      }
+    }
+  },
+  "PHP": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/post/1table": {
+            "requests_per_sec": 27518.46,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 27518.46,
+            "rps_ci95_high": 27518.46,
+            "latency_mean_ms": 0.75,
+            "latency_stdev_ms": 0.89,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 0.75,
+            "latency_ci95_high": 0.75,
+            "latency_p50_ms": 0.7,
+            "latency_p90_ms": 0.87,
+            "latency_p95_ms": 0.96,
+            "latency_p99_ms": 1.41,
+            "latency_max_ms": 58.93,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/2table": {
+            "requests_per_sec": 13092.98,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 13092.98,
+            "rps_ci95_high": 13092.98,
+            "latency_mean_ms": 1.54,
+            "latency_stdev_ms": 1.0,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.54,
+            "latency_ci95_high": 1.54,
+            "latency_p50_ms": 1.41,
+            "latency_p90_ms": 2.22,
+            "latency_p95_ms": 2.69,
+            "latency_p99_ms": 3.08,
+            "latency_max_ms": 66.45,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/3table": {
+            "requests_per_sec": 11181.41,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 11181.41,
+            "rps_ci95_high": 11181.41,
+            "latency_mean_ms": 1.8,
+            "latency_stdev_ms": 0.75,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.8,
+            "latency_ci95_high": 1.8,
+            "latency_p50_ms": 1.79,
+            "latency_p90_ms": 2.04,
+            "latency_p95_ms": 2.1,
+            "latency_p99_ms": 2.29,
+            "latency_max_ms": 61.81,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/4table": {
+            "requests_per_sec": 8773.15,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 8773.15,
+            "rps_ci95_high": 8773.15,
+            "latency_mean_ms": 2.29,
+            "latency_stdev_ms": 1.01,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 2.29,
+            "latency_ci95_high": 2.29,
+            "latency_p50_ms": 2.07,
+            "latency_p90_ms": 3.44,
+            "latency_p95_ms": 4.1,
+            "latency_p99_ms": 4.84,
+            "latency_max_ms": 67.0,
+            "errors": 0,
+            "runs_count": 1
+          }
+        }
+      }
+    }
+  },
+  "Go": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/post/1table": {
+            "requests_per_sec": 31507.46,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 31507.46,
+            "rps_ci95_high": 31507.46,
+            "latency_mean_ms": 0.63,
+            "latency_stdev_ms": 0.27,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 0.63,
+            "latency_ci95_high": 0.63,
+            "latency_p50_ms": 0.58,
+            "latency_p90_ms": 0.8,
+            "latency_p95_ms": 1.02,
+            "latency_p99_ms": 1.52,
+            "latency_max_ms": 15.97,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/2table": {
+            "requests_per_sec": 16085.64,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 16085.64,
+            "rps_ci95_high": 16085.64,
+            "latency_mean_ms": 1.24,
+            "latency_stdev_ms": 0.33,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.24,
+            "latency_ci95_high": 1.24,
+            "latency_p50_ms": 1.16,
+            "latency_p90_ms": 1.5,
+            "latency_p95_ms": 1.93,
+            "latency_p99_ms": 2.68,
+            "latency_max_ms": 8.86,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/3table": {
+            "requests_per_sec": 12708.62,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 12708.62,
+            "rps_ci95_high": 12708.62,
+            "latency_mean_ms": 1.57,
+            "latency_stdev_ms": 0.42,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.57,
+            "latency_ci95_high": 1.57,
+            "latency_p50_ms": 1.45,
+            "latency_p90_ms": 2.07,
+            "latency_p95_ms": 2.52,
+            "latency_p99_ms": 3.29,
+            "latency_max_ms": 6.71,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/4table": {
+            "requests_per_sec": 10592.01,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 10592.01,
+            "rps_ci95_high": 10592.01,
+            "latency_mean_ms": 1.88,
+            "latency_stdev_ms": 0.52,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.88,
+            "latency_ci95_high": 1.88,
+            "latency_p50_ms": 1.71,
+            "latency_p90_ms": 2.64,
+            "latency_p95_ms": 3.12,
+            "latency_p99_ms": 3.72,
+            "latency_max_ms": 6.58,
+            "errors": 0,
+            "runs_count": 1
+          }
+        }
+      }
+    }
+  },
+  "Java": {
+    "Environment": "Docker",
+    "tiers": {
+      "poc": {
+        "config": {
+          "name": "POC / Small internal system",
+          "scenario": "Thesis project, department website prototype",
+          "threads": 2,
+          "connections": 20,
+          "duration": "30s"
+        },
+        "endpoints": {
+          "/raw/post/1table": {
+            "requests_per_sec": 26542.69,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 26542.69,
+            "rps_ci95_high": 26542.69,
+            "latency_mean_ms": 0.78,
+            "latency_stdev_ms": 0.83,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 0.78,
+            "latency_ci95_high": 0.78,
+            "latency_p50_ms": 0.71,
+            "latency_p90_ms": 0.92,
+            "latency_p95_ms": 1.0,
+            "latency_p99_ms": 1.32,
+            "latency_max_ms": 21.03,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/2table": {
+            "requests_per_sec": 15636.68,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 15636.68,
+            "rps_ci95_high": 15636.68,
+            "latency_mean_ms": 1.28,
+            "latency_stdev_ms": 0.61,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.28,
+            "latency_ci95_high": 1.28,
+            "latency_p50_ms": 1.24,
+            "latency_p90_ms": 1.56,
+            "latency_p95_ms": 1.66,
+            "latency_p99_ms": 1.96,
+            "latency_max_ms": 22.07,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/3table": {
+            "requests_per_sec": 13524.88,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 13524.88,
+            "rps_ci95_high": 13524.88,
+            "latency_mean_ms": 1.46,
+            "latency_stdev_ms": 0.29,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.46,
+            "latency_ci95_high": 1.46,
+            "latency_p50_ms": 1.44,
+            "latency_p90_ms": 1.78,
+            "latency_p95_ms": 1.89,
+            "latency_p99_ms": 2.16,
+            "latency_max_ms": 10.25,
+            "errors": 0,
+            "runs_count": 1
+          },
+          "/raw/post/4table": {
+            "requests_per_sec": 12805.47,
+            "rps_stdev": 0.0,
+            "rps_ci95_margin": 0.0,
+            "rps_ci95_low": 12805.47,
+            "rps_ci95_high": 12805.47,
+            "latency_mean_ms": 1.55,
+            "latency_stdev_ms": 0.35,
+            "latency_ci95_margin": 0.0,
+            "latency_ci95_low": 1.55,
+            "latency_ci95_high": 1.55,
+            "latency_p50_ms": 1.5,
+            "latency_p90_ms": 1.88,
+            "latency_p95_ms": 2.01,
+            "latency_p99_ms": 2.35,
+            "latency_max_ms": 16.55,
+            "errors": 0,
+            "runs_count": 1
+          }
+        }
+      }
+    }
+  }
+}

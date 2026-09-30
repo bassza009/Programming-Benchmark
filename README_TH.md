@@ -243,6 +243,22 @@ flowchart TD
 
 > ตรวจสอบผลลัพธ์ฉบับสมบูรณ์พร้อมค่า Mean ± SD, ช่วงความเชื่อมั่น 95% (95% CI) และ Percentiles (p50, p90, p95, p99) ของทุก Endpoint และระดับโหลดได้ที่ [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) และ [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv)
 
+### ชุดทดสอบประสิทธิภาพระดับองค์กรบน PostgreSQL (`pos_web_benchmark`: 11,110,000 แถว)
+
+เพื่อต่อยอดจากการทดสอบพื้นฐานบน MySQL 8.0 ทางโครงการได้จัดทำชุดทดสอบระดับองค์กรขนาดใหญ่บน PostgreSQL 16 ภายใต้โฟลเดอร์ [`pos_web_benchmark/`](pos_web_benchmark/README.md) บรรจุข้อมูลรวม **11,110,000 แถว** (`customer`: 1,000,000, `product`: 100,000, `orders`: 10,000,000, `factory`: 10,000) พร้อมทำ Secondary B-tree Index ครบทุก Foreign Key และฟิลด์ค้นหา
+
+#### สรุปผลการทดสอบระดับ POC (PostgreSQL 16, Docker, -t2 -c20 -d30s):
+| ภาษา | เฟรมเวิร์ก | GET 1table (Req/s) | GET 4join (Req/s) | POST 1table (Req/s) | POST 4table (Req/s) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PHP** | Swoole | **22,522.87** (0.90ms) | 2,632.64 (7.61ms) | 27,518.46 (0.75ms) | 8,773.15 (2.29ms) |
+| **Node.js** | Fastify | **9,837.01** (2.13ms) | 2,032.21 (9.86ms) | 28,300.84 (0.82ms) | 8,495.46 (2.38ms) |
+| **Java** | Spring Boot | **9,782.76** (2.09ms) | **2,861.28** (6.99ms) | 26,542.69 (0.78ms) | **12,805.47** (1.55ms) |
+| **Go** | Fiber | 4,783.00 (4.15ms) | **3,085.37** (6.48ms) | **31,507.46** (0.63ms) | 10,592.01 (1.88ms) |
+| **Python** | FastAPI | 1,543.17 (12.95ms) | 1,305.66 (15.31ms) | 8,822.72 (2.26ms) | 4,543.08 (4.52ms) |
+
+#### ข้อค้นพบสำคัญ: อัตราเร่งของดัชนีบนข้อมูล 10,000,000 แถว:
+การสร้าง Secondary Index บนตาราง `orders` (10 ล้านแถว) ช่วยเพิ่มอัตราเร็ว Throughput ขึ้นอย่างมหาศาลถึง **13.0× – 32.6× เท่า** สำหรับการ JOIN ข้อมูล (เช่น PHP 2join เร็วขึ้นจาก 399.17 Req/s เป็น 13,006.40 Req/s ลดค่าความหน่วง Latency จาก 50.59ms เหลือเพียง 1.55ms) ตรวจสอบเอกสารฉบับเต็มและรายงาน Excel: [`pos_web_benchmark/`](pos_web_benchmark/README.md)
+
 ---
 
 ## 8. วิธีการรันทดสอบชุด Benchmark

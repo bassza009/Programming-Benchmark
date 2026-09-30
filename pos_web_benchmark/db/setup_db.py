@@ -21,20 +21,28 @@ SEED_SQL = os.path.join(SCRIPT_DIR, "seed.sql")
 INDEXES_SQL = os.path.join(SCRIPT_DIR, "add_indexes.sql")
 DROP_INDEXES_SQL = os.path.join(SCRIPT_DIR, "drop_indexes.sql")
 
+import shutil
+
 def run_psql_file(filepath, host, port, user, password, dbname):
-    env = os.environ.copy()
-    env["PGPASSWORD"] = password
-    cmd = [
-        "psql",
-        "-h", host,
-        "-p", str(port),
-        "-U", user,
-        "-d", dbname,
-        "-v", "ON_ERROR_STOP=1",
-        "-f", filepath
-    ]
     t0 = time.time()
-    res = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    if shutil.which("psql"):
+        env = os.environ.copy()
+        env["PGPASSWORD"] = password
+        cmd = [
+            "psql",
+            "-h", host,
+            "-p", str(port),
+            "-U", user,
+            "-d", dbname,
+            "-v", "ON_ERROR_STOP=1",
+            "-f", filepath
+        ]
+        res = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    else:
+        with open(filepath, "r") as f:
+            res = subprocess.run([
+                "docker", "exec", "-i", "benchmark-postgres", "psql", "-U", user, "-d", dbname, "-v", "ON_ERROR_STOP=1"
+            ], stdin=f, capture_output=True, text=True)
     elapsed = time.time() - t0
     if res.returncode != 0:
         print(f"[!] Error executing {os.path.basename(filepath)}:\n{res.stderr}", file=sys.stderr)
@@ -42,18 +50,23 @@ def run_psql_file(filepath, host, port, user, password, dbname):
     return True, elapsed
 
 def run_psql_query(query, host, port, user, password, dbname):
-    env = os.environ.copy()
-    env["PGPASSWORD"] = password
-    cmd = [
-        "psql",
-        "-h", host,
-        "-p", str(port),
-        "-U", user,
-        "-d", dbname,
-        "-t", "-A",
-        "-c", query
-    ]
-    res = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    if shutil.which("psql"):
+        env = os.environ.copy()
+        env["PGPASSWORD"] = password
+        cmd = [
+            "psql",
+            "-h", host,
+            "-p", str(port),
+            "-U", user,
+            "-d", dbname,
+            "-t", "-A",
+            "-c", query
+        ]
+        res = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    else:
+        res = subprocess.run([
+            "docker", "exec", "-i", "benchmark-postgres", "psql", "-U", user, "-d", dbname, "-t", "-A", "-c", query
+        ], capture_output=True, text=True)
     return res.stdout.strip(), res.returncode
 
 def ensure_database(host, port, user, password, dbname):

@@ -35,19 +35,24 @@ def run_cmd(cmd, cwd=None):
         return False
     return True
 
-def run_pg_query(sql):
-    env = os.environ.copy()
-    env["PGPASSWORD"] = PG_PASS
-    cmd = [
-        "psql",
-        "-h", PG_HOST,
-        "-p", str(PG_PORT),
-        "-U", PG_USER,
-        "-d", PG_DB,
-        "-t", "-A",
-        "-c", sql
-    ]
-    return subprocess.run(cmd, env=env, capture_output=True, text=True)
+import shutil
+
+def run_pg_sql_file(sql_file):
+    if not os.path.exists(sql_file):
+        return False
+    if shutil.which("psql"):
+        env = os.environ.copy()
+        env["PGPASSWORD"] = PG_PASS
+        res = subprocess.run([
+            "psql", "-h", PG_HOST, "-p", str(PG_PORT), "-U", PG_USER, "-d", PG_DB, "-f", sql_file
+        ], env=env, capture_output=True, text=True)
+        return res.returncode == 0
+    else:
+        with open(sql_file, "r") as f:
+            res = subprocess.run([
+                "docker", "exec", "-i", "benchmark-postgres", "psql", "-U", PG_USER, "-d", PG_DB
+            ], stdin=f, capture_output=True, text=True)
+            return res.returncode == 0
 
 def cleanup_environment():
     """Ensure no leftover benchmark processes or containers occupy ports 8001-8005."""
@@ -70,24 +75,14 @@ def drop_secondary_indexes():
     """Drop secondary indexes for get_no_index benchmarks."""
     print("[AUTO-RUNNER] Dropping secondary indexes for GET get_no_index...", flush=True)
     drop_sql_file = os.path.join(DB_DIR, "drop_indexes.sql")
-    if os.path.exists(drop_sql_file):
-        env = os.environ.copy()
-        env["PGPASSWORD"] = PG_PASS
-        subprocess.run([
-            "psql", "-h", PG_HOST, "-p", str(PG_PORT), "-U", PG_USER, "-d", PG_DB, "-f", drop_sql_file
-        ], env=env, capture_output=True)
+    run_pg_sql_file(drop_sql_file)
     print("[AUTO-RUNNER] Secondary indexes dropped.")
 
 def add_secondary_indexes():
     """Apply secondary indexes for get_with_index benchmarks."""
     print("[AUTO-RUNNER] Applying secondary indexes for GET get_with_index...", flush=True)
     add_sql_file = os.path.join(DB_DIR, "add_indexes.sql")
-    if os.path.exists(add_sql_file):
-        env = os.environ.copy()
-        env["PGPASSWORD"] = PG_PASS
-        subprocess.run([
-            "psql", "-h", PG_HOST, "-p", str(PG_PORT), "-U", PG_USER, "-d", PG_DB, "-f", add_sql_file
-        ], env=env, capture_output=True)
+    run_pg_sql_file(add_sql_file)
     print("[AUTO-RUNNER] Secondary indexes created and VACUUM ANALYZE executed.")
 
 def main():
@@ -111,7 +106,7 @@ def main():
     parser.add_argument("--skip-bme", action="store_true", help="Skip Bare-Metal benchmarks")
     args = parser.parse_args()
 
-    runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 5)
+    runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 1)
     common_args = ["--tier", args.tier, "--runs", str(runs_count)]
     if args.lang:
         common_args.extend(["--lang", args.lang])
@@ -119,6 +114,11 @@ def main():
         common_args.extend(["--framework", args.framework])
     if args.no_warmup:
         common_args.append("--no-warmup")
+
+    bme_available = bool(shutil.which("go") and shutil.which("php") and shutil.which("java"))
+    if not bme_available and not args.skip_bme:
+        print("[AUTO-RUNNER] Note: Host runtimes (go, php, java) not found. Auto-skipping Bare-Metal (BME) mode.", flush=True)
+        args.skip_bme = True
 
     print("=================================================================")
     print(" PROGRAMMING BENCHMARK: POSTGRESQL AUTOMATED SUITE RUNNER")
@@ -179,7 +179,18 @@ def main():
     if os.path.exists(os.path.join(results_dir, "export_csv.py")):
         run_cmd(["python3", "export_csv.py"], cwd=results_dir)
     if os.path.exists(os.path.join(results_dir, "export_excel.py")):
-        run_cmd(["python3", "export_excel.py"], cwd=results_dir)
+        try:
+            import openpyxl  # noqa
+            run_cmd(["python3", "export_excel.py"], cwd=results_dir)
+        except ImportError:
+            print("[AUTO-RUNNER] Exporting Excel via python container...", flush=True)
+            subprocess.run([
+                "docker", "run", "--rm",
+                "-v", f"{results_dir}:/results",
+                "-w", "/results",
+                "python:3.11-slim",
+                "sh", "-c", "pip install -q openpyxl && python3 export_excel.py"
+            ])
 
     print("\n=======================================================")
     print(" POSTGRESQL BENCHMARK PIPELINE EXECUTION COMPLETED!")

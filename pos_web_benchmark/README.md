@@ -184,3 +184,62 @@ python3 export_excel.py
 cd pos_web_benchmark
 python3 compare_results.py results/get_with_index_dkr.json
 ```
+
+---
+
+## Benchmark Results: PostgreSQL 11.11M Dataset (POC Tier)
+
+### 1. Executive Performance Summary
+
+All benchmarks executed with **11,110,000 total records** in PostgreSQL 16 under POC concurrency (`-t2 -c20 -d30s`) in Docker containerized environment.
+
+| Language | Framework | GET 1table (Req/s) | GET 4join (Req/s) | POST 1table (Req/s) | POST 4table (Req/s) | Error Count |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **PHP** | Swoole | **22,522.87** (0.90ms) | 2,632.64 (7.61ms) | 27,518.46 (0.75ms) | 8,773.15 (2.29ms) | **0** |
+| **Node.js** | Fastify | **9,837.01** (2.13ms) | 2,032.21 (9.86ms) | 28,300.84 (0.82ms) | 8,495.46 (2.38ms) | **0** |
+| **Java** | Spring Boot | **9,782.76** (2.09ms) | **2,861.28** (6.99ms) | 26,542.69 (0.78ms) | **12,805.47** (1.55ms) | **0** |
+| **Go** | Fiber | 4,783.00 (4.15ms) | **3,085.37** (6.48ms) | **31,507.46** (0.63ms) | 10,592.01 (1.88ms) | **0** |
+| **Python** | FastAPI | 1,543.17 (12.95ms) | 1,305.66 (15.31ms) | 8,822.72 (2.26ms) | 4,543.08 (4.52ms) | **0** |
+
+---
+
+### 2. The Impact of Secondary Indexes on 10,000,000 Records
+
+Secondary B-tree indexes were evaluated on the high-volume `orders` table (10M rows) joining `customer` (1M rows), `product` (100k rows), and `factory` (10k rows).
+
+| Endpoint | Language | Without Index (Req/s) | With Index (Req/s) | Speedup Ratio ($\times$) | Latency Reduction |
+| :--- | :--- | :--- | :--- | :---: | :--- |
+| **`/raw/2join`** | **PHP** | 399.17 | **13,006.40** | **32.6×** | 50.59ms $\rightarrow$ **1.55ms** |
+| **`/raw/2join`** | **Java** | 466.95 | **9,553.07** | **20.5×** | 42.79ms $\rightarrow$ **2.09ms** |
+| **`/raw/2join`** | **Node.js** | 378.83 | **8,682.81** | **22.9×** | 52.72ms $\rightarrow$ **2.32ms** |
+| **`/raw/2join`** | **Go** | 436.17 | **5,659.89** | **13.0×** | 45.81ms $\rightarrow$ **3.51ms** |
+| **`/raw/2join`** | **Python** | 362.53 | **1,508.03** | **4.2×** | 55.09ms $\rightarrow$ **13.26ms** |
+| **`/raw/3join`** | **Java** | 390.99 | **3,580.99** | **9.2×** | 51.10ms $\rightarrow$ **5.58ms** |
+| **`/raw/3join`** | **Go** | 379.47 | **3,577.97** | **9.4×** | 52.64ms $\rightarrow$ **5.59ms** |
+| **`/raw/4join`** | **Go** | 353.23 | **3,085.37** | **8.7×** | 56.54ms $\rightarrow$ **6.48ms** |
+| **`/raw/4join`** | **Java** | 380.42 | **2,861.28** | **7.5×** | 52.49ms $\rightarrow$ **6.99ms** |
+
+*Without foreign key indexes, PostgreSQL performs sequential disk table scans across 10M rows, collapsing throughput to ~350-460 Req/s. With secondary B-tree indexes, execution leverages Index Scans and Memoize nodes, reducing query latency from ~50ms down to 1.5-6.5ms.*
+
+---
+
+### 3. Write / Transactional Insert Rankings (POST)
+
+Atomic relational inserts and multi-table transactions under PostgreSQL 16:
+
+- **Single Table Insert (`/raw/post/1table`)**:
+  1. **Go Fiber**: 31,507.46 Req/s (0.63ms latency, $p_{99}$ 1.52ms)
+  2. **Node.js Fastify**: 28,300.84 Req/s (0.82ms latency, $p_{99}$ 1.31ms)
+  3. **PHP Swoole**: 27,518.46 Req/s (0.75ms latency, $p_{99}$ 1.41ms)
+  4. **Java Spring Boot**: 26,542.69 Req/s (0.78ms latency, $p_{99}$ 1.32ms)
+  5. **Python FastAPI**: 8,822.72 Req/s (2.26ms latency, $p_{99}$ 3.40ms)
+
+- **4-Table Atomic Transaction (`/raw/post/4table`)**:
+  1. **Java Spring Boot**: 12,805.47 Req/s (1.55ms latency, $p_{99}$ 2.35ms)
+  2. **Go Fiber**: 10,592.01 Req/s (1.88ms latency, $p_{99}$ 3.72ms)
+  3. **PHP Swoole**: 8,773.15 Req/s (2.29ms latency, $p_{99}$ 4.84ms)
+  4. **Node.js Fastify**: 8,495.46 Req/s (2.38ms latency, $p_{99}$ 3.59ms)
+  5. **Python FastAPI**: 4,543.08 Req/s (4.52ms latency, $p_{99}$ 6.92ms)
+
+> All detailed statistical matrices, raw JSON runs, CSV exports, and the styled Excel report are preserved in [`results/`](results/).
+

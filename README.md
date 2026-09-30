@@ -239,6 +239,22 @@ Tested under two database states:
 
 > For complete tabular results with Mean ± SD, 95% Confidence Intervals, and p50/p90/p95/p99 percentiles across all endpoints and tiers, see [main_web_benchmark/results/SUMMARY.md](main_web_benchmark/results/SUMMARY.md) and [main_web_benchmark/results/SUMMARY.csv](main_web_benchmark/results/SUMMARY.csv).
 
+### PostgreSQL Enterprise Scale Benchmark (`pos_web_benchmark`: 11,110,000 Records)
+
+To complement the MySQL baseline, an enterprise-scale PostgreSQL 16 benchmark suite has been introduced in [`pos_web_benchmark/`](pos_web_benchmark/README.md) featuring **11,110,000 total records** (`customer`: 1,000,000, `product`: 100,000, `orders`: 10,000,000, `factory`: 10,000) with secondary B-tree indexes across all foreign keys and lookup attributes.
+
+#### POC Tier Summary (PostgreSQL 16, Docker, -t2 -c20 -d30s):
+| Language | Framework | GET 1table (Req/s) | GET 4join (Req/s) | POST 1table (Req/s) | POST 4table (Req/s) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PHP** | Swoole | **22,522.87** (0.90ms) | 2,632.64 (7.61ms) | 27,518.46 (0.75ms) | 8,773.15 (2.29ms) |
+| **Node.js** | Fastify | **9,837.01** (2.13ms) | 2,032.21 (9.86ms) | 28,300.84 (0.82ms) | 8,495.46 (2.38ms) |
+| **Java** | Spring Boot | **9,782.76** (2.09ms) | **2,861.28** (6.99ms) | 26,542.69 (0.78ms) | **12,805.47** (1.55ms) |
+| **Go** | Fiber | 4,783.00 (4.15ms) | **3,085.37** (6.48ms) | **31,507.46** (0.63ms) | 10,592.01 (1.88ms) |
+| **Python** | FastAPI | 1,543.17 (12.95ms) | 1,305.66 (15.31ms) | 8,822.72 (2.26ms) | 4,543.08 (4.52ms) |
+
+#### Key Finding: Index Speedup on 10,000,000 Rows:
+Secondary indexes on `orders` (10M rows) produce a **13.0× to 32.6× speedup** on relational joins (e.g., PHP 2join surges from 399.17 Req/s up to 13,006.40 Req/s, reducing latency from 50.59ms to 1.55ms). Full documentation and Excel report: [`pos_web_benchmark/`](pos_web_benchmark/README.md).
+
 ---
 
 ## 8. How to Run the Benchmarks
