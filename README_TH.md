@@ -7,11 +7,11 @@
 
 ## 1. บทนำและความสำคัญของปัญหา (Background & Significance)
 
-ในปัจจุบัน การประเมินประสิทธิภาพของภาษาโปรแกรมมีการศึกษาอย่างหลากหลาย ทว่างานวิจัยส่วนใหญ่มักมุ่งเน้นไปที่มิติเดียว เช่น การวัดความเร็วในการประมวลผลอัลกอริทึมพื้นฐาน หรือการใช้พลังงานในระดับตัวภาษาโดยตรง [[1]](#1-n-wickramage-2005)[[2]](#2-l-prechelt-2000)[[6]](#6-m-amaral-et-al-2015) 
+ในปัจจุบัน การประเมินประสิทธิภาพของภาษาโปรแกรมมีการศึกษาอย่างหลากหลาย ทว่างานวิจัยส่วนใหญ่มักมุ่งเน้นไปที่มิติเดียว เช่น การวัดความเร็วในการประมวลผลอัลกอริทึมพื้นฐาน หรือการใช้พลังงานในระดับตัวภาษาโดยตรง [[1]](#ref-1)[[2]](#ref-2)[[14]](#ref-14)[[24]](#ref-24)[[25]](#ref-25) 
 
-อย่างไรก็ตาม ในการพัฒนาซอฟต์แวร์ระดับองค์กรยุคใหม่ ระบบไม่ได้ทำงานอย่างเป็นเอกเทศ แต่ต้องอยู่ภายใต้โครงสร้างพื้นฐานที่มีความซับซ้อน โดยเฉพาะการเปลี่ยนผ่านสู่สถาปัตยกรรมแบบ Cloud-Native ที่ต้องทำงานร่วมกับเทคโนโลยีคอนเทนเนอร์ (Containerization เช่น Docker) และระบบจัดการฐานข้อมูลเชิงสัมพันธ์ (Relational Database Management System - RDBMS เช่น MySQL)
+อย่างไรก็ตาม ในการพัฒนาซอฟต์แวร์ระดับองค์กรยุคใหม่ ระบบไม่ได้ทำงานอย่างเป็นเอกเทศ แต่ต้องอยู่ภายใต้โครงสร้างพื้นฐานที่มีความซับซ้อน โดยเฉพาะการเปลี่ยนผ่านสู่สถาปัตยกรรมแบบ Cloud-Native ที่ต้องทำงานร่วมกับเทคโนโลยีคอนเทนเนอร์ (Containerization เช่น Docker) และระบบจัดการฐานข้อมูลเชิงสัมพันธ์ (Relational Database Management System - RDBMS เช่น MySQL และ PostgreSQL)
 
-แม้จะมีงานวิจัยที่เปรียบเทียบประสิทธิภาพระหว่างสถาปัตยกรรมแบบโมโนลิทิก (Monolithic Architecture) [[3]](#3-วิลาวัณย์-และคณะ-2559)[[5]](#5-m-villamizar-et-al-2017)[[12]](#12-r-lauwren-et-al-2025) และไมโครเซอร์วิส (Microservices Architecture) ร่วมกับภาษาและระบบฐานข้อมูลที่หลากหลาย [[4]](#4-r-morabito-et-al-2015)[[7]](#7-j-shetty-et-al-2020) แต่การศึกษาที่ผ่านมายังไม่ครอบคลุมและตอบคำถามได้อย่างชัดเจนว่า เมื่อภาษาโปรแกรมและเว็บเฟรมเวิร์กทำงานอยู่ภายในคอนเทนเนอร์ พร้อมทั้งเชื่อมต่อกับฐานข้อมูลภายใต้สภาวะโหลดสูง ประสิทธิภาพการทำงานจะลดทอนลงมากน้อยเพียงใด
+งานวิจัยที่ผ่านมาได้ยืนยันแล้วว่าคอนเทนเนอร์มีภาระงานส่วนเกินด้าน CPU และหน่วยความจำต่ำมาก แต่มีภาระงานส่วนเกินด้านดิสก์และเครือข่าย (NAT/Bridge) ที่ชัดเจน [[3]](#ref-3)[[4]](#ref-4)[[5]](#ref-5)[[6]](#ref-6)[[19]](#ref-19)[[20]](#ref-20) และมีงานที่เปรียบเทียบสถาปัตยกรรมแบบโมโนลิทิก (Monolithic Architecture) กับไมโครเซอร์วิส (Microservices Architecture) [[7]](#ref-7)[[8]](#ref-8)[[9]](#ref-9)[[31]](#ref-31) ภาษา Backend [[10]](#ref-10)[[11]](#ref-11)[[12]](#ref-12)[[13]](#ref-13) และระบบฐานข้อมูล [[15]](#ref-15)[[16]](#ref-16)[[17]](#ref-17) แต่ส่วนใหญ่ใช้ Microbenchmark เชิงสังเคราะห์ ทดสอบรอบเดียว หรือไม่มีฐานข้อมูล การศึกษาที่ผ่านมาจึงยังไม่ครอบคลุมและตอบคำถามได้อย่างชัดเจนว่า เมื่อภาษาโปรแกรมและเว็บเฟรมเวิร์กทำงานอยู่ภายในคอนเทนเนอร์ พร้อมทั้งเชื่อมต่อกับฐานข้อมูลภายใต้สภาวะโหลดสูง ประสิทธิภาพการทำงานแบบครบทั้งเส้นทาง (HTTP → Runtime → RDBMS) จะลดทอนลงมากน้อยเพียงใด
 
 ด้วยเหตุนี้ โครงการวิจัยนี้จึงนำเสนอการประเมินและเปรียบเทียบประสิทธิภาพเชิงลึกภายใต้สภาพแวดล้อมการทำงานจริง เพื่อเป็นแนวทางให้นักพัฒนาและสถาปนิกซอฟต์แวร์สามารถเลือกชุดเทคโนโลยี (Technology Stack) และปรับแต่งประสิทธิภาพ (Optimization) ได้อย่างเหมาะสมและคุ้มค่าที่สุด
 
@@ -19,7 +19,7 @@
 
 ## 2. วัตถุประสงค์ของการวิจัย (Research Objectives)
 
-1. **ประเมินภาระงานส่วนเกินของสถาปัตยกรรมและคอนเทนเนอร์ (Architecture & Containerization Overhead)**: เพื่อประเมินและเปรียบเทียบประสิทธิภาพการทำงานและภาระงานส่วนเกิน (Overhead) ระหว่างสถาปัตยกรรมแบบโมโนลิทิกและไมโครเซอร์วิส ภายใต้สภาพแวดล้อมการทำงานแบบดั้งเดิม (**Bare Metal**) และแบบคอนเทนเนอร์ (**Docker Containerization**)
+1. **ประเมินภาระงานส่วนเกินของคอนเทนเนอร์ (Containerization Overhead)**: เพื่อประเมินและเปรียบเทียบประสิทธิภาพการทำงานและภาระงานส่วนเกิน (Overhead) ระหว่างการทำงานบนเครื่องจริง (**Bare Metal**) และแบบคอนเทนเนอร์ (**Docker Containerization**) ในระดับแอปพลิเคชันเว็บที่เชื่อมต่อฐานข้อมูลจริง (การเปรียบเทียบ Monolithic กับ Microservices อ้างอิงจากงานวิจัยที่มีอยู่แล้ว)
 2. **วิเคราะห์สมรรถนะของภาษาและเว็บเฟรมเวิร์ก (Comparative Runtime & Framework Analysis)**: เพื่อวิเคราะห์และเปรียบเทียบสมรรถนะของภาษาและเว็บเฟรมเวิร์กที่แตกต่างกัน (**Python / FastAPI**, **Node.js / Fastify**, **PHP / Swoole**, **Go / Fiber** และ **Java / Spring Boot**) ในการรองรับภาระงานฐานข้อมูลทั้งการอ่าน (`GET` ตารางเดี่ยวและ `JOIN` 2–4 ตาราง) และการเขียน (`POST` Transactions หลายตาราง) ภายใต้ระดับความซับซ้อนของข้อมูลที่หลากหลาย
 3. **ศึกษาผลกระทบของการจัดสรรทรัพยากรภายใต้สภาวะโหลดสูง (High-Concurrency Saturation & Resource Limits)**: เพื่อศึกษาผลกระทบของการจัดสรรทรัพยากรและการจำลองระบบ (Virtualization / Container Overhead) รวมถึงการทำ Index ฐานข้อมูล ที่มีต่อเวลาในการตอบสนอง (Response Time), ปริมาณงานที่รองรับได้ (Throughput) และความเสถียรของระบบภายใต้สภาวะโหลดสูง (จนถึง 10,000 Concurrent Connections)
 
@@ -27,26 +27,48 @@
 
 ## 3. เอกสารและงานวิจัยที่เกี่ยวข้อง และช่องว่างของงานวิจัย (Literature Review & Research Gap)
 
+> เอกสารอ้างอิงทั้งหมดได้รับการตรวจสอบกับฐานข้อมูลของสำนักพิมพ์และ Crossref แล้ว (30 ก.ย. 2569) รายการเดิมที่ตรวจสอบไม่พบว่ามีอยู่จริง (บทความวารสารภาษาไทยเรื่อง Microservices กับ Containers, วิทยานิพนธ์ มหาวิทยาลัยบูรพา และบทความใน Jurnal RESTI) ถูกนำออก และแก้ไขรายการที่อ้างอิงไม่ตรง (Wickramage, Villamizar, Amaral, Shetty, Lauwren, Effendy, The Benchmarker)
+
 ### สรุปผลงานวิจัยที่เกี่ยวข้อง
 
 | เอกสาร / งานวิจัย | ประเด็นที่ศึกษา | ข้อค้นพบสำคัญ |
 | :--- | :--- | :--- |
-| **Narada Wickramage (2005)** [[1]](#1-n-wickramage-2005) | Benchmark สำหรับ Web Service Frameworks ในสถานการณ์จริง | ความซับซ้อนของข้อความ SOAP และขนาดข้อมูล (Payload size) มีผลอย่างยิ่งต่อ Response Time |
-| **Prechelt Lutz (2000)** [[2]](#2-l-prechelt-2000) | เปรียบเทียบเชิงประจักษ์ 7 ภาษาโปรแกรม (Scripting vs Non-scripting) | ความแตกต่างของทักษะผู้พัฒนา (Inter-programmer variability) ส่งผลต่อประสิทธิภาพมากกว่าตัวภาษาในหลายกรณี |
-| **วิลาวัณย์ และคณะ (2559)** [[3]](#3-วิลาวัณย์-และคณะ-2559) | สถาปัตยกรรม Microservices กับเทคโนโลยี Containers (Docker) | คอนเทนเนอร์แก้ปัญหา Dependency Conflict ได้ดีเยี่ยม แต่มี Overhead การจัดการทรัพยากรเมื่อรันบริการจำนวนมากบนฮาร์ดแวร์จำกัด |
-| **Morabito et al. (2015)** [[4]](#4-r-morabito-et-al-2015) | เปรียบเทียบ Hypervisors vs Lightweight Virtualization (Docker vs Bare Metal vs VM) | Docker มีประสิทธิภาพ CPU/RAM ใกล้เคียง Bare Metal มาก แต่พบความแตกต่างด้าน Network I/O อย่างชัดเจน |
-| **Villamizar et al. (2017)** [[5]](#5-m-villamizar-et-al-2017) | ประเมิน Monolithic vs Microservices บน Cloud | Monolithic ให้ Response Time ที่ดีกว่าในสภาวะปกติ แต่ Microservices เหมาะสมและคุ้มค่ากว่าเมื่อต้องการ Scale บน Cloud |
-| **Amaral et al. (2015)** [[6]](#6-m-amaral-et-al-2015) | ประเมิน Latency ในระบบ Microservices ผ่าน Container | ความหน่วงจากการสื่อสารผ่าน HTTP/REST และ JSON Serialization จะทวีคูณเพิ่มขึ้นตามจำนวนชั้นของบริการที่เรียกต่อกัน (Service Chaining) |
-| **Shetty et al. (2020)** [[7]](#7-j-shetty-et-al-2020) | การทดสอบเชิงประจักษ์ Docker Container vs Bare Metal | ภาระงานที่เน้น I/O ดิสก์หนัก คอนเทนเนอร์มีประสิทธิภาพลดลง 5–10% เมื่อเทียบกับการรันบนระบบจริง |
-| **วรเทพ อหันตริก (2566)** [[8]](#8-วรเทพ-อหันตริก-2566) | การขยายตัวอัตโนมัติของพอด (Autoscaling) บน Docker และ Kubernetes | การบริหารจัดการทรัพยากร CPU และ Thread เป็นปัจจัยชี้ขาดความเร็วในการตอบสนองภายใต้โหลดผู้ใช้งานสูง |
-| **Ruslan (2023)** [[9]](#9-r-ruslan-2023) | Web Frameworks Benchmark (Throughput & Memory) | Go และ Java (Vert.x) ให้ Throughput สูงสุด แต่มีการใช้หน่วยความจำที่ต่างกันอย่างมีนัยสำคัญในสภาวะทรัพยากรจำกัด |
-| **Faried Effendy (2021)** [[10]](#10-f-effendy-2021) | เปรียบเทียบ Web Frameworks (Java, Python, PHP) ตาม Response Time & Throughput | ยืนยันความสำคัญในการเลือกรันไทม์ภาษาให้สอดคล้องกับพฤติกรรมของภาระงานและทรัพยากรระบบ |
-| **The-Benchmarker (2024)** [[11]](#11-the-benchmarker-2024) | Cross-layer Benchmark บนคอนเทนเนอร์ร่วมกับ MySQL/PostgreSQL | ประสิทธิภาพของ Database Driver ในแต่ละภาษามีผลต่อ Latency รวมมากกว่าความเร็วของตัวภาษาเองในงาน CRUD |
-| **Lauwren et al. (2025)** [[12]](#12-r-lauwren-et-al-2025) | ประสิทธิภาพ Microservice vs Monolith ในระบบ Transaction | Monolithic ให้ค่าเฉลี่ยความหน่วงดีกว่าในเกือบทุกกรณี แต่ Microservices มี Success Rate สูงกว่าเมื่อเผชิญ High Load ระดับขีดสุด |
-| **TechEmpower (2024)** [[13]](#13-techempower-2024) | ชุดทดสอบมาตรฐานอุตสาหกรรมสำหรับเว็บเฟรมเวิร์ก | ประเมินหลายร้อยเฟรมเวิร์กในมิติ Single-query, Multi-queries, Database Updates และ Fortunes |
+| **Wickramage & Weerawarana (2005)** [[1]](#ref-1) | Benchmark สำหรับ SOAP Web Service Frameworks (IEEE SCC'05) | ความซับซ้อนของข้อความ SOAP และขนาด Payload เป็นปัจจัยหลักของเวลาตอบสนอง |
+| **Prechelt (2000)** [[2]](#ref-2) | โปรแกรมเดียวกัน 80 ชุดใน 7 ภาษา | Scripting ใช้เวลาเขียนและโค้ดราวครึ่งหนึ่งแต่ใช้หน่วยความจำ ~2 เท่าของ C/C++ ความแปรปรวนระหว่างผู้เขียนใกล้เคียงความแปรปรวนระหว่างภาษา |
+| **Morabito et al. (2015)** [[3]](#ref-3) | KVM vs LXC vs Docker vs OSv vs Native ด้วย Microbenchmark ทำซ้ำ 15 รอบ | CPU ของ Docker ≈ Native, TCP_RR −19.4% (KVM −47.4%), Random Write −14.7% (KVM −50.3%) ไม่มีภาระงานระดับแอปพลิเคชัน |
+| **Felter et al. (2015)** [[4]](#ref-4) | VM vs Linux Containers (IBM) | Docker ≥ KVM เกือบทุกกรณี ภาระงานส่วนเกินอยู่ที่ I/O และเครือข่าย NAT ของ Docker |
+| **Shetty et al. (2017)** [[5]](#ref-5) | Docker vs OpenStack VM vs Bare Metal (Phoronix, Apache Bench) | VM ช้ากว่า Bare Metal 21–30%, IOzone Write: VM −54%, Docker −13% ไม่มีฐานข้อมูลและไม่รายงาน CI |
+| **Amaral et al. (2015)** [[6]](#ref-6) | Microservices บนคอนเทนเนอร์ (Sysbench, Netperf) | ไม่มี CPU Overhead ที่มีนัยสำคัญ เครือข่ายแบบ Bridge/OVS ให้ Throughput ~½ และ Latency ~2 เท่าของเครือข่ายโฮสต์ |
+| **Wen et al. (2023)**, **Baumgartner et al. (2023)** [[19]](#ref-19)[[20]](#ref-20) | งานล่าสุด Bare Metal vs VM vs Container | คอนเทนเนอร์สูญเสีย CPU/หน่วยความจำ/เครือข่าย ~0–5% และดิสก์ ~5–15% |
+| **Villamizar et al. (2015)** [[7]](#ref-7) | Monolith vs Microservices บน AWS (10CCC) | Microservices ลดต้นทุนโครงสร้างพื้นฐาน แลกกับเวลาตอบสนองที่สูงขึ้นเล็กน้อย |
+| **Blinowski et al. (2022)** [[8]](#ref-8) | Monolith vs Microservices (Java, C#) บนเครื่องเดียวและ Azure | บนเครื่องเดียว Monolith ดีกว่า และ Vertical Scaling คุ้มค่ากว่า |
+| **Lauwren & Setianto (2022)** [[9]](#ref-9) | Go Monolith (Echo) vs Microservices (Go-kit + NGINX) กับ PostgreSQL, JMeter 100–5,000 เธรด | Monolith ความหน่วงเฉลี่ยต่ำกว่าเล็กน้อย (7,205 vs 7,277 ms) Microservices Success Rate สูงกว่าเล็กน้อย (63.66% vs 61.44%) ทดสอบรอบเดียวไม่มีสถิติ |
+| **Dirgantara et al. (2024)** [[31]](#ref-31) | Monolith vs Microservices บน Docker | ผลกลับด้านขึ้นกับการใช้ Docker แสดงว่าผลของคอนเทนเนอร์และสถาปัตยกรรมปะปนกัน |
+| **Effendy et al. (2021)** [[10]](#ref-10) | Node.js/Go × MySQL/MongoDB | Go+MySQL ใช้ CPU/หน่วยความจำดีที่สุด Node.js+MySQL เวลาตอบสนองดีที่สุด |
+| **Lei et al. (2014)**, **Choma et al. (2023)**, **Azzahidi et al. (2025)** [[11]](#ref-11)[[12]](#ref-12)[[13]](#ref-13) | เปรียบเทียบภาษา/เฟรมเวิร์ก Backend | Node.js เด่นในงาน I/O, Spring Boot เร็วที่สุดในงานล่าสุด ผลขึ้นกับเฟรมเวิร์กไม่ใช่แค่ภาษา |
+| **Ala'anzy et al. (2026)** [[14]](#ref-14) | Throughput/Latency ของเฟรมเวิร์กภายใต้ทรัพยากรจำกัด | Native Binary ดีกว่า Managed Runtime แต่ใช้ JSON คงที่ ไม่มีฐานข้อมูล |
+| **Salunke & Ouda (2024)**, **Truskowski et al. (2020)**, **Taipalus (2024)** [[15]](#ref-15)[[16]](#ref-16)[[17]](#ref-17) | MySQL vs PostgreSQL และการทบทวนวรรณกรรมงานเปรียบเทียบ DBMS | PostgreSQL อ่านเร็วกว่าและเสถียรกว่าเมื่ออ่าน-เขียนพร้อมกัน งานเปรียบเทียบ DBMS ส่วนใหญ่ไม่สะท้อนการใช้งานจริง |
+| **Stack Overflow Survey (2023–2025)** [[18]](#ref-18) | การใช้งานในอุตสาหกรรม | PostgreSQL เป็นฐานข้อมูลที่ใช้มากที่สุดตั้งแต่ 2023 (2025: 55.6% vs MySQL 40.5%) |
+| **ชาคริต ผาอินทร์ (2560)** [[27]](#ref-27) | ระบบจัดเก็บบันทึกจราจรเครือข่ายแบบ Monolith vs Microservices (จุฬาฯ) | แบบ Microservices ให้เวลาสืบค้นสั้นกว่า |
+| **Kossmann et al. (2020)**, **Ramdhani & Widodo (2026)** [[28]](#ref-28)[[29]](#ref-29) | การเลือกดัชนี / B-Tree vs Hash ใน PostgreSQL | ดัชนีลดเวลา JOIN ระดับ Query ได้หลายระดับขนาด (วัดด้วย EXPLAIN ANALYZE ไม่ใช่ระดับ HTTP) |
+| **Georges et al. (2007)**, **Kalibera & Jones (2013)**, **Papadopoulos et al. (2021)** [[21]](#ref-21)[[22]](#ref-22)[[23]](#ref-23) | ระเบียบวิธีวัดประสิทธิภาพที่เข้มงวดและทำซ้ำได้ | ต้องทำซ้ำหลายรอบ แยก Warm-up รายงาน CI และสภาพแวดล้อมครบถ้วน |
+| **The Benchmarker** [[25]](#ref-25), **TechEmpower R23** [[26]](#ref-26) | Benchmark ของชุมชน/อุตสาหกรรม | The Benchmarker ไม่มีฐานข้อมูล TechEmpower (รอบสุดท้าย 2025 ยุติ 2026) มีฐานข้อมูลแต่ทดสอบบน Bare Metal เท่านั้น |
 
 ### ช่องว่างของงานวิจัย (Research Gap)
-จากการทบทวนวรรณกรรมที่ผ่านมา พบว่าการศึกษาส่วนใหญ่มักมุ่งเน้นการทดสอบแบบแยกมิติเดี่ยว (*Isolated Single-dimension Testing*) เช่น วัดเฉพาะความเร็วอัลกอริทึม หรือวัดเฟรมเวิร์กด้วยข้อมูลจำลองในหน่วยความจำ โดยขาดการศึกษาเชิงประจักษ์ที่เป็นระบบในลักษณะ **การทดสอบแบบผสมผสานหลายมิติพร้อมกัน (*Multi-factor Cross-combination Evaluation*)** ที่ผสานรวมทั้ง รันไทม์ภาษา, สภาพแวดล้อมคอนเทนเนอร์, การจัดทำ Index ของฐานข้อมูล, ความซับซ้อนของ SQL Query และระดับโหลดผู้ใช้งานเข้าด้วยกัน
+(1) งานด้านคอนเทนเนอร์ [[3]](#ref-3)[[4]](#ref-4)[[5]](#ref-5)[[6]](#ref-6)[[19]](#ref-19)[[20]](#ref-20) ใช้ Microbenchmark เชิงสังเคราะห์ ไม่มีภาระงานเว็บที่เชื่อมต่อฐานข้อมูลจริง (2) งานด้านภาษาและเฟรมเวิร์ก [[10]](#ref-10)[[11]](#ref-11)[[12]](#ref-12)[[13]](#ref-13)[[14]](#ref-14)[[25]](#ref-25) ส่วนใหญ่ทดสอบบนสภาพแวดล้อมเดียวและหลายงานไม่มีฐานข้อมูล (3) งานด้านดัชนี [[28]](#ref-28)[[29]](#ref-29) วัดผลระดับ Query ไม่ใช่ Throughput และ Tail Latency ระดับ HTTP (4) หลายงาน [[5]](#ref-5)[[9]](#ref-9)[[12]](#ref-12) ทดสอบรอบเดียวโดยไม่มีสถิติ ขัดกับข้อเสนอของ [[21]](#ref-21)[[22]](#ref-22)[[23]](#ref-23)
+
+โครงการนี้เติมเต็มช่องว่างด้วยการทดลองแบบ **Full-Factorial** ที่ผสาน 5 ภาษา, Bare Metal vs Docker, สถานะดัชนี, ความซับซ้อนของ Query และ 5 ระดับ Concurrency ทดสอบซ้ำ 20 รอบต่อค่า พร้อมรายงาน Mean ± SD, 95% CI และ p50–p99
+
+### แผนการวิจัย — อ้างอิงสิ่งที่มีอยู่แล้ว ไม่ทดลองซ้ำ
+| ประเด็น | ข้อสรุปที่มีอยู่แล้ว | อ้างอิง | การตัดสินใจในโครงการนี้ |
+| :--- | :--- | :--- | :--- |
+| MySQL vs PostgreSQL | PostgreSQL อ่านเร็วกว่าหรือเท่ากัน เสถียรกว่าเมื่อโหลดผสม และเป็นฐานข้อมูลที่ใช้มากที่สุด | [[15]](#ref-15)[[16]](#ref-16)[[17]](#ref-17)[[18]](#ref-18) | ไม่ทดสอบ DBMS ซ้ำ `main_web_benchmark` ใช้ MySQL 8.0 (เสร็จแล้ว) และ `pos_web_benchmark` ใช้ **PostgreSQL 16** เพื่อให้ใกล้เคียงโลกจริง |
+| Container vs VM | คอนเทนเนอร์ดีกว่า VM เกือบทุกด้าน | [[3]](#ref-3)[[4]](#ref-4)[[5]](#ref-5)[[19]](#ref-19)[[20]](#ref-20) | ไม่ทดสอบ VM เปรียบเทียบเฉพาะ Bare Metal กับ Docker |
+| Monolith vs Microservices | บนเครื่องเดียว Monolith เร็วกว่า | [[7]](#ref-7)[[8]](#ref-8)[[9]](#ref-9)[[31]](#ref-31) | ใช้บริการเดี่ยวต่อภาษา และอ้างอิงแทนการทดลอง |
+| อัตราเร่งดัชนีระดับ Query | ลดเวลา JOIN ได้หลายระดับขนาด | [[28]](#ref-28)[[29]](#ref-29) | วัดเฉพาะผลระดับ HTTP ทั้งเส้นทาง |
+| ประสิทธิภาพพลังงานของภาษา | จัดอันดับไว้แล้ว 27 ภาษา | [[24]](#ref-24) | ไม่วัดพลังงาน |
+
+ดูคำถามวิจัย (RQ1–RQ5) ตารางและกราฟที่จะนำเสนอ และผลเบื้องต้นได้ที่ [Programming_Benchmark_Report.md](Programming_Benchmark_Report.md) หัวข้อ 2.6
 
 ---
 
@@ -317,6 +339,7 @@ Programming-Benchmark/
 │   │   └── SUMMARY.csv                # รายงานสรุปผลในรูปแบบ CSV
 │   ├── compare_results.py             # เครื่องมือแสดงตารางเปรียบเทียบผลผ่าน CLI
 │   └── issue.md                       # รายงานการวิเคราะห์ปัญหาทางเทคนิค
+├── pos_web_benchmark/                 # ชุดทดสอบระบบ POS บน PostgreSQL 16 (11.11 ล้านแถว, กำลังดำเนินการ)
 └── benchmark/                         # การทดสอบประสิทธิภาพอัลกอริทึมพื้นฐาน (Microbenchmarks)
 ```
 
@@ -324,41 +347,95 @@ Programming-Benchmark/
 
 ## 10. เอกสารอ้างอิง (References)
 
-<a id="1-n-wickramage-2005"></a>
-[1] N. Wickramage, "A benchmark for web service frameworks," Master's thesis, Department of Computer Science, Indiana University, Bloomington, IN, USA, 2005.
+<a id="ref-1"></a>
+[1] N. Wickramage and S. Weerawarana, "A benchmark for web service frameworks," in Proc. IEEE Int. Conf. Services Comput. (SCC'05), Orlando, FL, USA, 2005, vol. 1, pp. 233–240. doi: [10.1109/SCC.2005.9](https://doi.org/10.1109/SCC.2005.9).
 
-<a id="2-l-prechelt-2000"></a>
-[2] L. Prechelt, "An empirical comparison of seven programming languages," *IEEE Computer*, vol. 33, no. 10, pp. 23–29, Oct. 2000. doi: [10.1109/2.876288](https://doi.org/10.1109/2.876288).
+<a id="ref-2"></a>
+[2] L. Prechelt, "An empirical comparison of seven programming languages," Computer, vol. 33, no. 10, pp. 23–29, Oct. 2000. doi: [10.1109/2.876288](https://doi.org/10.1109/2.876288).
 
-<a id="3-วิลาวัณย์-และคณะ-2559"></a>
-[3] วิลาวัณย์ รักประชาสรรค์ และ พรชัย มงคลนาม, "สถาปัตยกรรม Microservices กับเทคโนโลยี Containers," *วารสารวิชาการพระจอมเกล้าพระนครเหนือ*, ปีที่ 26, ฉบับที่ 3, หน้า 511–522, ก.ย.–ธ.ค. 2559.
+<a id="ref-3"></a>
+[3] R. Morabito, J. Kjällman, and M. Komu, "Hypervisors vs. lightweight virtualization: A performance comparison," in Proc. IEEE Int. Conf. Cloud Eng. (IC2E), Tempe, AZ, USA, 2015, pp. 386–393. doi: [10.1109/IC2E.2015.74](https://doi.org/10.1109/IC2E.2015.74).
 
-<a id="4-r-morabito-et-al-2015"></a>
-[4] R. Morabito, J. Kjällman, and M. Komu, "Hypervisors vs. lightweight virtualization: A performance comparison," in *Proc. IEEE Int. Conf. Cloud Eng. (IC2E)*, Tempe, AZ, USA, 2015, pp. 386–393. doi: [10.1109/IC2E.2015.74](https://doi.org/10.1109/IC2E.2015.74).
+<a id="ref-4"></a>
+[4] W. Felter, A. Ferreira, R. Rajamony, and J. Rubio, "An updated performance comparison of virtual machines and Linux containers," in Proc. IEEE Int. Symp. Perform. Anal. Syst. Softw. (ISPASS), Philadelphia, PA, USA, 2015, pp. 171–172. doi: [10.1109/ISPASS.2015.7095802](https://doi.org/10.1109/ISPASS.2015.7095802).
 
-<a id="5-m-villamizar-et-al-2017"></a>
-[5] M. Villamizar et al., "Evaluating the monolithic and the microservice architecture pattern to deploy web applications in the cloud," in *Proc. 10th Int. Conf. High Perform. Comput. Commun. (HPCC)*, Bangor, UK, 2017, pp. 583–590. doi: [10.1109/HPCC/SmartCity/DSS.2016.0086](https://doi.org/10.1109/HPCC/SmartCity/DSS.2016.0086).
+<a id="ref-5"></a>
+[5] J. Shetty, S. Upadhaya, H. S. Rajarajeshwari, G. Shobha, and J. Chandra, "An empirical performance evaluation of Docker container, OpenStack virtual machine and bare metal server," Indonesian J. Elect. Eng. Comput. Sci., vol. 7, no. 1, pp. 205–213, Jul. 2017. doi: [10.11591/ijeecs.v7.i1.pp205-213](https://doi.org/10.11591/ijeecs.v7.i1.pp205-213).
 
-<a id="6-m-amaral-et-al-2015"></a>
-[6] M. Amaral et al., "Performance evaluation of microservices architectures using containers," in *Proc. 14th Int. Symp. Netw. Comput. Appl. (NCA)*, Cambridge, MA, USA, 2015, pp. 27–34. doi: [10.1109/NCA.2015.10](https://doi.org/10.1109/NCA.2015.10).
+<a id="ref-6"></a>
+[6] M. Amaral, J. Polo, D. Carrera, I. Mohomed, M. Unuvar, and M. Steinder, "Performance evaluation of microservices architectures using containers," in Proc. IEEE 14th Int. Symp. Netw. Comput. Appl. (NCA), Cambridge, MA, USA, 2015, pp. 27–34. doi: [10.1109/NCA.2015.49](https://doi.org/10.1109/NCA.2015.49).
 
-<a id="7-j-shetty-et-al-2020"></a>
-[7] J. Shetty et al., "An empirical performance evaluation of Docker container and bare metal server," in *Proc. Int. Conf. Emerg. Trends Inf. Technol. Eng. (ic-ETITE)*, Vellore, India, 2020, pp. 1–6. doi: [10.1109/ic-ETITE47903.2020.9077782](https://doi.org/10.1109/ic-ETITE47903.2020.9077782).
+<a id="ref-7"></a>
+[7] M. Villamizar, O. Garcés, H. Castro, M. Verano, L. Salamanca, R. Casallas, and S. Gil, "Evaluating the monolithic and the microservice architecture pattern to deploy web applications in the cloud," in Proc. 10th Computing Colombian Conf. (10CCC), Bogotá, Colombia, 2015, pp. 583–590. doi: [10.1109/ColumbianCC.2015.7333476](https://doi.org/10.1109/ColumbianCC.2015.7333476).
 
-<a id="8-วรเทพ-อหันตริก-2566"></a>
-[8] วรเทพ อหันตริก, "การประเมินและเปรียบเทียบประสิทธิภาพการทำงานของอัลกอริทึมการขยายตัวอัตโนมัติของพอดบนแพลตฟอร์มคูเบอร์เนเตส," วิทยานิพนธ์ วท.ม., คณะวิทยาการสารสนเทศ, มหาวิทยาลัยบูรพา, ชลบุรี, ประเทศไทย, 2566.
+<a id="ref-8"></a>
+[8] G. Blinowski, A. Ojdowska, and A. Przybyłek, "Monolithic vs. microservice architecture: A performance and scalability evaluation," IEEE Access, vol. 10, pp. 20357–20374, 2022. doi: [10.1109/ACCESS.2022.3152803](https://doi.org/10.1109/ACCESS.2022.3152803).
 
-<a id="9-r-ruslan-2023"></a>
-[9] R. Ruslan, "Web Frameworks Benchmark," GitHub Repository, 2023. [Online]. Available: [https://github.com/the-benchmarker/web-frameworks](https://github.com/the-benchmarker/web-frameworks).
+<a id="ref-9"></a>
+[9] A. J. Lauwren and Y. D. Setianto, "Microservice and monolith performance comparison in transaction application," Proxies: Jurnal Informatika, vol. 5, no. 2, pp. 86–105, 2022. doi: [10.24167/proxies.v5i2.12447](https://doi.org/10.24167/proxies.v5i2.12447).
 
-<a id="10-f-effendy-2021"></a>
-[10] F. Effendy, "Performance comparison of web frameworks based on response time and throughput," *Jurnal RESTI (Rekayasa Sistem dan Teknologi Informasi)*, vol. 5, no. 4, pp. 780–786, 2021. doi: [10.29207/resti.v5i4.3312](https://doi.org/10.29207/resti.v5i4.3312).
+<a id="ref-10"></a>
+[10] F. Effendy, Taufik, and B. Adhilaksono, "Performance comparison of web backend and database: A case study of Node.JS, Golang and MySQL, Mongo DB," Recent Adv. Comput. Sci. Commun., vol. 14, no. 6, pp. 1955–1961, 2021. doi: [10.2174/2666255813666191219104133](https://doi.org/10.2174/2666255813666191219104133).
 
-<a id="11-the-benchmarker-2024"></a>
-[11] The-Benchmarker, "Which is the fastest web framework?," 2024. [Online]. Available: [https://web-frameworks-benchmark.netlify.app/](https://web-frameworks-benchmark.netlify.app/).
+<a id="ref-11"></a>
+[11] K. Lei, Y. Ma, and Z. Tan, "Performance comparison and evaluation of web development technologies in PHP, Python, and Node.js," in Proc. IEEE 17th Int. Conf. Comput. Sci. Eng. (CSE), Chengdu, China, 2014, pp. 661–668. doi: [10.1109/CSE.2014.142](https://doi.org/10.1109/CSE.2014.142).
 
-<a id="12-r-lauwren-et-al-2025"></a>
-[12] R. Lauwren, A. F. Wicaksono, and D. I. Sensuse, "Microservice and monolith performance comparison in transaction application," in *Proc. Int. Conf. Adv. Comput. Sci. Inf. Syst. (ICACSIS)*, 2025, pp. 1–8.
+<a id="ref-12"></a>
+[12] D. Choma, K. Chwaleba, and M. Dzieńkowski, "The efficiency and reliability of backend technologies: Express, Django, and Spring Boot," Informatyka, Automatyka, Pomiary w Gospodarce i Ochronie Środowiska, vol. 13, no. 4, pp. 73–78, 2023. doi: [10.35784/iapgos.4279](https://doi.org/10.35784/iapgos.4279).
 
-<a id="13-techempower-2024"></a>
-[13] TechEmpower, "TechEmpower Web Framework Benchmarks," 2024. [Online]. Available: [https://www.techempower.com/benchmarks/](https://www.techempower.com/benchmarks/).
+<a id="ref-13"></a>
+[13] A. Azzahidi, B. Wijayanto, and A. Darmawan, "Performance evaluation of backend frameworks for REST API: A comparative study of Spring Boot, Flask, Express.js, Laravel FrankenPHP, and Gin," Jurnal Teknik Informatika (JUTIF), vol. 6, no. 4, pp. 2405–2419, 2025. doi: [10.52436/1.jutif.2025.6.4.4811](https://doi.org/10.52436/1.jutif.2025.6.4.4811).
+
+<a id="ref-14"></a>
+[14] M. A. Ala'anzy, O. Alramli, A. Ibraheem, and A. Al-Hadeethi, "Throughput and latency benchmarking of backend web frameworks under resource-constrained environments," in Proc. 6th Int. Conf. Electr., Comput., Commun. Mechatron. Eng. (ICECET), 2026, pp. 1–5. doi: [10.1109/ICECET65726.2026.11632913](https://doi.org/10.1109/ICECET65726.2026.11632913).
+
+<a id="ref-15"></a>
+[15] S. V. Salunke and A. Ouda, "A performance benchmark for the PostgreSQL and MySQL databases," Future Internet, vol. 16, no. 10, Art. no. 382, 2024. doi: [10.3390/fi16100382](https://doi.org/10.3390/fi16100382).
+
+<a id="ref-16"></a>
+[16] W. Truskowski, R. Klewek, and M. Skublewska-Paszkowska, "Comparison of MySQL, MSSQL, PostgreSQL, Oracle databases performance, including virtualization," Journal of Computer Sciences Institute, vol. 16, pp. 279–284, 2020. doi: [10.35784/jcsi.2026](https://doi.org/10.35784/jcsi.2026).
+
+<a id="ref-17"></a>
+[17] T. Taipalus, "Database management system performance comparisons: A systematic literature review," J. Syst. Softw., vol. 208, Art. no. 111872, 2024. doi: [10.1016/j.jss.2023.111872](https://doi.org/10.1016/j.jss.2023.111872).
+
+<a id="ref-18"></a>
+[18] Stack Overflow, "2025 Stack Overflow Developer Survey: Technology — Databases," 2025. [Online]. Available: [https://survey.stackoverflow.co/2025/technology](https://survey.stackoverflow.co/2025/technology). [Accessed: Sep. 30, 2026].
+
+<a id="ref-19"></a>
+[19] L. Wen, M. Rickert, F. Pan, J. Lin, and A. Knoll, "Bare-metal vs. hypervisors and containers: Performance evaluation of virtualization technologies for software-defined vehicles," in Proc. IEEE Intelligent Vehicles Symp. (IV), Anchorage, AK, USA, 2023, pp. 1–8. doi: [10.1109/IV55152.2023.10186789](https://doi.org/10.1109/IV55152.2023.10186789).
+
+<a id="ref-20"></a>
+[20] J. Baumgartner, C. Lillo, and S. Rumley, "Performance losses with virtualization: Comparing bare metal to VMs and containers," in High Performance Computing (ISC High Performance 2023 Workshops), Lecture Notes in Computer Science, Cham, Switzerland: Springer, 2023, pp. 107–120. doi: [10.1007/978-3-031-40843-4_9](https://doi.org/10.1007/978-3-031-40843-4_9).
+
+<a id="ref-21"></a>
+[21] A. Georges, D. Buytaert, and L. Eeckhout, "Statistically rigorous Java performance evaluation," in Proc. 22nd ACM SIGPLAN Conf. Object-Oriented Program. Syst. Lang. Appl. (OOPSLA), Montreal, QC, Canada, 2007, pp. 57–76. doi: [10.1145/1297105.1297033](https://doi.org/10.1145/1297105.1297033).
+
+<a id="ref-22"></a>
+[22] T. Kalibera and R. Jones, "Rigorous benchmarking in reasonable time," in Proc. ACM SIGPLAN Int. Symp. Memory Manage. (ISMM), Seattle, WA, USA, 2013, pp. 63–74. doi: [10.1145/2464157.2464160](https://doi.org/10.1145/2464157.2464160).
+
+<a id="ref-23"></a>
+[23] A. V. Papadopoulos et al., "Methodological principles for reproducible performance evaluation in cloud computing," IEEE Trans. Softw. Eng., vol. 47, no. 8, pp. 1528–1543, Aug. 2021. doi: [10.1109/TSE.2019.2927908](https://doi.org/10.1109/TSE.2019.2927908).
+
+<a id="ref-24"></a>
+[24] R. Pereira et al., "Ranking programming languages by energy efficiency," Sci. Comput. Program., vol. 205, Art. no. 102609, 2021. doi: [10.1016/j.scico.2021.102609](https://doi.org/10.1016/j.scico.2021.102609).
+
+<a id="ref-25"></a>
+[25] M. Rabbâa et al. (The Benchmarker), "Web frameworks benchmark," GitHub repository, 2017–2026. [Online]. Available: [https://github.com/the-benchmarker/web-frameworks](https://github.com/the-benchmarker/web-frameworks). [Accessed: Sep. 30, 2026].
+
+<a id="ref-26"></a>
+[26] TechEmpower, "TechEmpower web framework benchmarks, Round 23," 2025. [Online]. Available: [https://www.techempower.com/benchmarks/](https://www.techempower.com/benchmarks/). [Accessed: Sep. 30, 2026].
+
+<a id="ref-27"></a>
+[27] ชาคริต ผาอินทร์, "การขยายตัวจัดเก็บบันทึกจราจรเครือข่ายด้วยสถาปัตยกรรมไมโครเซอร์วิส," วิทยานิพนธ์ปริญญาวิทยาศาสตรมหาบัณฑิต สาขาวิชาวิทยาการคอมพิวเตอร์, จุฬาลงกรณ์มหาวิทยาลัย, กรุงเทพฯ, 2560. doi: [10.58837/CHULA.THE.2017.1256](https://doi.org/10.58837/CHULA.THE.2017.1256).
+
+<a id="ref-28"></a>
+[28] J. Kossmann, S. Halfpap, M. Jankrift, and R. Schlosser, "Magic mirror in my hand, which is the best in the land? An experimental evaluation of index selection algorithms," Proc. VLDB Endow., vol. 13, no. 12, pp. 2382–2395, 2020. doi: [10.14778/3407790.3407832](https://doi.org/10.14778/3407790.3407832).
+
+<a id="ref-29"></a>
+[29] A. Ramdhani and S. Widodo, "Comparative analysis of B-Tree and Hash indexes for PostgreSQL query optimization," JURTEKSI (Jurnal Teknologi dan Sistem Informasi), vol. 12, no. 3, pp. 461–468, 2026. doi: [10.33330/jurteksi.v12i3.4653](https://doi.org/10.33330/jurteksi.v12i3.4653).
+
+<a id="ref-30"></a>
+[30] W. Glozer, "wrk: Modern HTTP benchmarking tool," GitHub repository. [Online]. Available: [https://github.com/wg/wrk](https://github.com/wg/wrk); G. Tene, "wrk2: A constant throughput, correct latency recording variant of wrk," GitHub repository. [Online]. Available: [https://github.com/giltene/wrk2](https://github.com/giltene/wrk2). [Accessed: Sep. 30, 2026].
+
+<a id="ref-31"></a>
+[31] D. P. Dirgantara, D. S. Kusumo, and R. G. Utomo, "Docker-based monolithic and microservices architecture performance comparison," Jurnal Teknik Informatika (JUTIF), vol. 5, no. 2, pp. 357–365, 2024. doi: [10.52436/1.jutif.2024.5.2.1338](https://doi.org/10.52436/1.jutif.2024.5.2.1338).
