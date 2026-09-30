@@ -1,0 +1,9 @@
+{
+  "name": "benchmark-fastify-postgres",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "fastify": "^4.26.2",
+    "pg": "^8.11.5"
+  }
+}
