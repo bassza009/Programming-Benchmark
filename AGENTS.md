@@ -2,7 +2,7 @@
 
 ## Mandatory Rules for Benchmark Data & Reporting
 
-Whenever you run benchmarks, modify benchmark results, or update dataset configurations in this repository, you **MUST** follow these 3 core requirements:
+Whenever you run benchmarks, modify benchmark results, or update dataset configurations in this repository, you **MUST** follow these 4 core requirements:
 
 ### 1. Synchronize README and Push to GitHub Every Time Data Changes
 * Whenever benchmark output data (`.json`, `.csv`, `SUMMARY.md`) changes, immediately update both [README.md](file:///D:/github/Programming-Benchmark/README.md) and [README_TH.md](file:///D:/github/Programming-Benchmark/README_TH.md) to reflect the new figures.
@@ -31,3 +31,13 @@ Whenever you run benchmarks, modify benchmark results, or update dataset configu
   - Indexing Speedup Ratio ($\frac{\bar{T}_{\text{WithIndex}}}{\bar{T}_{\text{NoIndex}}}$)
   - Concurrency Saturation & Breakdown Thresholds across tiers (POC $\rightarrow$ Stress).
 * Format aggregated matrices into academic comparison tables for the report and READMEs.
+
+### 4. Sync Results to the Benchmark-web Database (Supabase)
+* After `generate_summary.py` finishes, upload the latest results so the website ([Benchmark-web](../Benchmark-web)) shows them:
+  ```bash
+  python scripts/sync_to_supabase.py --dry-run   # check what will be uploaded
+  python scripts/sync_to_supabase.py
+  ```
+* Requires `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in `.env` (see `.env.example`). Never commit the secret key.
+* Each sync uploads **all** benchmarks as one new batch; the site shows the latest complete batch.
+* New result files must be registered in `WEB_SUITES` / `WEB_TESTS` / `ALGO_BENCHMARKS` at the top of the script.
