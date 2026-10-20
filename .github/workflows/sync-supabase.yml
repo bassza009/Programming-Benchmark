@@ -1,0 +1,42 @@
+# Upload benchmark results to Supabase (for the Benchmark-web site) whenever results change on main.
+# Needs repository secrets: SUPABASE_URL, SUPABASE_SECRET_KEY
+# Can also be started by hand: Actions tab -> "Sync results to Supabase" -> Run workflow
+
+name: Sync results to Supabase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "main_web_benchmark/results/**"
+      - "pos_web_benchmark/results/**"
+      - "results/**"
+      - "scripts/sync_to_supabase.py"
+  workflow_dispatch:
+
+# Never run two syncs at the same time
+concurrency:
+  group: sync-supabase
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests python-dotenv
+
+      - name: Check files (dry run)
+        run: python scripts/sync_to_supabase.py --dry-run
+
+      - name: Upload to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: python scripts/sync_to_supabase.py

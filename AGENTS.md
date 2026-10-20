@@ -41,3 +41,4 @@ Whenever you run benchmarks, modify benchmark results, or update dataset configu
 * Requires `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in `.env` (see `.env.example`). Never commit the secret key.
 * Each sync uploads **all** benchmarks as one new batch; the site shows the latest complete batch.
 * New result files must be registered in `WEB_SUITES` / `WEB_TESTS` / `ALGO_BENCHMARKS` at the top of the script.
+* **Automatic:** pushing changes under `*_web_benchmark/results/`, `results/` or the script to `main` runs `.github/workflows/sync-supabase.yml`, which syncs for you (repo secrets `SUPABASE_URL`, `SUPABASE_SECRET_KEY`). Running the script by hand is only needed for local testing.
