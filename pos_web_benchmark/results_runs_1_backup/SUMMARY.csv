@@ -1,0 +1,16 @@
+Suite,Environment,Tier,Language,1table (Req/s),1table Latency (ms),2table/2join (Req/s),2table/2join Latency (ms),3table/3join (Req/s),3table/3join Latency (ms),4table/4join (Req/s),4table/4join Latency (ms),Total Errors
+get_no_index,Docker,POC / Small internal system,Go,4780.33,4.16,436.17,45.81,379.47,52.64,353.23,56.54,0
+get_no_index,Docker,POC / Small internal system,Java,9975.97,2.05,466.95,42.79,390.99,51.10,380.42,52.49,0
+get_no_index,Docker,POC / Small internal system,Node.js,9736.03,2.15,378.83,52.72,338.15,59.09,344.38,58.00,0
+get_no_index,Docker,POC / Small internal system,PHP,22133.54,0.91,399.17,50.59,399.95,50.18,383.28,52.24,0
+get_no_index,Docker,POC / Small internal system,Python,1533.77,13.03,362.53,55.09,385.80,51.78,343.40,58.18,0
+get_with_index,Docker,POC / Small internal system,Go,4783.00,4.15,5659.89,3.51,3577.97,5.59,3085.37,6.48,0
+get_with_index,Docker,POC / Small internal system,Java,9782.76,2.09,9553.07,2.09,3580.99,5.58,2861.28,6.99,0
+get_with_index,Docker,POC / Small internal system,Node.js,9837.01,2.13,8682.81,2.32,2318.99,8.64,2032.21,9.86,0
+get_with_index,Docker,POC / Small internal system,PHP,22522.87,0.90,13006.40,1.55,2841.21,7.05,2632.64,7.61,0
+get_with_index,Docker,POC / Small internal system,Python,1543.17,12.95,1508.03,13.26,1473.81,13.57,1305.66,15.31,0
+post,Docker,POC / Small internal system,Go,31507.46,0.63,16085.64,1.24,12708.62,1.57,10592.01,1.88,0
+post,Docker,POC / Small internal system,Java,26542.69,0.78,15636.68,1.28,13524.88,1.46,12805.47,1.55,0
+post,Docker,POC / Small internal system,Node.js,28300.84,0.82,14139.78,1.44,10494.52,1.93,8495.46,2.38,0
+post,Docker,POC / Small internal system,PHP,27518.46,0.75,13092.98,1.54,11181.41,1.80,8773.15,2.29,0
+post,Docker,POC / Small internal system,Python,8822.72,2.26,5937.10,3.46,5037.29,4.06,4543.08,4.52,0

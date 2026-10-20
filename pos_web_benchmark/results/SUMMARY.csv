@@ -1,16 +1,37 @@
 Suite,Environment,Tier,Language,1table (Req/s),1table Latency (ms),2table/2join (Req/s),2table/2join Latency (ms),3table/3join (Req/s),3table/3join Latency (ms),4table/4join (Req/s),4table/4join Latency (ms),Total Errors
-get_no_index,Docker,POC / Small internal system,Go,4780.33,4.16,436.17,45.81,379.47,52.64,353.23,56.54,0
-get_no_index,Docker,POC / Small internal system,Java,9975.97,2.05,466.95,42.79,390.99,51.10,380.42,52.49,0
-get_no_index,Docker,POC / Small internal system,Node.js,9736.03,2.15,378.83,52.72,338.15,59.09,344.38,58.00,0
-get_no_index,Docker,POC / Small internal system,PHP,22133.54,0.91,399.17,50.59,399.95,50.18,383.28,52.24,0
-get_no_index,Docker,POC / Small internal system,Python,1533.77,13.03,362.53,55.09,385.80,51.78,343.40,58.18,0
-get_with_index,Docker,POC / Small internal system,Go,4783.00,4.15,5659.89,3.51,3577.97,5.59,3085.37,6.48,0
-get_with_index,Docker,POC / Small internal system,Java,9782.76,2.09,9553.07,2.09,3580.99,5.58,2861.28,6.99,0
-get_with_index,Docker,POC / Small internal system,Node.js,9837.01,2.13,8682.81,2.32,2318.99,8.64,2032.21,9.86,0
-get_with_index,Docker,POC / Small internal system,PHP,22522.87,0.90,13006.40,1.55,2841.21,7.05,2632.64,7.61,0
-get_with_index,Docker,POC / Small internal system,Python,1543.17,12.95,1508.03,13.26,1473.81,13.57,1305.66,15.31,0
-post,Docker,POC / Small internal system,Go,31507.46,0.63,16085.64,1.24,12708.62,1.57,10592.01,1.88,0
-post,Docker,POC / Small internal system,Java,26542.69,0.78,15636.68,1.28,13524.88,1.46,12805.47,1.55,0
-post,Docker,POC / Small internal system,Node.js,28300.84,0.82,14139.78,1.44,10494.52,1.93,8495.46,2.38,0
-post,Docker,POC / Small internal system,PHP,27518.46,0.75,13092.98,1.54,11181.41,1.80,8773.15,2.29,0
-post,Docker,POC / Small internal system,Python,8822.72,2.26,5937.10,3.46,5037.29,4.06,4543.08,4.52,0
+get_no_index,Bare Metal,POC / Small internal system,Node.js,9439.01,2.15,666.48,30.00,595.52,33.57,570.12,35.06,0
+get_no_index,Bare Metal,POC / Small internal system,PHP,15317.41,1.36,602.74,33.82,524.34,39.09,505.47,41.07,0
+get_no_index,Bare Metal,POC / Small internal system,Python,470.24,42.52,337.98,59.12,380.53,52.54,339.43,58.86,0
+get_no_index,Bare Metal,Small production website,Node.js,18694.97,5.35,483.25,206.49,423.53,235.53,411.46,242.44,0
+get_no_index,Bare Metal,Small production website,Python,480.48,209.52,298.14,334.42,317.51,313.99,295.69,337.04,0
+get_no_index,Bare Metal,General web application,Node.js,19842.63,25.65,481.19,1058.86,424.66,1187.02,410.00,1226.80,0
+get_no_index,Bare Metal,General web application,Python,480.22,1052.62,295.18,1626.98,303.96,1611.55,282.62,1707.41,5837
+get_no_index,Bare Metal,High-density website,Node.js,18440.44,113.95,475.90,3378.62,415.92,3497.39,419.15,3513.03,958112
+get_no_index,Bare Metal,High-density website,Python,445.39,3465.70,284.37,4843.89,285.41,4783.04,265.24,4934.91,110535
+get_no_index,Bare Metal,Stress testing,Node.js,12233.19,1022.43,2074.28,4379.15,2051.42,4398.63,2067.47,4400.87,37294732
+get_no_index,Bare Metal,Stress testing,Python,394.98,5447.22,261.55,6865.03,261.23,6506.02,245.14,6695.18,4735807
+get_no_index,Docker,POC / Small internal system,Go,4787.56,4.15,443.46,45.06,384.74,51.93,357.45,55.93,0
+get_no_index,Docker,POC / Small internal system,Java,9812.72,2.04,455.72,43.86,386.98,51.64,373.04,53.56,0
+get_no_index,Docker,POC / Small internal system,Node.js,8940.67,2.27,450.37,44.42,405.34,49.34,394.49,50.72,0
+get_no_index,Docker,POC / Small internal system,PHP,20156.65,0.99,419.51,47.86,389.28,51.78,372.51,53.97,0
+get_no_index,Docker,POC / Small internal system,Python,1539.17,12.99,416.01,48.39,363.37,55.35,346.56,57.81,0
+get_no_index,Docker,Small production website,Go,20073.31,5.26,379.51,263.20,337.22,296.25,326.46,306.00,0
+get_no_index,Docker,Small production website,Java,26173.87,3.84,370.66,270.17,328.49,304.61,317.39,315.14,0
+get_no_index,Docker,Small production website,Node.js,17674.81,5.66,380.91,261.87,338.04,294.96,326.98,304.88,0
+get_no_index,Docker,Small production website,PHP,36638.61,2.77,380.33,269.94,335.06,308.00,322.64,318.17,0
+get_no_index,Docker,Small production website,Python,1646.57,60.74,375.10,267.32,326.43,307.27,316.62,316.71,0
+get_no_index,Docker,General web application,Go,21706.17,22.97,375.30,1306.74,331.31,1478.51,318.46,1537.86,0
+get_no_index,Docker,General web application,Java,25962.84,19.36,366.92,1336.51,323.94,1511.68,312.43,1566.52,0
+get_no_index,Docker,General web application,Node.js,17971.01,27.80,373.83,1331.92,331.30,1488.32,319.75,1539.32,0
+get_no_index,Docker,General web application,PHP,39576.21,13.75,376.83,1236.85,331.77,1542.16,320.66,1551.29,7982
+get_no_index,Docker,General web application,Python,1677.61,299.08,367.65,1367.19,321.62,1550.94,308.64,1616.05,0
+get_no_index,Docker,High-density website,Go,23571.16,84.68,364.38,5347.34,320.86,6020.96,308.99,6264.87,9847
+get_no_index,Docker,High-density website,Java,25358.42,79.03,358.57,5424.53,315.29,6143.36,304.81,6319.87,11207
+get_no_index,Docker,High-density website,Node.js,17286.97,123.27,367.54,4062.20,329.86,4257.94,318.72,3895.11,519694
+get_no_index,Docker,High-density website,PHP,39078.32,59.39,369.87,3429.49,323.33,3618.49,310.65,3841.22,303695
+get_no_index,Docker,High-density website,Python,1628.43,1295.09,359.09,4094.19,313.00,5460.79,300.72,4670.08,406873
+get_no_index,Docker,Stress testing,Go,28030.38,356.18,343.70,260.80,299.52,0.00,288.68,0.00,5589513
+get_no_index,Docker,Stress testing,Java,32043.47,262.17,450.41,4789.39,399.15,4844.28,385.56,4825.82,7436764
+get_no_index,Docker,Stress testing,Node.js,16245.88,626.54,1348.92,5247.01,1344.95,5196.88,1349.67,5175.77,22315063
+get_no_index,Docker,Stress testing,PHP,38702.90,274.61,349.38,5183.24,299.84,5185.90,288.29,5621.10,5343402
+get_no_index,Docker,Stress testing,Python,1426.62,714.32,333.15,2162.67,291.22,2042.77,276.86,2641.94,5642658

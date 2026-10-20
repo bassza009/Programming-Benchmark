@@ -4,8 +4,19 @@ import json
 import math
 import os
 import subprocess
+import sys
 import time
 import urllib.request
+
+try:
+    _guard_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    if _guard_path not in sys.path:
+        sys.path.insert(0, _guard_path)
+    from thermal_guard import get_cpu_temp, check_and_cool, get_cooldown_sleep
+except Exception:
+    def get_cpu_temp(): return 0.0
+    def check_and_cool(tier_key=None): return 0.0
+    def get_cooldown_sleep(tier_key): return 2.0
 
 try:
     import resource
@@ -76,6 +87,13 @@ def warmup(port, endpoint):
     except Exception:
         pass
 
+def parse_duration_sec(dur_str):
+    if str(dur_str).endswith("s"):
+        return int(str(dur_str)[:-1])
+    if str(dur_str).endswith("m"):
+        return int(str(dur_str)[:-1]) * 60
+    return int(dur_str)
+
 def run_wrk(port, endpoint, tier_cfg):
     url = f"http://127.0.0.1:{port}{endpoint}"
     cmd = [
@@ -83,18 +101,30 @@ def run_wrk(port, endpoint, tier_cfg):
         f"-t{tier_cfg['threads']}",
         f"-c{tier_cfg['connections']}",
         f"-d{tier_cfg['duration']}",
+        "--timeout", "10s",
         "-s", "wrk_json_reporter.lua",
         url
     ]
 
+    dur_sec = parse_duration_sec(tier_cfg['duration'])
+    timeout_sec = dur_sec + 30
+
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_sec)
         stdout = res.stdout.strip()
         json_start = stdout.find("{")
         json_end = stdout.rfind("}") + 1
         if json_start != -1 and json_end > json_start:
             return json.loads(stdout[json_start:json_end])
         return json.loads(stdout)
+    except subprocess.TimeoutExpired:
+        print(f"  [!] wrk timed out after {timeout_sec}s for {url}")
+        return {
+            "requests_per_sec": 0.0,
+            "latency_mean_ms": 0.0,
+            "latency_max_ms": 0.0,
+            "errors": 1
+        }
     except Exception as e:
         print(f"  [!] Error running wrk for {url}: {e}")
         return {
@@ -171,6 +201,9 @@ def compute_average_metrics(runs_list):
 
     max_lat = max((r.get("latency_max_ms", 0.0) for r in runs_list), default=0.0)
     total_errors = sum(r.get("errors", 0) for r in runs_list)
+    temps = [r.get("cpu_temp_c", 0.0) for r in runs_list if r.get("cpu_temp_c")]
+    avg_temp = round(sum(temps) / len(temps), 1) if temps else 0.0
+    max_temp = round(max(temps), 1) if temps else 0.0
 
     return {
         "requests_per_sec": round(avg_rps, 2),
@@ -188,6 +221,8 @@ def compute_average_metrics(runs_list):
         "latency_p95_ms": round(avg_p95, 2),
         "latency_p99_ms": round(avg_p99, 2),
         "latency_max_ms": round(max_lat, 2),
+        "cpu_temp_avg_c": avg_temp,
+        "cpu_temp_max_c": max_temp,
         "errors": total_errors,
         "runs_count": n
     }
@@ -211,6 +246,7 @@ def main():
     parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Framework to benchmark")
     parser.add_argument("--runs", type=int, default=1, help="Number of iterations per endpoint to average (default: 1)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
+    parser.add_argument("--resume", action="store_true", help="Skip already completed tiers in results")
     args = parser.parse_args()
 
     filter_desc = []
@@ -229,31 +265,64 @@ def main():
 
     print("=================================================================")
     print(" Programming Benchmark: GET (No Index) Docker Benchmark [PostgreSQL]")
-    print(f" Filter: {filter_label} | Tiers: {', '.join(selected_tiers).upper()} | Runs: {args.runs} | Warmup: {not args.no_warmup}")
+    print(f" Filter: {filter_label} | Tiers: {', '.join(selected_tiers).upper()} | Runs: {args.runs} | Warmup: {not args.no_warmup} | Resume: {args.resume}")
     print(f" Services: {', '.join([s['name'] + ' (' + s['framework'] + ')' for s in target_services])}")
     print("=================================================================")
 
     ALL_RESULTS = {}
     RAW_RESULTS = {}
-    if os.path.exists("dkr_benchmark_results.json"):
-        try:
-            with open("dkr_benchmark_results.json", "r") as f:
-                ALL_RESULTS = json.load(f)
-        except Exception:
-            pass
-    if os.path.exists("raw_results.json"):
-        try:
-            with open("raw_results.json", "r") as f:
-                RAW_RESULTS = json.load(f)
-        except Exception:
-            pass
-
     res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "results"))
     os.makedirs(res_dir, exist_ok=True)
     raw_res_dir = os.path.join(res_dir, "raw_results")
     os.makedirs(raw_res_dir, exist_ok=True)
 
+    suite_json = os.path.join(res_dir, "get_no_index_dkr.json")
+    if os.path.exists(suite_json):
+        try:
+            with open(suite_json, "r") as f:
+                ALL_RESULTS = json.load(f)
+        except Exception:
+            pass
+    elif os.path.exists("dkr_benchmark_results.json"):
+        try:
+            with open("dkr_benchmark_results.json", "r") as f:
+                ALL_RESULTS = json.load(f)
+        except Exception:
+            pass
+
+    suite_raw_json = os.path.join(raw_res_dir, "get_no_index_dkr_raw.json")
+    if os.path.exists(suite_raw_json):
+        try:
+            with open(suite_raw_json, "r") as f:
+                RAW_RESULTS = json.load(f)
+        except Exception:
+            pass
+    elif os.path.exists("dkr_raw_results.json"):
+        try:
+            with open("dkr_raw_results.json", "r") as f:
+                RAW_RESULTS = json.load(f)
+        except Exception:
+            pass
+
     for s in target_services:
+        lang_results = ALL_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
+        raw_lang_results = RAW_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
+        lang_results["Environment"] = "Docker"
+        raw_lang_results["Environment"] = "Docker"
+        if "tiers" not in lang_results:
+            lang_results["tiers"] = {}
+        if "tiers" not in raw_lang_results:
+            raw_lang_results["tiers"] = {}
+
+        def is_tier_complete(tk):
+            td = lang_results.get("tiers", {}).get(tk, {})
+            eps = td.get("endpoints", {})
+            return len(eps) == len(ENDPOINTS) and all(ep_data.get("runs_count", 0) >= args.runs for ep_data in eps.values())
+
+        if args.resume and all(is_tier_complete(tk) for tk in selected_tiers):
+            print(f"\n---> [RESUME] All selected tiers already completed for {s['name']}. Skipping container launch.")
+            continue
+
         print(f"\n---> Spinning up Docker container: {s['service']} on Port {s['port']}")
         subprocess.run(["docker", "compose", "up", "-d", "--build", s['service']], check=True)
         
@@ -261,57 +330,69 @@ def main():
         if not wait_for_server(s['port'], max_wait=40):
             print(f"  [!] Timeout waiting for {s['name']} server on port {s['port']}")
 
-        lang_results = ALL_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
-        raw_lang_results = RAW_RESULTS.get(s["name"], {"Environment": "Docker", "tiers": {}})
-        if "tiers" not in lang_results:
-            lang_results["tiers"] = {}
-        if "tiers" not in raw_lang_results:
-            raw_lang_results["tiers"] = {}
-
         for tier_key in selected_tiers:
+            if args.resume and is_tier_complete(tier_key):
+                print(f"\n  >> [RESUME] Tier '{tier_key}' already completed for {s['name']}. Skipping...")
+                continue
+
             t_cfg = TIERS[tier_key]
             print(f"\n  >> Running Tier: {t_cfg['name']} (-t{t_cfg['threads']} -c{t_cfg['connections']} -d{t_cfg['duration']})")
-            tier_endpoints = {}
-            raw_tier_endpoints = {}
+            existing_tier_eps = lang_results.get("tiers", {}).get(tier_key, {}).get("endpoints", {}) if args.resume else {}
+            existing_raw_eps = raw_lang_results.get("tiers", {}).get(tier_key, {}).get("endpoints", {}) if args.resume else {}
+            tier_endpoints = dict(existing_tier_eps)
+            raw_tier_endpoints = dict(existing_raw_eps)
 
             for ep in ENDPOINTS:
+                existing_ep_runs = raw_tier_endpoints.get(ep, {}).get("raw_runs", []) if args.resume else []
+                if args.resume and ep in tier_endpoints and tier_endpoints[ep].get("runs_count", 0) >= args.runs and len(existing_ep_runs) >= args.runs:
+                    print(f"     >> [RESUME] Endpoint {ep} already completed ({len(existing_ep_runs)}/{args.runs} runs). Skipping...")
+                    continue
+
                 if not args.no_warmup:
                     warmup(s['port'], ep)
                     time.sleep(1)
 
-                runs_data = []
-                for run_idx in range(1, args.runs + 1):
+                runs_data = list(existing_ep_runs) if (args.resume and 0 < len(existing_ep_runs) < args.runs) else []
+                start_run = len(runs_data) + 1
+                if start_run > 1:
+                    print(f"     >> [RESUME] Resuming {ep} from Run {start_run}/{args.runs} ({len(runs_data)} runs already saved)...")
+
+                for run_idx in range(start_run, args.runs + 1):
+                    check_and_cool(tier_key)
                     run_label = f" (Run {run_idx}/{args.runs})" if args.runs > 1 else ""
                     print(f"     Benchmarking Docker {s['name']} GET {ep}{run_label}...")
                     ep_res = run_wrk(s['port'], ep, t_cfg)
+                    cur_cpu = check_and_cool(tier_key)
                     ep_res_with_meta = dict(ep_res)
                     ep_res_with_meta["run_index"] = run_idx
+                    ep_res_with_meta["cpu_temp_c"] = cur_cpu
                     runs_data.append(ep_res_with_meta)
-                    print(f"     -> Run {run_idx}: Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)}")
+                    print(f"     -> Run {run_idx}: Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)} | CPU: {cur_cpu:.1f}°C")
+
+                    avg_res = compute_average_metrics(runs_data)
+                    tier_endpoints[ep] = avg_res
+                    raw_tier_endpoints[ep] = {"average": avg_res, "raw_runs": runs_data}
+                    lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": tier_endpoints}
+                    raw_lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": raw_tier_endpoints}
+                    ALL_RESULTS[s["name"]] = lang_results
+                    RAW_RESULTS[s["name"]] = raw_lang_results
+
+                    with open("dkr_benchmark_results.json", "w") as f:
+                        json.dump(ALL_RESULTS, f, indent=2)
+                    with open("dkr_raw_results.json", "w") as f:
+                        json.dump(RAW_RESULTS, f, indent=2)
+                    with open(suite_json, "w") as f:
+                        json.dump(ALL_RESULTS, f, indent=2)
+                    with open(suite_raw_json, "w") as f:
+                        json.dump(RAW_RESULTS, f, indent=2)
+
                     if run_idx < args.runs:
-                        time.sleep(1)
+                        sleep_time = get_cooldown_sleep(tier_key)
+                        time.sleep(sleep_time)
 
                 avg_res = compute_average_metrics(runs_data)
-                tier_endpoints[ep] = avg_res
-                raw_tier_endpoints[ep] = {"average": avg_res, "raw_runs": runs_data}
-
                 if args.runs > 1:
                     print(f"     ==> Average ({args.runs} runs): Req/sec: {avg_res['requests_per_sec']:.2f} | Latency: {avg_res['latency_mean_ms']:.2f}ms | Errors: {avg_res['errors']}")
-
-            lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": tier_endpoints}
-            raw_lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": raw_tier_endpoints}
-
-        ALL_RESULTS[s["name"]] = lang_results
-        RAW_RESULTS[s["name"]] = raw_lang_results
-
-        with open("dkr_benchmark_results.json", "w") as f:
-            json.dump(ALL_RESULTS, f, indent=2)
-        with open("raw_results.json", "w") as f:
-            json.dump(RAW_RESULTS, f, indent=2)
-        with open(os.path.join(res_dir, "get_no_index_dkr.json"), "w") as f:
-            json.dump(ALL_RESULTS, f, indent=2)
-        with open(os.path.join(raw_res_dir, "get_no_index_dkr_raw.json"), "w") as f:
-            json.dump(RAW_RESULTS, f, indent=2)
 
         print(f"---> Stopping container {s['service']}...")
         subprocess.run(["docker", "compose", "stop", s['service']], check=True)

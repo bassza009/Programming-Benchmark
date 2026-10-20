@@ -14,6 +14,15 @@ import subprocess
 import sys
 import time
 
+try:
+    import resource
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    target = min(65535, hard if hard > 0 else 65535)
+    if soft < target:
+        resource.setrlimit(resource.RLIMIT_NOFILE, (target, hard))
+except Exception:
+    pass
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_DIR = os.path.join(BASE_DIR, "db")
 
@@ -90,8 +99,8 @@ def main():
         description="Automated Master Benchmark Runner for pos_web_benchmark (PostgreSQL)",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("runs_pos", type=int, nargs="?", default=None, help="Number of runs per endpoint (e.g. 5)")
-    parser.add_argument("-r", "--runs", type=int, default=None, help="Number of runs per endpoint (default: 5)")
+    parser.add_argument("runs_pos", type=int, nargs="?", default=None, help="Number of runs per endpoint (e.g. 20)")
+    parser.add_argument("-r", "--runs", type=int, default=None, help="Number of runs per endpoint (default: 20)")
     parser.add_argument("--tier", default="all", choices=["poc", "small", "general", "high", "stress", "all"], help="Load tier to execute")
     parser.add_argument(
         "--suite",
@@ -102,11 +111,13 @@ def main():
     parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
     parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Filter by framework")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
+    parser.add_argument("--resume", action="store_true", default=True, help="Skip already completed tiers in results JSON files (default: True)")
+    parser.add_argument("--no-resume", "--force", dest="resume", action="store_false", help="Force re-running already completed benchmarks")
     parser.add_argument("--skip-dkr", action="store_true", help="Skip Docker benchmarks")
     parser.add_argument("--skip-bme", action="store_true", help="Skip Bare-Metal benchmarks")
     args = parser.parse_args()
 
-    runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 1)
+    runs_count = args.runs if args.runs is not None else (args.runs_pos if args.runs_pos is not None else 20)
     common_args = ["--tier", args.tier, "--runs", str(runs_count)]
     if args.lang:
         common_args.extend(["--lang", args.lang])
@@ -114,6 +125,8 @@ def main():
         common_args.extend(["--framework", args.framework])
     if args.no_warmup:
         common_args.append("--no-warmup")
+    if args.resume:
+        common_args.append("--resume")
 
     bme_available = bool(shutil.which("go") and shutil.which("php") and shutil.which("java"))
     if not bme_available and not args.skip_bme:
@@ -134,12 +147,12 @@ def main():
         if not args.skip_dkr:
             print("\n>>> STEP: Running GET get_no_index Docker (DKR)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir)
+            run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir)
 
         if not args.skip_bme:
             print("\n>>> STEP: Running GET get_no_index Bare-Metal (BME)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir)
+            run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir)
 
     # 2. GET (get_with_index)
     if args.suite in ["all", "get_with_index"]:
@@ -149,12 +162,12 @@ def main():
         if not args.skip_dkr:
             print("\n>>> STEP: Running GET get_with_index Docker (DKR)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir)
+            run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir)
 
         if not args.skip_bme:
             print("\n>>> STEP: Running GET get_with_index Bare-Metal (BME)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir)
+            run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir)
 
     # 3. POST (Write / Transactions)
     if args.suite in ["all", "post", "post_dkr", "post_bme"]:
@@ -163,25 +176,25 @@ def main():
         if not args.skip_dkr and args.suite in ["all", "post", "post_dkr"]:
             print("\n>>> STEP: Running POST Docker (DKR)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir)
+            run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=post_dir)
 
         if not args.skip_bme and args.suite in ["all", "post", "post_bme"]:
             print("\n>>> STEP: Running POST Bare-Metal (BME)...", flush=True)
             cleanup_environment()
-            run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir)
+            run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=post_dir)
 
     # 4. Generate Summaries, CSVs, and Excel Report
     print("\n>>> Generating PostgreSQL Benchmark Summaries and Reports...", flush=True)
     cleanup_environment()
     results_dir = os.path.join(BASE_DIR, "results")
     if os.path.exists(os.path.join(results_dir, "generate_summary.py")):
-        run_cmd(["python3", "generate_summary.py"], cwd=results_dir)
+        run_cmd([sys.executable, "-u", "generate_summary.py"], cwd=results_dir)
     if os.path.exists(os.path.join(results_dir, "export_csv.py")):
-        run_cmd(["python3", "export_csv.py"], cwd=results_dir)
+        run_cmd([sys.executable, "-u", "export_csv.py"], cwd=results_dir)
     if os.path.exists(os.path.join(results_dir, "export_excel.py")):
         try:
             import openpyxl  # noqa
-            run_cmd(["python3", "export_excel.py"], cwd=results_dir)
+            run_cmd([sys.executable, "-u", "export_excel.py"], cwd=results_dir)
         except ImportError:
             print("[AUTO-RUNNER] Exporting Excel via python container...", flush=True)
             subprocess.run([
@@ -191,6 +204,20 @@ def main():
                 "python:3.11-slim",
                 "sh", "-c", "pip install -q openpyxl && python3 export_excel.py"
             ])
+
+    # 5. Generate Benchmark Duration Summary
+    print("\n>>> Step 5: Generating Execution Duration Summary...", flush=True)
+    scripts_dir = os.path.join(os.path.dirname(BASE_DIR), "scripts")
+    dur_script = os.path.join(scripts_dir, "benchmark_duration_summary.py")
+    if os.path.exists(dur_script):
+        run_cmd([sys.executable, dur_script], cwd=os.path.dirname(BASE_DIR))
+
+    # 6. Compile Word Document Report (.docx)
+    print("\n>>> Step 6: Post-benchmark synchronization and report generation...", flush=True)
+    sync_script = os.path.join(scripts_dir, "sync_benchmark_report.py")
+    if os.path.exists(sync_script):
+        print("[AUTO-RUNNER] Compiling Programming_Benchmark_Report.docx...", flush=True)
+        run_cmd([sys.executable, sync_script, "--docx"], cwd=os.path.dirname(BASE_DIR))
 
     print("\n=======================================================")
     print(" POSTGRESQL BENCHMARK PIPELINE EXECUTION COMPLETED!")

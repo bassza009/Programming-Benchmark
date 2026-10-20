@@ -17,7 +17,9 @@ from docx.oxml.ns import nsdecls
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT_MD = os.path.join(REPO_ROOT, "Programming_Benchmark_Report.md")
 REPORT_DOCX = os.path.join(REPO_ROOT, "Programming_Benchmark_Report.docx")
-SUMMARY_PY = os.path.join(REPO_ROOT, "main_web_benchmark", "results", "generate_summary.py")
+SUMMARY_PY = os.path.join(REPO_ROOT, "pos_web_benchmark", "results", "generate_summary.py")
+if not os.path.exists(SUMMARY_PY):
+    SUMMARY_PY = os.path.join(REPO_ROOT, "main_web_benchmark", "results", "generate_summary.py")
 
 def run_summary_generator():
     """Step 1: Execute generate_summary.py to aggregate raw results."""
