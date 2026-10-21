@@ -16,6 +16,11 @@ from docx.oxml import parse_xml
 from docx.oxml import OxmlElement
 from docx.oxml.ns import nsdecls, qn
 
+try:
+    from pythainlp.tokenize import word_tokenize
+except ImportError:
+    word_tokenize = None
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT_MD = os.path.join(REPO_ROOT, "Programming_Benchmark_Report.md")
 REPORT_DOCX = os.path.join(REPO_ROOT, "Programming_Benchmark_Report.docx")
@@ -48,9 +53,27 @@ def set_cell_background(cell, fill_hex):
 #   "## 1.1 ..." / "### 1.1.1 ..." -> headings
 #   "ตารางที่ ..." line before a | table |, "ภาพที่ ..." and "ที่มา: ..." lines
 #   "- item" bullets, "1) item" numbered items, **bold** inline
+# Body text is left-aligned with a zero-width space between Thai words: some viewers
+# (e.g. WordCraft) break Thai only at spaces and stretch thaiDistribute lines, last line included.
 # ---------------------------------------------------------------------------
 THAI_FONT = "TH Sarabun New"
 BODY_PT = 16
+ZWSP = "​"
+THAI_CHAR = re.compile(r"[฀-๿]")
+NO_BREAK_BEFORE = re.compile(r"[ัิ-ฺๆ-๎ฯ]")  # marks, ๆ, ฯ
+
+
+def thai_line_breaks(text):
+    """Insert zero-width spaces between adjacent Thai words so lines can wrap mid-phrase."""
+    if word_tokenize is None or not THAI_CHAR.search(text):
+        return text
+    tokens = word_tokenize(text, engine="newmm", keep_whitespace=True)
+    out = tokens[:1]
+    for tok in tokens[1:]:
+        if THAI_CHAR.match(out[-1][-1:]) and THAI_CHAR.match(tok) and not NO_BREAK_BEFORE.match(tok):
+            out.append(ZWSP)
+        out.append(tok)
+    return "".join(out)
 
 
 def set_run_font(run, size=BODY_PT, bold=False):
@@ -81,7 +104,7 @@ def add_text(paragraph, text, size=BODY_PT, bold=False):
     text = text.replace("`", "")
     for i, part in enumerate(re.split(r"\*\*", text)):
         if part:
-            set_run_font(paragraph.add_run(part), size, bold or i % 2 == 1)
+            set_run_font(paragraph.add_run(thai_line_breaks(part)), size, bold or i % 2 == 1)
 
 
 def add_page_number(section):
@@ -120,6 +143,8 @@ def write_table(doc, rows):
 def markdown_to_docx(md_path, docx_path):
     """Step 2: Convert Programming_Benchmark_Report.md into a Word Document (.docx)."""
     print(f"[2/4] Compiling {md_path} -> {docx_path}...")
+    if word_tokenize is None:
+        print("Warning: pythainlp not installed (pip install pythainlp); Thai lines will only wrap at spaces.")
     if not os.path.exists(md_path):
         print(f"Error: {md_path} does not exist.")
         return
@@ -219,7 +244,6 @@ def markdown_to_docx(md_path, docx_path):
             add_text(p, stripped)
         else:
             p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.THAI_JUSTIFY
             p.paragraph_format.first_line_indent = indent
             add_text(p, stripped)
 
