@@ -102,48 +102,28 @@ app.get('/', async (request, reply) => {
 });
 
 app.get('/raw/1table', async (request, reply) => {
-  const connection = await pool.getConnection();
-  try {
-    const [rows] = await connection.execute('SELECT * FROM users LIMIT 100');
-    return rows;
-  } finally {
-    connection.release();
-  }
+  const [rows] = await pool.query('SELECT id, name, email FROM users LIMIT 100');
+  return rows;
 });
 
 app.get('/raw/2join', async (request, reply) => {
-  const connection = await pool.getConnection();
-  try {
-    const [rows] = await connection.execute('SELECT u.name, p.age FROM users u JOIN profiles p ON u.id = p.user_id LIMIT 100');
-    return rows;
-  } finally {
-    connection.release();
-  }
+  const [rows] = await pool.query('SELECT u.name, p.age FROM users u JOIN profiles p ON u.id = p.user_id LIMIT 100');
+  return rows;
 });
 
 app.get('/raw/3join', async (request, reply) => {
-  const connection = await pool.getConnection();
-  try {
-    const [rows] = await connection.execute('SELECT u.name, p.age, o.total_amount FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id LIMIT 100');
-    return rows;
-  } finally {
-    connection.release();
-  }
+  const [rows] = await pool.query('SELECT u.name, p.age, o.total_amount FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id LIMIT 100');
+  return rows;
 });
 
 app.get('/raw/4join', async (request, reply) => {
-  const connection = await pool.getConnection();
-  try {
-    const [rows] = await connection.execute('SELECT u.name, p.age, o.total_amount, oi.product_name FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id JOIN order_items oi ON o.id = oi.order_id LIMIT 100');
-    return rows;
-  } finally {
-    connection.release();
-  }
+  const [rows] = await pool.query('SELECT u.name, p.age, o.total_amount, oi.product_name FROM users u JOIN profiles p ON u.id = p.user_id JOIN orders o ON u.id = o.user_id JOIN order_items oi ON o.id = oi.order_id LIMIT 100');
+  return rows;
 });
 
 if (cluster.isPrimary || cluster.isMaster) {
   initDB().then(() => {
-    const numCPUs = os.cpus().length;
+    const numCPUs = parseInt(process.env.WORKERS || '16', 10);
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }

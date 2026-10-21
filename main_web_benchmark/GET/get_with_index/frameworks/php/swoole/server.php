@@ -149,7 +149,7 @@ class BenchmarkGetWithIndexServer {
             $pdo = $this->getPdoConnection();
 
             if ($uri === '/raw/1table') {
-                $stmt = $pdo->query("SELECT * FROM users LIMIT 100");
+                $stmt = $pdo->query("SELECT id, name, email FROM users LIMIT 100");
                 $response->status(200);
                 $response->end(json_encode($stmt->fetchAll()));
                 return;
@@ -188,8 +188,9 @@ $server = new Server("0.0.0.0", 8003);
 $benchmark = new BenchmarkGetWithIndexServer();
 $benchmark->initDatabase();
 
+$workers = (int)(getenv('WORKERS') ?: 16);
 $server->set([
-    'worker_num' => swoole_cpu_num(),
+    'worker_num' => $workers,
     'enable_coroutine' => true,
     'log_level' => SWOOLE_LOG_ERROR
 ]);

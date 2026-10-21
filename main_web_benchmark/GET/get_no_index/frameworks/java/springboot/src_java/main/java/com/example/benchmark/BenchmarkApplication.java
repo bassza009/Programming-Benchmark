@@ -89,7 +89,7 @@ public class BenchmarkApplication {
 
     @GetMapping("/raw/1table")
     public List<Map<String, Object>> get1Table() {
-        return jdbcTemplate.queryForList("SELECT * FROM users LIMIT 100");
+        return jdbcTemplate.queryForList("SELECT id, name, email FROM users LIMIT 100");
     }
 
     @GetMapping("/raw/2join")

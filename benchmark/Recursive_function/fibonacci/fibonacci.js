@@ -1,7 +1,15 @@
-function fibonacci(n){
-    if( n <= 1 ){
-        return n
+'use strict';
+
+function fibonacci(n) {
+    if (n <= 1) {
+        return n;
     }
-    return fibonacci(n-1) + fibonacci(n-2)
+    return fibonacci(n - 1) + fibonacci(n - 2);
 }
-console.log(fibonacci(50))
+
+function main() {
+    const n = 40;
+    console.log(fibonacci(n));
+}
+
+main();

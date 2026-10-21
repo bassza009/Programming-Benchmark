@@ -1,0 +1,86 @@
+{
+  "door": {
+    "category": "interactive",
+    "source_dir": "interactive_function/door",
+    "file_prefix": "door",
+    "results_dir": "results/interactive/door",
+    "csv_name": "door.csv",
+    "csv_delete_name": "doordelete.csv",
+    "title_en": "100 Doors",
+    "title_th": "100 Doors",
+    "description": "2 nested loops, 1,000,000 doors",
+    "cooldown_sec": 2
+  },
+  "bubble_sort": {
+    "category": "interactive",
+    "source_dir": "interactive_function/bubble_sort",
+    "file_prefix": "bubble",
+    "results_dir": "results/interactive/bubble_sort",
+    "csv_name": "bubble_sort.csv",
+    "csv_delete_name": "bubble_sortdelete.csv",
+    "title_en": "Bubble Sort",
+    "title_th": "เรียงลำดับแบบฟอง",
+    "description": "2 nested loops, 10,000 reverse-sorted items",
+    "cooldown_sec": 2
+  },
+  "prime": {
+    "category": "interactive",
+    "source_dir": "interactive_function/primeNumCount",
+    "file_prefix": "prime",
+    "results_dir": "results/interactive/prime",
+    "csv_name": "prime.csv",
+    "csv_delete_name": "primedelete.csv",
+    "title_en": "Prime Number Count",
+    "title_th": "นับจำนวนเฉพาะ",
+    "description": "2 nested loops, primes up to 1,000,000",
+    "cooldown_sec": 3
+  },
+  "prisoners": {
+    "category": "interactive",
+    "source_dir": "interactive_function/prisoners",
+    "file_prefix": "prisoners",
+    "results_dir": "results/interactive/Prison",
+    "csv_name": "prisoners.csv",
+    "csv_delete_name": "prisonersdelete.csv",
+    "title_en": "100 Prisoners",
+    "title_th": "100 Prisoners",
+    "description": "2 nested loops, 1,000,000 simulations",
+    "cooldown_sec": 4
+  },
+  "matrix": {
+    "category": "interactive",
+    "source_dir": "interactive_function/Metrix_multiplication",
+    "file_prefix": "Metrix",
+    "results_dir": "results/interactive/Metrix",
+    "csv_name": "metrix.csv",
+    "csv_delete_name": "metrixdelete.csv",
+    "title_en": "Matrix multiplication",
+    "title_th": "คูณเมทริกซ์",
+    "description": "3 nested loops, 1000 x 1000",
+    "cooldown_sec": 6
+  },
+  "factorial": {
+    "category": "recursive",
+    "source_dir": "Recursive_function/factorial",
+    "file_prefix": "factorial",
+    "results_dir": "results/recursive/factorial",
+    "csv_name": "factorial.csv",
+    "csv_delete_name": "factorialdelete.csv",
+    "title_en": "Factorial",
+    "title_th": "Factorial",
+    "description": "Recursive factorial(100)",
+    "cooldown_sec": 1
+  },
+  "fibonacci": {
+    "category": "recursive",
+    "source_dir": "Recursive_function/fibonacci",
+    "file_prefix": "fibonacci",
+    "results_dir": "results/recursive/fibonacci",
+    "csv_name": "fibonacci.csv",
+    "csv_delete_name": "fibonaccidelete.csv",
+    "title_en": "Fibonacci",
+    "title_th": "Fibonacci",
+    "description": "Recursive fibonacci(40)",
+    "cooldown_sec": 4
+  }
+}

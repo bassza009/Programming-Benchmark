@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -15,6 +15,7 @@ import (
 
 var db *sql.DB
 var once sync.Once
+var reqCounter uint64
 
 func initDB() error {
 	dbHost := os.Getenv("DB_HOST")
@@ -92,16 +93,18 @@ func initSchema() error {
 }
 
 func randomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyz0123456789")
-	b := make([]rune, n)
+	const letters = "abcdefghijklmnopqrstuvwxyz0123456789"
+	seq := atomic.AddUint64(&reqCounter, 1)
+	seed := uint64(time.Now().UnixNano()) ^ (seq * 6364136223846793005)
+	b := make([]byte, n)
 	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
+		seed = seed*6364136223846793005 + 1442695040888963407
+		b[i] = letters[(seed>>32)%uint64(len(letters))]
 	}
 	return string(b)
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
 	if err := initDB(); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -116,7 +119,8 @@ func main() {
 
 	app.Post("/raw/post/1table", func(c *fiber.Ctx) error {
 		randID := randomString(8)
-		email := fmt.Sprintf("go_test_%s_%d@example.com", randID, time.Now().UnixNano())
+		seq := atomic.AddUint64(&reqCounter, 1)
+		email := fmt.Sprintf("go_test_%s_%d_%d@example.com", randID, time.Now().UnixNano(), seq)
 		res, err := db.Exec("INSERT INTO users (name, email) VALUES (?, ?)", fmt.Sprintf("User_%s", randID), email)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
@@ -133,7 +137,8 @@ func main() {
 		defer tx.Rollback()
 
 		randID := randomString(8)
-		email := fmt.Sprintf("go_test_%s_%d@example.com", randID, time.Now().UnixNano())
+		seq := atomic.AddUint64(&reqCounter, 1)
+		email := fmt.Sprintf("go_test_%s_%d_%d@example.com", randID, time.Now().UnixNano(), seq)
 		res, err := tx.Exec("INSERT INTO users (name, email) VALUES (?, ?)", fmt.Sprintf("User_%s", randID), email)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
@@ -158,15 +163,20 @@ func main() {
 		defer tx.Rollback()
 
 		randID := randomString(8)
-		email := fmt.Sprintf("go_test_%s_%d@example.com", randID, time.Now().UnixNano())
+		seq := atomic.AddUint64(&reqCounter, 1)
+		email := fmt.Sprintf("go_test_%s_%d_%d@example.com", randID, time.Now().UnixNano(), seq)
 		res, err := tx.Exec("INSERT INTO users (name, email) VALUES (?, ?)", fmt.Sprintf("User_%s", randID), email)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 		}
 		userID, _ := res.LastInsertId()
 
-		tx.Exec("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)", userID, 25, "123 St", fmt.Sprintf("Bio %d", userID), fmt.Sprintf("555-%s", randID))
-		tx.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", userID, 100.00)
+		if _, err := tx.Exec("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)", userID, 25, "123 St", fmt.Sprintf("Bio %d", userID), fmt.Sprintf("555-%s", randID)); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		if _, err := tx.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", userID, 100.00); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
 
 		if err := tx.Commit(); err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
@@ -182,19 +192,29 @@ func main() {
 		defer tx.Rollback()
 
 		randID := randomString(8)
-		email := fmt.Sprintf("go_test_%s_%d@example.com", randID, time.Now().UnixNano())
+		seq := atomic.AddUint64(&reqCounter, 1)
+		email := fmt.Sprintf("go_test_%s_%d_%d@example.com", randID, time.Now().UnixNano(), seq)
 		res, err := tx.Exec("INSERT INTO users (name, email) VALUES (?, ?)", fmt.Sprintf("User_%s", randID), email)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 		}
 		userID, _ := res.LastInsertId()
 
-		tx.Exec("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)", userID, 25, "123 St", fmt.Sprintf("Bio %d", userID), fmt.Sprintf("555-%s", randID))
-		resOrd, _ := tx.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", userID, 100.00)
+		if _, err := tx.Exec("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (?, ?, ?, ?, ?)", userID, 25, "123 St", fmt.Sprintf("Bio %d", userID), fmt.Sprintf("555-%s", randID)); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		resOrd, err := tx.Exec("INSERT INTO orders (user_id, total_amount) VALUES (?, ?)", userID, 100.00)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
 		orderID, _ := resOrd.LastInsertId()
 
-		tx.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", orderID, fmt.Sprintf("Prod1_%s", randID), 25.00)
-		tx.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", orderID, fmt.Sprintf("Prod2_%s", randID), 75.00)
+		if _, err := tx.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", orderID, fmt.Sprintf("Prod1_%s", randID), 25.00); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
+		if _, err := tx.Exec("INSERT INTO order_items (order_id, product_name, price) VALUES (?, ?, ?)", orderID, fmt.Sprintf("Prod2_%s", randID), 75.00); err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		}
 
 		if err := tx.Commit(); err != nil {
 			return c.Status(500).JSON(fiber.Map{"error": err.Error()})

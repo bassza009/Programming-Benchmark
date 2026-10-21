@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY . .
-CMD ["java","bubble.java"]
+COPY bubble.java .
+RUN javac bubble.java
+CMD ["java", "bubble"]

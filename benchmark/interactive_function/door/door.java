@@ -1,19 +1,20 @@
 public class door {
-    
     public static void main(String[] args) {
-        int n = 1000000;
-        boolean[] doors = new boolean[n+1]; // false = closed, true = open
+        final int n = 1000000;
+        boolean[] doors = new boolean[n + 1];
 
         for (int pass = 1; pass <= n; pass++) {
-            for (int door = pass; door <= n; door += pass) {
-                doors[door] = !doors[door];
+            for (int d = pass; d <= n; d += pass) {
+                doors[d] = !doors[d];
             }
         }
 
-        System.out.print("Open doors: ");
+        int openCount = 0;
         for (int i = 1; i <= n; i++) {
-            if (doors[i]) System.out.print("Door "+i + " : opened\n");
+            if (doors[i]) {
+                openCount++;
+            }
         }
-        System.out.println("");
+        System.out.println("Open doors: " + openCount);
     }
 }

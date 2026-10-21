@@ -112,7 +112,7 @@ async def root():
 async def raw_1table():
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cursor:
-            await cursor.execute("SELECT * FROM users LIMIT 100")
+            await cursor.execute("SELECT id, name, email FROM users LIMIT 100")
             return await cursor.fetchall()
 
 @app.get("/raw/2join")
@@ -147,6 +147,5 @@ async def shutdown():
         await pool.wait_closed()
 
 if __name__ == "__main__":
-    import multiprocessing
-    workers = multiprocessing.cpu_count()
+    workers = int(os.getenv("WORKERS", "16"))
     uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers, loop="auto", http="auto")

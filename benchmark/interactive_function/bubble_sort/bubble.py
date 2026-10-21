@@ -1,20 +1,16 @@
-import time
-
 def main():
-    n = 100000
+    n = 10000
     arr = [n - i for i in range(n)]
-
-    print(f"Starting Bubble Sort (Python): {n} items")
-    
 
     for i in range(n):
         for j in range(0, n - i - 1):
             if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
 
-    
-    print(f"Sample Result [0]: {arr[0]}")
-    
+    print(f"Sample Result [0]: {arr[0]}, [{n - 1}]: {arr[n - 1]}")
+
 
 if __name__ == "__main__":
     main()

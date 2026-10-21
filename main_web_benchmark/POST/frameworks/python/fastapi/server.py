@@ -1,13 +1,19 @@
 import aiomysql
 import asyncio
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 import uvicorn
 import logging
 import os
 import uuid
+import orjson
 
-app = FastAPI()
+class CustomORJSONResponse(Response):
+    media_type = "application/json"
+    def render(self, content) -> bytes:
+        return orjson.dumps(content)
+
+app = FastAPI(default_response_class=CustomORJSONResponse)
 pool = None
 
 logging.getLogger("uvicorn.access").disabled = True
@@ -92,9 +98,9 @@ async def post_1table():
                 email = f"py_test_{random_id}_{os.getpid()}_{id(cursor)}@example.com"
                 await cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (f"User_{random_id}", email))
                 user_id = cursor.lastrowid
-                return JSONResponse(status_code=201, content={"user_id": user_id})
+                return CustomORJSONResponse(status_code=201, content={"user_id": user_id})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return CustomORJSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/raw/post/2table")
 async def post_2table():
@@ -109,9 +115,9 @@ async def post_2table():
                 await cursor.execute("INSERT INTO profiles (user_id, age, address, bio, phone) VALUES (%s, %s, %s, %s, %s)",
                                      (user_id, 25, "123 St", f"Bio {user_id}", f"555-{random_id}"))
                 await conn.commit()
-                return JSONResponse(status_code=201, content={"user_id": user_id})
+                return CustomORJSONResponse(status_code=201, content={"user_id": user_id})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return CustomORJSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/raw/post/3table")
 async def post_3table():
@@ -127,9 +133,9 @@ async def post_3table():
                                      (user_id, 25, "123 St", f"Bio {user_id}", f"555-{random_id}"))
                 await cursor.execute("INSERT INTO orders (user_id, total_amount) VALUES (%s, %s)", (user_id, 100.00))
                 await conn.commit()
-                return JSONResponse(status_code=201, content={"user_id": user_id})
+                return CustomORJSONResponse(status_code=201, content={"user_id": user_id})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return CustomORJSONResponse(status_code=500, content={"error": str(e)})
 
 @app.post("/raw/post/4table")
 async def post_4table():
@@ -150,9 +156,9 @@ async def post_4table():
                 await cursor.execute("INSERT INTO order_items (order_id, product_name, price) VALUES (%s, %s, %s)",
                                      (order_id, f"Prod2_{random_id}", 75.00))
                 await conn.commit()
-                return JSONResponse(status_code=201, content={"user_id": user_id})
+                return CustomORJSONResponse(status_code=201, content={"user_id": user_id})
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": str(e)})
+        return CustomORJSONResponse(status_code=500, content={"error": str(e)})
 
 @app.on_event("startup")
 async def startup():
@@ -165,6 +171,5 @@ async def shutdown():
         await pool.wait_closed()
 
 if __name__ == "__main__":
-    import multiprocessing
-    workers = multiprocessing.cpu_count()
+    workers = int(os.getenv("WORKERS", "16"))
     uvicorn.run("server:app", host="0.0.0.0", port=8001, log_level="critical", workers=workers, loop="auto", http="auto")

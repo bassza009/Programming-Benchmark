@@ -1,11 +1,13 @@
 public class fibonacci {
-    public static int fibo_nacci(int n){
-        if(n <= 1){
+    public static long computeFibonacci(long n) {
+        if (n <= 1L) {
             return n;
         }
-        return fibo_nacci(n-1) + fibo_nacci(n-2);
+        return computeFibonacci(n - 1L) + computeFibonacci(n - 2L);
     }
-    public static void main (String[] args){
-        System.out.println(fibo_nacci(50));
+
+    public static void main(String[] args) {
+        final long n = 40L;
+        System.out.println(computeFibonacci(n));
     }
 }

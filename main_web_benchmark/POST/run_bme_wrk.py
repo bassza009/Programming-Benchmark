@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import math
 import os
+import signal
 import subprocess
+import sys
 import time
 import urllib.request
+from datetime import datetime, timezone
+
+try:
+    _guard_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    if _guard_path not in sys.path:
+        sys.path.insert(0, _guard_path)
+    from thermal_guard import get_cpu_temp, check_and_cool, get_cooldown_sleep
+except Exception:
+    def get_cpu_temp(): return 0.0
+    def check_and_cool(tier_key=None): return 0.0
+    def get_cooldown_sleep(tier_key): return 2.0
 
 try:
     import resource
@@ -55,6 +69,12 @@ TIERS = {
     "high": {"name": "High-density website", "scenario": "Popular portals SaaS platforms", "threads": 8, "connections": 2000, "duration": "120s"},
     "stress": {"name": "Stress testing", "scenario": "Find saturation point", "threads": 16, "connections": 10000, "duration": "300s"}
 }
+
+def kill_process_on_port(port):
+    try:
+        subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True)
+    except Exception:
+        pass
 
 def wait_for_server(port, max_wait=30):
     start = time.time()
@@ -108,6 +128,13 @@ def warmup(port, endpoint):
     except Exception:
         pass
 
+def parse_duration_sec(dur_str):
+    if str(dur_str).endswith("s"):
+        return int(str(dur_str)[:-1])
+    if str(dur_str).endswith("m"):
+        return int(str(dur_str)[:-1]) * 60
+    return int(dur_str)
+
 def run_wrk(port, endpoint, tier_cfg):
     url = f"http://127.0.0.1:{port}{endpoint}"
     cmd = [
@@ -115,20 +142,30 @@ def run_wrk(port, endpoint, tier_cfg):
         f"-t{tier_cfg['threads']}",
         f"-c{tier_cfg['connections']}",
         f"-d{tier_cfg['duration']}",
+        "--timeout", "10s",
         "-s", "wrk_json_reporter.lua",
         url
     ]
 
+    dur_sec = parse_duration_sec(tier_cfg['duration'])
+    timeout_sec = dur_sec + 30
+
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_sec)
         stdout = res.stdout.strip()
         json_start = stdout.find("{")
         json_end = stdout.rfind("}") + 1
         if json_start != -1 and json_end > json_start:
-            data = json.loads(stdout[json_start:json_end])
-            return data
-        data = json.loads(stdout)
-        return data
+            return json.loads(stdout[json_start:json_end])
+        return json.loads(stdout)
+    except subprocess.TimeoutExpired:
+        print(f"  [!] wrk timed out after {timeout_sec}s for {url}")
+        return {
+            "requests_per_sec": 0.0,
+            "latency_mean_ms": 0.0,
+            "latency_max_ms": 0.0,
+            "errors": 1
+        }
     except Exception as e:
         print(f"  [!] Error running wrk for {url}: {e}")
         return {
@@ -137,8 +174,6 @@ def run_wrk(port, endpoint, tier_cfg):
             "latency_max_ms": 0.0,
             "errors": 1
         }
-
-import math
 
 T_CRIT_95 = {
     1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
@@ -207,6 +242,9 @@ def compute_average_metrics(runs_list):
 
     max_lat = max((r.get("latency_max_ms", 0.0) for r in runs_list), default=0.0)
     total_errors = sum(r.get("errors", 0) for r in runs_list)
+    temps = [r.get("cpu_temp_c", 0.0) for r in runs_list if r.get("cpu_temp_c")]
+    avg_temp = round(sum(temps) / len(temps), 1) if temps else 0.0
+    max_temp = round(max(temps), 1) if temps else 0.0
 
     return {
         "requests_per_sec": round(avg_rps, 2),
@@ -224,6 +262,8 @@ def compute_average_metrics(runs_list):
         "latency_p95_ms": round(avg_p95, 2),
         "latency_p99_ms": round(avg_p99, 2),
         "latency_max_ms": round(max_lat, 2),
+        "cpu_temp_avg_c": avg_temp,
+        "cpu_temp_max_c": max_temp,
         "errors": total_errors,
         "runs_count": n
     }
@@ -243,10 +283,11 @@ def is_target(item, filter_lang=None, filter_fw=None):
 def main():
     parser = argparse.ArgumentParser(description="POST Bare Metal Benchmark Runner")
     parser.add_argument("--tier", choices=list(TIERS.keys()) + ["all"], default="all", help="Tier to execute (default: all)")
-    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Language to benchmark (runs all frameworks in language if --framework is not set)")
+    parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Language to benchmark")
     parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Framework to benchmark")
     parser.add_argument("--runs", type=int, default=1, help="Number of iterations per endpoint to average (default: 1)")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase")
+    parser.add_argument("--resume", action="store_true", help="Skip already completed tiers in results")
     args = parser.parse_args()
 
     filter_desc = []
@@ -257,140 +298,175 @@ def main():
     filter_label = " | ".join(filter_desc) if filter_desc else "ALL"
 
     selected_tiers = list(TIERS.keys()) if args.tier == "all" else [args.tier]
-    target_langs = [l for l in LANGUAGES if is_target(l, args.lang, args.framework)]
+    target_languages = [l for l in LANGUAGES if is_target(l, args.lang, args.framework)]
 
-    if not target_langs:
-        print(f"[!] No languages/frameworks matched filter (Lang: {args.lang}, Framework: {args.framework})")
+    if not target_languages:
+        print(f"[!] No languages matched filter (Lang: {args.lang}, Framework: {args.framework})")
         return
 
     print("=================================================================")
-    print(" Programming Benchmark: POST Write/Transaction Bare Metal Benchmark")
-    print(f" Target Filter: {filter_label} | Selected Tiers: {', '.join(selected_tiers).upper()} | Runs/Endpoint: {args.runs} | Warmup: {not args.no_warmup}")
-    print(f" Target Frameworks: {', '.join([l['name'] + ' (' + l['framework'] + ')' for l in target_langs])}")
+    print(" Programming Benchmark: POST Write/Transaction Bare Metal Benchmark [MySQL]")
+    print(f" Filter: {filter_label} | Tiers: {', '.join(selected_tiers).upper()} | Runs: {args.runs} | Warmup: {not args.no_warmup} | Resume: {args.resume}")
+    print(f" Targets: {', '.join([l['name'] + ' (' + l['framework'] + ')' for l in target_languages])}")
     print("=================================================================")
 
     ALL_RESULTS = {}
     RAW_RESULTS = {}
-    if os.path.exists("bme_benchmark_results.json"):
+    res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
+    os.makedirs(res_dir, exist_ok=True)
+    raw_res_dir = os.path.join(res_dir, "raw_results")
+    os.makedirs(raw_res_dir, exist_ok=True)
+
+    suite_json = os.path.join(res_dir, "post_bme.json")
+    if os.path.exists(suite_json):
         try:
-            with open("bme_benchmark_results.json") as f:
+            with open(suite_json, "r") as f:
                 ALL_RESULTS = json.load(f)
         except Exception:
             pass
-    if os.path.exists("raw_results.json"):
+    elif os.path.exists("bme_benchmark_results.json"):
         try:
-            with open("raw_results.json") as f:
+            with open("bme_benchmark_results.json", "r") as f:
+                ALL_RESULTS = json.load(f)
+        except Exception:
+            pass
+
+    suite_raw_json = os.path.join(raw_res_dir, "post_bme_raw.json")
+    if os.path.exists(suite_raw_json):
+        try:
+            with open(suite_raw_json, "r") as f:
+                RAW_RESULTS = json.load(f)
+        except Exception:
+            pass
+    elif os.path.exists("bme_raw_results.json"):
+        try:
+            with open("bme_raw_results.json", "r") as f:
                 RAW_RESULTS = json.load(f)
         except Exception:
             pass
 
-    for lang in target_langs:
-        # Skip language if already fully benchmarked in existing results
-        if lang["name"] in ALL_RESULTS and lang["name"] in RAW_RESULTS:
-            tiers_done = ALL_RESULTS[lang["name"]].get("tiers", {})
-            if all(tk in tiers_done and all(ep in tiers_done[tk].get("endpoints", {}) for ep in ENDPOINTS) for tk in selected_tiers):
-                print(f"\n---> Skipping {lang['name']} (already fully benchmarked across all selected tiers)")
-                continue
+    for lang in target_languages:
+        lang_results = ALL_RESULTS.get(lang["name"], {"Environment": "BME", "tiers": {}})
+        raw_lang_results = RAW_RESULTS.get(lang["name"], {"Environment": "BME", "tiers": {}})
+        lang_results["Environment"] = "BME"
+        raw_lang_results["Environment"] = "BME"
+        if "tiers" not in lang_results:
+            lang_results["tiers"] = {}
+        if "tiers" not in raw_lang_results:
+            raw_lang_results["tiers"] = {}
+
+        def is_tier_complete(tk):
+            td = lang_results.get("tiers", {}).get(tk, {})
+            eps = td.get("endpoints", {})
+            return len(eps) == len(ENDPOINTS) and all(ep_data.get("runs_count", 0) >= args.runs for ep_data in eps.values())
+
+        if args.resume and all(is_tier_complete(tk) for tk in selected_tiers):
+            print(f"\n---> [RESUME] All selected tiers already completed for {lang['name']}. Skipping process launch.")
+            continue
 
         print(f"\n---> Resetting Database for {lang['name']}...")
         reset_db()
 
-        print(f"---> Starting Server: {lang['name']} on Port {lang['port']}")
-        subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
+        print(f"---> Starting Bare-Metal {lang['name']} ({lang['framework']}) on Port {lang['port']}...")
+        kill_process_on_port(lang["port"])
         time.sleep(1)
 
-        proc = subprocess.Popen(lang["cmd"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=lang.get("cwd"))
-        
-        print(f"     Waiting for {lang['name']} server to be ready on port {lang['port']}...")
-        if not wait_for_server(lang['port'], max_wait=30):
-            print(f"  [!] Timeout waiting for {lang['name']} server on port {lang['port']}")
-
-        lang_results = {
-            "Environment": "BME",
-            "tiers": {}
-        }
-        raw_lang_results = {
-            "Environment": "BME",
-            "tiers": {}
-        }
+        proc = subprocess.Popen(lang["cmd"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, cwd=lang["cwd"])
+        print(f"     Waiting for {lang['name']} server to start...")
+        if not wait_for_server(lang["port"], max_wait=30):
+            print(f"  [!] Failed to start {lang['name']} server")
+            try:
+                proc.terminate()
+            except Exception:
+                pass
+            continue
 
         for tier_key in selected_tiers:
+            if args.resume and is_tier_complete(tier_key):
+                print(f"\n  >> [RESUME] Tier '{tier_key}' already completed for {lang['name']}. Skipping...")
+                continue
+
             t_cfg = TIERS[tier_key]
             print(f"\n  >> Running Tier: {t_cfg['name']} (-t{t_cfg['threads']} -c{t_cfg['connections']} -d{t_cfg['duration']})")
             print(f"     Resetting Database before tier: {t_cfg['name']}...")
             reset_db()
-            tier_endpoints = {}
-            raw_tier_endpoints = {}
+            existing_tier_eps = lang_results.get("tiers", {}).get(tier_key, {}).get("endpoints", {}) if args.resume else {}
+            existing_raw_eps = raw_lang_results.get("tiers", {}).get(tier_key, {}).get("endpoints", {}) if args.resume else {}
+            tier_endpoints = dict(existing_tier_eps)
+            raw_tier_endpoints = dict(existing_raw_eps)
 
             for ep in ENDPOINTS:
+                existing_ep_runs = raw_tier_endpoints.get(ep, {}).get("raw_runs", []) if args.resume else []
+                if args.resume and ep in tier_endpoints and tier_endpoints[ep].get("runs_count", 0) >= args.runs and len(existing_ep_runs) >= args.runs:
+                    print(f"     >> [RESUME] Endpoint {ep} already completed ({len(existing_ep_runs)}/{args.runs} runs). Skipping...")
+                    continue
+
                 if not args.no_warmup:
-                    warmup(lang['port'], ep)
+                    warmup(lang["port"], ep)
                     time.sleep(1)
 
-                runs_data = []
-                for run_idx in range(1, args.runs + 1):
+                runs_data = list(existing_ep_runs) if (args.resume and 0 < len(existing_ep_runs) < args.runs) else []
+                start_run = len(runs_data) + 1
+                if start_run > 1:
+                    print(f"     >> [RESUME] Resuming {ep} from Run {start_run}/{args.runs} ({len(runs_data)} runs already saved)...")
+
+                for run_idx in range(start_run, args.runs + 1):
+                    check_and_cool(tier_key)
                     run_label = f" (Run {run_idx}/{args.runs})" if args.runs > 1 else ""
-                    print(f"     Benchmarking {lang['name']} POST {ep}{run_label}...")
-                    ep_res = run_wrk(lang['port'], ep, t_cfg)
+                    print(f"     Benchmarking Bare Metal {lang['name']} POST {ep}{run_label}...")
+                    run_start_iso = datetime.now(timezone.utc).isoformat()
+                    t0 = time.time()
+                    ep_res = run_wrk(lang["port"], ep, t_cfg)
+                    elapsed_sec = round(time.time() - t0, 2)
+                    run_end_iso = datetime.now(timezone.utc).isoformat()
+                    cur_cpu = check_and_cool(tier_key)
                     ep_res_with_meta = dict(ep_res)
                     ep_res_with_meta["run_index"] = run_idx
+                    ep_res_with_meta["cpu_temp_c"] = cur_cpu
+                    ep_res_with_meta["started_at"] = run_start_iso
+                    ep_res_with_meta["completed_at"] = run_end_iso
+                    ep_res_with_meta["elapsed_sec"] = elapsed_sec
                     runs_data.append(ep_res_with_meta)
-                    print(f"     -> Run {run_idx}: Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)}")
+                    print(f"     -> Run {run_idx}: Req/sec: {ep_res.get('requests_per_sec', 0):.2f} | Latency: {ep_res.get('latency_mean_ms', 0):.2f}ms | Errors: {ep_res.get('errors', 0)} | CPU: {cur_cpu:.1f}°C")
+
+                    avg_res = compute_average_metrics(runs_data)
+                    tier_endpoints[ep] = avg_res
+                    raw_tier_endpoints[ep] = {"average": avg_res, "raw_runs": runs_data}
+                    lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": tier_endpoints}
+                    raw_lang_results["tiers"][tier_key] = {"config": t_cfg, "endpoints": raw_tier_endpoints}
+                    ALL_RESULTS[lang["name"]] = lang_results
+                    RAW_RESULTS[lang["name"]] = raw_lang_results
+
+                    with open("bme_benchmark_results.json", "w") as f:
+                        json.dump(ALL_RESULTS, f, indent=2)
+                    with open("bme_raw_results.json", "w") as f:
+                        json.dump(RAW_RESULTS, f, indent=2)
+                    with open(suite_json, "w") as f:
+                        json.dump(ALL_RESULTS, f, indent=2)
+                    with open(suite_raw_json, "w") as f:
+                        json.dump(RAW_RESULTS, f, indent=2)
+
                     if run_idx < args.runs:
-                        time.sleep(1)
+                        sleep_time = get_cooldown_sleep(tier_key)
+                        time.sleep(sleep_time)
 
                 avg_res = compute_average_metrics(runs_data)
-                tier_endpoints[ep] = avg_res
-                raw_tier_endpoints[ep] = {
-                    "average": avg_res,
-                    "raw_runs": runs_data
-                }
-
                 if args.runs > 1:
-                    print(f"     ==> Average ({args.runs} runs): Req/sec: {avg_res['requests_per_sec']:.2f} | Avg Latency: {avg_res['latency_mean_ms']:.2f}ms | Total Errors: {avg_res['errors']}")
+                    print(f"     ==> Average ({args.runs} runs): Req/sec: {avg_res['requests_per_sec']:.2f} | Latency: {avg_res['latency_mean_ms']:.2f}ms | Errors: {avg_res['errors']}")
 
-            lang_results["tiers"][tier_key] = {
-                "config": t_cfg,
-                "endpoints": tier_endpoints
-            }
-            raw_lang_results["tiers"][tier_key] = {
-                "config": t_cfg,
-                "endpoints": raw_tier_endpoints
-            }
-
-        ALL_RESULTS[lang["name"]] = lang_results
-        RAW_RESULTS[lang["name"]] = raw_lang_results
-
-        proc.terminate()
+        print(f"---> Stopping {lang['name']} server...")
         try:
+            proc.send_signal(signal.SIGINT)
             proc.wait(timeout=5)
         except Exception:
             proc.kill()
-        subprocess.run(["fuser", "-k", f"{lang['port']}/tcp"], capture_output=True)
+        kill_process_on_port(lang["port"])
         time.sleep(2)
 
-        # Incrementally persist results after each language finishes
-        with open("bme_benchmark_results.json", "w") as f:
-            json.dump(ALL_RESULTS, f, indent=2)
-
-        with open("raw_results.json", "w") as f:
-            json.dump(RAW_RESULTS, f, indent=2)
-
-        res_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
-        os.makedirs(res_dir, exist_ok=True)
-        raw_res_dir = os.path.join(res_dir, "raw_results")
-        os.makedirs(raw_res_dir, exist_ok=True)
-
-        with open(os.path.join(res_dir, "post_bme.json"), "w") as f:
-            json.dump(ALL_RESULTS, f, indent=2)
-
-        with open(os.path.join(raw_res_dir, "post_bme_raw.json"), "w") as f:
-            json.dump(RAW_RESULTS, f, indent=2)
-
     print("\n=================================================================")
-    print(" POST Bare-Metal Benchmark Finished!")
-    print(" Averaged Results in: bme_benchmark_results.json & results/post_bme.json")
-    print(" Raw Iteration Results in: raw_results.json & results/raw_results/post_bme_raw.json")
+    print(" POST Bare Metal Benchmark Completed!")
+    print(" Averaged: bme_benchmark_results.json & results/post_bme.json")
+    print(" Raw:      bme_raw_results.json & results/raw_results/post_bme_raw.json")
     print("=================================================================")
 
 if __name__ == "__main__":

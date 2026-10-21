@@ -33,8 +33,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 WEB_SUITES = {
     "main": {"folder": "main_web_benchmark", "db_engine": "MySQL"},
-    # PostgreSQL suite is still incomplete (BME has no Go/Java yet). Uncomment when done.
-    # "pos": {"folder": "pos_web_benchmark", "db_engine": "PostgreSQL"},
+    "pos": {"folder": "pos_web_benchmark", "db_engine": "PostgreSQL"},
 }
 
 WEB_TESTS = {
@@ -46,19 +45,31 @@ WEB_TESTS = {
 # slug: (suite, folder under results/, title_en, title_th, description)
 ALGO_BENCHMARKS = {
     "door": ("interactive", "interactive/door", "100 Doors", "100 Doors",
-             "1 nested loop, 1,000,000 doors"),
+             "2 nested loops, 1,000,000 doors"),
+    "bubble_sort": ("interactive", "interactive/bubble_sort", "Bubble Sort", "เรียงลำดับแบบฟอง",
+                    "2 nested loops, 10,000 reverse-sorted items"),
+    "prime": ("interactive", "interactive/prime", "Prime Number Count", "นับจำนวนเฉพาะ",
+              "2 nested loops, primes up to 1,000,000"),
     "prisoners": ("interactive", "interactive/Prison", "100 Prisoners", "100 Prisoners",
-                  "2 nested loops, 1,000,000 prisoners"),
+                  "2 nested loops, 1,000,000 simulations"),
     "matrix": ("interactive", "interactive/Metrix", "Matrix multiplication", "คูณเมทริกซ์",
                "3 nested loops, 1000 x 1000"),
     "factorial": ("recursive", "recursive/factorial", "Factorial", "Factorial",
                   "Recursive factorial(100)"),
     "fibonacci": ("recursive", "recursive/fibonacci", "Fibonacci", "Fibonacci",
-                  "Recursive fibonacci(50)"),
+                  "Recursive fibonacci(40)"),
 }
 
-# hyperfine file name -> language label shown on the website
+# hyperfine file name -> language label shown on the website (auto-extended from benchmark/languages.json)
 ALGO_LANGUAGES = {"go": "Go", "java": "Java", "node": "Node.js", "php": "PHP", "python": "Python"}
+_LANG_CONFIG_PATH = os.path.join(REPO_ROOT, "benchmark", "languages.json")
+if os.path.exists(_LANG_CONFIG_PATH):
+    try:
+        for _lk, _lcfg in json.load(open(_LANG_CONFIG_PATH, encoding="utf-8")).items():
+            if _lk not in ALGO_LANGUAGES and _lcfg.get("name"):
+                ALGO_LANGUAGES[_lk] = _lcfg["name"]
+    except Exception:
+        pass
 
 TIER_ORDER = {"poc": 1, "small": 2, "general": 3, "high": 4, "stress": 5}
 

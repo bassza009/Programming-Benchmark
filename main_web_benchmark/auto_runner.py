@@ -116,13 +116,15 @@ def main():
     parser.add_argument(
         "--suite",
         choices=["post", "post_bme", "post_dkr", "all", "get_no_index", "get_with_index"],
-        default="post",
-        help="Benchmark suite to execute. Defaults to 'post' for running both POST Docker and Bare-Metal."
+        default="all",
+        help="Benchmark suite to execute. Defaults to 'all'."
     )
     parser.add_argument("--all", action="store_true", help="Execute ALL benchmark suites (equivalent to --suite all)")
     parser.add_argument("--lang", choices=["python", "py", "node", "nodejs", "js", "php", "go", "golang", "java", "all"], default=None, help="Filter by language")
     parser.add_argument("--framework", "--fw", choices=["fastapi", "fastify", "swoole", "fiber", "springboot", "spring-boot", "spring", "all"], default=None, help="Filter by framework")
     parser.add_argument("--no-warmup", action="store_true", help="Disable 3-second warmup phase before recording metrics")
+    parser.add_argument("--resume", action="store_true", default=True, help="Skip already completed tiers in results JSON files (default: True)")
+    parser.add_argument("--no-resume", "--force", dest="resume", action="store_false", help="Force re-running already completed benchmarks")
     parser.add_argument("--skip-get-no-index", action="store_true", help="Skip GET No-Index suite")
     parser.add_argument("--skip-get-with-index", action="store_true", help="Skip GET With-Index suite")
     parser.add_argument("--skip-post", action="store_true", help="Skip POST suite")
@@ -140,11 +142,13 @@ def main():
         common_args.extend(["--framework", args.framework])
     if args.no_warmup:
         common_args.append("--no-warmup")
+    if args.resume:
+        common_args.append("--resume")
 
     print("=================================================================")
-    print(" PROGRAMMING BENCHMARK: AUTOMATED BENCHMARK SUITE RUNNER")
-    print(f" Mode/Suite: {suite_mode.upper()} (POST DKR & BME)")
-    print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: {args.tier.upper()}")
+    print(" PROGRAMMING BENCHMARK: AUTOMATED BENCHMARK SUITE RUNNER [MySQL]")
+    print(f" Mode/Suite: {suite_mode.upper()}")
+    print(f" Parameters: Runs/Endpoint: {runs_count} | Warmup: {not args.no_warmup} | Tiers: {args.tier.upper()} | Resume: {args.resume}")
     print("=================================================================\n", flush=True)
 
     # Flags to determine which steps to run
@@ -163,13 +167,13 @@ def main():
         if not args.skip_dkr:
             print("\n\n>>> STEP: Running GET get_no_index Docker (DKR)...", flush=True)
             cleanup_environment()
-            if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
+            if not run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=get_no_idx_dir):
                 print("[!] Warning: GET No-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
         if not args.skip_bme:
             print("\n\n>>> STEP: Running GET get_no_index Bare-Metal (BME)...", flush=True)
             cleanup_environment()
-            if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
+            if not run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=get_no_idx_dir):
                 print("[!] Warning: GET No-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
@@ -182,13 +186,13 @@ def main():
         if not args.skip_dkr:
             print("\n\n>>> STEP: Running GET get_with_index Docker (DKR)...", flush=True)
             cleanup_environment()
-            if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
+            if not run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=get_with_idx_dir):
                 print("[!] Warning: GET With-Index Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
         if not args.skip_bme:
             print("\n\n>>> STEP: Running GET get_with_index Bare-Metal (BME)...", flush=True)
             cleanup_environment()
-            if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
+            if not run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=get_with_idx_dir):
                 print("[!] Warning: GET With-Index Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
@@ -199,13 +203,13 @@ def main():
     if run_post_dkr:
         print("\n\n>>> STEP: Running POST Docker (DKR)...", flush=True)
         cleanup_environment()
-        if not run_cmd(["python3", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
+        if not run_cmd([sys.executable, "-u", "run_dkr_wrk.py"] + common_args, cwd=post_dir):
             print("[!] Warning: POST Docker benchmark encountered errors, continuing...", file=sys.stderr)
 
     if run_post_bme:
         print("\n\n>>> STEP: Running POST Bare-Metal (BME)...", flush=True)
         cleanup_environment()
-        if not run_cmd(["python3", "run_bme_wrk.py"] + common_args, cwd=post_dir):
+        if not run_cmd([sys.executable, "-u", "run_bme_wrk.py"] + common_args, cwd=post_dir):
             print("[!] Warning: POST Bare-Metal benchmark encountered errors, continuing...", file=sys.stderr)
 
     # -------------------------------------------------------------
@@ -214,9 +218,18 @@ def main():
     print("\n\n>>> Generating Aggregated Summaries, CSVs, and Excel Report...", flush=True)
     cleanup_environment()
     results_dir = os.path.join(BASE_DIR, "results")
-    run_cmd(["python3", "generate_summary.py"], cwd=results_dir)
-    run_cmd(["python3", "export_csv.py"], cwd=results_dir)
-    run_cmd(["python3", "export_excel.py"], cwd=results_dir)
+    run_cmd([sys.executable, "-u", "generate_summary.py"], cwd=results_dir)
+    run_cmd([sys.executable, "-u", "export_csv.py"], cwd=results_dir)
+    run_cmd([sys.executable, "-u", "export_excel.py"], cwd=results_dir)
+
+    scripts_dir = os.path.join(os.path.dirname(BASE_DIR), "scripts")
+    dur_script = os.path.join(scripts_dir, "benchmark_duration_summary.py")
+    if os.path.exists(dur_script):
+        run_cmd([sys.executable, dur_script], cwd=os.path.dirname(BASE_DIR))
+
+    sync_script = os.path.join(scripts_dir, "sync_benchmark_report.py")
+    if os.path.exists(sync_script):
+        run_cmd([sys.executable, sync_script, "--docx"], cwd=os.path.dirname(BASE_DIR))
 
     print("\n=======================================================")
     print(" BENCHMARK EXECUTION & SUMMARIES COMPLETED SUCCESSFULLY!")

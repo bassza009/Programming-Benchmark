@@ -1,12 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
-
-func main() {
-	fmt.Println(countPrimes(10000000))
-}
+import "fmt"
 
 func countPrimes(limit int) int {
 	count := 0
@@ -23,4 +17,10 @@ func countPrimes(limit int) int {
 		}
 	}
 	return count
+}
+
+func main() {
+	const n = 1000000
+	result := countPrimes(n)
+	fmt.Printf("Primes count: %d\n", result)
 }

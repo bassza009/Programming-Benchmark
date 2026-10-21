@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY . .
-CMD ["java","fibonacci.java"]
+COPY fibonacci.java .
+RUN javac fibonacci.java
+CMD ["java", "fibonacci"]

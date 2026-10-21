@@ -1,3 +1,4 @@
 fastapi>=0.100.0
 uvicorn[standard]>=0.22.0
 aiomysql>=0.2.0
+orjson>=3.9.0

@@ -211,7 +211,7 @@ $benchmark = new BenchmarkPostServer();
 $benchmark->initDatabase();
 
 $server->set([
-    'worker_num' => swoole_cpu_num(),
+    'worker_num' => (int)(getenv('WORKERS') ?: 16),
     'enable_coroutine' => true,
     'log_level' => SWOOLE_LOG_ERROR
 ]);

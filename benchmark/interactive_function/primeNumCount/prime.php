@@ -9,10 +9,13 @@ function countPrimes($limit) {
                 break;
             }
         }
-        if ($isPrime) $count++;
+        if ($isPrime) {
+            $count++;
+        }
     }
     return $count;
 }
-print(countPrimes(10000000))
 
-?>
+$n = 1000000;
+$result = countPrimes($n);
+echo "Primes count: {$result}\n";

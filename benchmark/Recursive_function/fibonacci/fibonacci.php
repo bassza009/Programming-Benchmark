@@ -1,9 +1,10 @@
 <?php
-    function fibonacci($n){
-        if($n <=1 ){
-            return $n;
-        }
-        return fibonacci($n-1) + fibonacci($n-2);
+function fibonacci($n) {
+    if ($n <= 1) {
+        return $n;
     }
-    printf(fibonacci(50))
-?>
+    return fibonacci($n - 1) + fibonacci($n - 2);
+}
+
+$n = 40;
+echo fibonacci($n) . "\n";

@@ -1,9 +1,10 @@
 <?php
-function factorial($n){
-    if($n <=1){
-        return 1;
+function factorial($n) {
+    if ($n <= 1) {
+        return 1.0;
     }
-    return $n * factorial($n-1);
+    return (float)$n * factorial($n - 1);
 }
-printf(factorial(100),"\n")
-?>
+
+$n = 100;
+printf("%.6e\n", factorial($n));

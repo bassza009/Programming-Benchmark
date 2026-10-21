@@ -3,12 +3,16 @@ get_no_index,Bare Metal,POC / Small internal system,Node.js,9439.01,2.15,666.48,
 get_no_index,Bare Metal,POC / Small internal system,PHP,15317.41,1.36,602.74,33.82,524.34,39.09,505.47,41.07,0
 get_no_index,Bare Metal,POC / Small internal system,Python,470.24,42.52,337.98,59.12,380.53,52.54,339.43,58.86,0
 get_no_index,Bare Metal,Small production website,Node.js,18694.97,5.35,483.25,206.49,423.53,235.53,411.46,242.44,0
+get_no_index,Bare Metal,Small production website,PHP,26215.71,4.26,541.43,204.07,483.70,229.72,465.83,233.46,0
 get_no_index,Bare Metal,Small production website,Python,480.48,209.52,298.14,334.42,317.51,313.99,295.69,337.04,0
 get_no_index,Bare Metal,General web application,Node.js,19842.63,25.65,481.19,1058.86,424.66,1187.02,410.00,1226.80,0
+get_no_index,Bare Metal,General web application,PHP,30251.20,17.61,488.52,1086.85,431.14,1208.40,417.34,1242.56,1
 get_no_index,Bare Metal,General web application,Python,480.22,1052.62,295.18,1626.98,303.96,1611.55,282.62,1707.41,5837
 get_no_index,Bare Metal,High-density website,Node.js,18440.44,113.95,475.90,3378.62,415.92,3497.39,419.15,3513.03,958112
+get_no_index,Bare Metal,High-density website,PHP,30531.29,75.26,466.54,3478.82,411.65,3701.09,397.68,3653.69,314965
 get_no_index,Bare Metal,High-density website,Python,445.39,3465.70,284.37,4843.89,285.41,4783.04,265.24,4934.91,110535
 get_no_index,Bare Metal,Stress testing,Node.js,12233.19,1022.43,2074.28,4379.15,2051.42,4398.63,2067.47,4400.87,37294732
+get_no_index,Bare Metal,Stress testing,PHP,29814.67,361.09,452.79,3924.78,0.00,0.00,0.00,0.00,1057974
 get_no_index,Bare Metal,Stress testing,Python,394.98,5447.22,261.55,6865.03,261.23,6506.02,245.14,6695.18,4735807
 get_no_index,Docker,POC / Small internal system,Go,4787.56,4.15,443.46,45.06,384.74,51.93,357.45,55.93,0
 get_no_index,Docker,POC / Small internal system,Java,9812.72,2.04,455.72,43.86,386.98,51.64,373.04,53.56,0

@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY . .
-CMD ["java","prisoners.java"]
+COPY prisoners.java .
+RUN javac prisoners.java
+CMD ["java", "prisoners"]

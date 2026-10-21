@@ -1,28 +1,25 @@
 <?php
+ini_set('memory_limit', '512M');
+
 $n = 1000;
-$a = new SplFixedArray($n * $n);
-$b = new SplFixedArray($n * $n);
-$res = new SplFixedArray($n * $n);
+$a = array_fill(0, $n * $n, 0.0);
+$b = array_fill(0, $n * $n, 0.0);
+$result = array_fill(0, $n * $n, 0.0);
 
 for ($i = 0; $i < $n * $n; $i++) {
-    $a[$i] = (double)($i % $n);
-    $b[$i] = (double)floor($i / $n);
+    $a[$i] = (float)($i % $n);
+    $b[$i] = (float)intdiv($i, $n);
 }
 
-echo "Starting Matrix Multiplication (PHP - Flat): {$n}x{$n}\n";
-// $start = microtime(true);
-
 for ($i = 0; $i < $n; $i++) {
+    $rowOffset = $i * $n;
     for ($j = 0; $j < $n; $j++) {
         $sum = 0.0;
         for ($k = 0; $k < $n; $k++) {
-            $sum += $a[$i * $n + $k] * $b[$k * $n + $j];
+            $sum += $a[$rowOffset + $k] * $b[$k * $n + $j];
         }
-        $res[$i * $n + $j] = $sum;
+        $result[$rowOffset + $j] = $sum;
     }
 }
 
-// $end = microtime(true);
-echo "Sample Result [0]: " . $res[0] . "\n";
-// echo "Time: " . round($end - $start, 4) . " sec\n";
-?>
+printf("Sample Result [0]: %.2f\n", $result[0]);

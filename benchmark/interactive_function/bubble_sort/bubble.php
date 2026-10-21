@@ -1,16 +1,15 @@
 <?php
-$n = 100000;
-$arr = array($n);
+ini_set('memory_limit', '512M');
 
+$n = 10000;
+$arr = [];
 for ($i = 0; $i < $n; $i++) {
     $arr[$i] = $n - $i;
 }
 
-echo "Starting Bubble Sort (PHP): {$n} items\n";
-
-
 for ($i = 0; $i < $n; $i++) {
-    for ($j = 0; $j < $n - $i - 1; $j++) {
+    $limit = $n - $i - 1;
+    for ($j = 0; $j < $limit; $j++) {
         if ($arr[$j] > $arr[$j + 1]) {
             $temp = $arr[$j];
             $arr[$j] = $arr[$j + 1];
@@ -19,5 +18,5 @@ for ($i = 0; $i < $n; $i++) {
     }
 }
 
-
-echo "Sample Result [0]: " . $arr[0] . "\n";
+$lastIdx = $n - 1;
+echo "Sample Result [0]: {$arr[0]}, [{$lastIdx}]: {$arr[$lastIdx]}\n";

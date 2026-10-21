@@ -156,7 +156,7 @@ app.post('/raw/post/4table', async (request, reply) => {
 
 if (cluster.isPrimary || cluster.isMaster) {
   initDB().then(() => {
-    const numCPUs = os.cpus().length;
+    const numCPUs = parseInt(process.env.WORKERS || '16', 10);
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }

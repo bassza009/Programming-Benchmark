@@ -1,16 +1,17 @@
-door_number = 1000000
-def solve_door():
-    doors = [False] * door_number 
+def main():
+    n = 1000000
+    doors = [False] * (n + 1)
 
-    for i in range(door_number ):
-        for j in range(i , door_number  , i+1):
-            doors[j] = not doors[j]
-    
-    return doors
+    for pass_num in range(1, n + 1):
+        for d in range(pass_num, n + 1, pass_num):
+            doors[d] = not doors[d]
 
-final_door = solve_door()
+    open_count = 0
+    for i in range(1, n + 1):
+        if doors[i]:
+            open_count += 1
+    print(f"Open doors: {open_count}")
 
-for idx, open_state in enumerate(final_door):
-    status = "open" if open_state else "closed"
-    if open_state:
-        print(f"Doors {idx+1}: {status}")
+
+if __name__ == "__main__":
+    main()

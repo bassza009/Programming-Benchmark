@@ -1,7 +1,15 @@
-function factorial(n){
-    if (n <=1){
-        return 1
+'use strict';
+
+function factorial(n) {
+    if (n <= 1) {
+        return 1.0;
     }
-    return n * factorial(n-1)
+    return n * factorial(n - 1);
 }
-console.log(factorial(100))
+
+function main() {
+    const n = 100;
+    console.log(factorial(n).toExponential(6));
+}
+
+main();

@@ -1,6 +1,6 @@
 # Benchmark Execution Duration & Workload Summary
 
-> **Generated at**: 2026-10-19 21:56:34
+> **Generated at**: 2026-10-20 19:54:04
 
 This document outlines the exact execution duration, iteration volume, and computational workload for both benchmark environments in this repository.
 
@@ -9,7 +9,7 @@ This document outlines the exact execution duration, iteration volume, and compu
 | Benchmark Suite | Database Target | Dataset Size | Total Wrk Runs | Pure Load Time | Estimated Total Wall-Clock |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Main Web Benchmark** | MySQL 8.0 | 100,000 Records across 4 tables | 14,400 runs | 431.78 hrs (17.99 days) | 18d 15h 46m 40s (18.66 days) |
-| **Pos Web Benchmark (Full 20-Run)** | PostgreSQL 16 | 11,110,000 Records across 4 tables | 2,880 / 12,000 runs (24.0%) | 89.33h recorded (Planned: 380.0h / 15.8 days) | 16d 9h 20m 0s (~16.4 days total) |
+| **Pos Web Benchmark (Full 20-Run)** | PostgreSQL 16 | 11,110,000 Records across 4 tables | 3,152 / 12,000 runs (26.3%) | 97.33h recorded (Planned: 380.0h / 15.8 days) | 16d 9h 20m 0s (~16.4 days total) |
 
 ---
 
@@ -30,7 +30,7 @@ This document outlines the exact execution duration, iteration volume, and compu
 
 * **Pipeline Started**: `2026-10-05 01:21:16 `
 
-* **Current Wall-Clock Elapsed**: `14d 20h 35m 18s`
+* **Current Wall-Clock Elapsed**: `15d 18h 32m 48s`
 
 
 | Planned Suite / Environment | Total Planned Runs | Pure Load Time (Hours) | Planned Wall-Clock Duration |

@@ -1,13 +1,13 @@
 public class factorial {
-    public static int facto_rial(int n){
-        if(n<=1){
-            return 1;
+    public static double computeFactorial(int n) {
+        if (n <= 1) {
+            return 1.0;
         }
-        return n * facto_rial(n-1);
-
+        return (double) n * computeFactorial(n - 1);
     }
-    public static void main(String[] args){
-        System.out.println(facto_rial(100));
 
+    public static void main(String[] args) {
+        final int n = 100;
+        System.out.printf("%.6e\n", computeFactorial(n));
     }
 }

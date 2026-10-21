@@ -1,4 +1,5 @@
-FROM eclipse-temurin:17-jdk-focal
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY . .
-CMD ["java","Metrix.java"]
+COPY Metrix.java .
+RUN javac Metrix.java
+CMD ["java", "Metrix"]

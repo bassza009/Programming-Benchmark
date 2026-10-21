@@ -1,23 +1,22 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
-	var door int = 1
-	var incrementer = 0
+	const n = 1000000
+	doors := make([]bool, n+1)
 
-	for current := 1; current <= 1000000; current++ {
-		//fmt.Printf("Door %d ", current)
-
-		if current == door {
-			fmt.Printf("Door %d Open\n", current)
-			incrementer++
-			door += 2*incrementer + 1
-		} else {
-			//fmt.Printf("Closed\n")
+	for pass := 1; pass <= n; pass++ {
+		for d := pass; d <= n; d += pass {
+			doors[d] = !doors[d]
 		}
 	}
 
+	openCount := 0
+	for i := 1; i <= n; i++ {
+		if doors[i] {
+			openCount++
+		}
+	}
+	fmt.Printf("Open doors: %d\n", openCount)
 }
